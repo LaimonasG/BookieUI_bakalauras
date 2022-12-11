@@ -34,6 +34,10 @@ const Login: React.FC<Props> = () => {
 
     login(username, password).then(
       () => {
+        if(username === 'Admin')
+        localStorage.setItem('Role','Admin');
+        else
+        localStorage.setItem('Role','User');
         navigate("/home");
         window.location.reload();
       },

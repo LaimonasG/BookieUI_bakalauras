@@ -1,7 +1,7 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import { Form, Button } from 'react-bootstrap';
-import { addBook,editBook } from "../requests/genres";
-import { messageHandling } from './extra/MessageHandling';
+import { addBook,editBook } from "../../requests/genres";
+import { messageHandling } from '../extra/MessageHandling';
 
 
 export interface IBooks {
@@ -24,8 +24,6 @@ type MessageProps = {
 }
 const BookForm = (props : Props) => {
 
-    const [selectedImage, setSelectedImage] = useState(Image);
-
     const {bookData,onBookChange,toggleModal} = props;
 
     const [book, setBook] = useState<IBooks>({
@@ -47,10 +45,10 @@ const BookForm = (props : Props) => {
         
     };
 
-    const handleSetImage = (event: ChangeEvent<HTMLInputElement>, index: number) {
-      const { files } = event.target;
-      setSelectedImage(files[0]);
-    }
+    // const handleSetImage = (event: ChangeEvent<HTMLInputElement>, index: number) {
+    // //   const { files } = event.target;
+    // //   setSelectedImage(files[0]);
+    //  }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -72,24 +70,7 @@ const BookForm = (props : Props) => {
 
     return (
         <Form onSubmit={onSubmit}>
-            <div>
-      {selectedImage && (
-        <div>
-        <img alt="not found" width={"250px"} src={URL.createObjectURL(selectedImage)} />
-        <br />
-        <button onClick={()=>setSelectedImage(null)}>Remove</button>
-        </div>
-      )}
-      <br />
-     
-      <br /> 
-      <input
-        type="file"
-        name="myImage"
-        onChange={e => handleSetImage(e, i)}/>
-      
 
-    </div>
             <Form.Group>
                 <Form.Label className="names">Name</Form.Label>
                 <Form.Control
@@ -115,6 +96,6 @@ const BookForm = (props : Props) => {
             </Button>
         </Form>
     )
-}
+    }
 
 export default BookForm;

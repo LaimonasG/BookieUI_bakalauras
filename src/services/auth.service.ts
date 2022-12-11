@@ -12,7 +12,6 @@ export const register = (username: string, email: string, password: string) => {
     
     if (res) {
       localStorage.setItem("user", JSON.stringify(res.data));
-      console.log('labas');
       console.log(localStorage.getItem("user"));
     }
     return res;
@@ -27,7 +26,6 @@ export const login = (username: string, password: string) => {
       password,
     })
     .then((response) => {
-      console.log(response.data);
       if (response.data.accessToken) {
         localStorage.setItem("user", JSON.stringify(response.data));
       }

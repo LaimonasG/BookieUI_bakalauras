@@ -1,30 +1,59 @@
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import { FaBars, FaTimes,FaBook } from "react-icons/fa";
+import  "./extra/NavBarStyles.css";
+import { IUser } from '../App';
+import * as AuthService from "../services/auth.service";
+import { useEffect, useState } from 'react';
 
-export class MainNavigation extends Component {
+export const Navbar = () => {
+	const navRef = useRef<HTMLElement>(null);
+  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
 
-  render() {
-    return (
-      <Navbar bg="dark" expand="lg">
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav>
-            <NavLink className="d-inline p-2 bg-dark text-white text-decoration-none" to="/">
-              Home
-            </NavLink>
-            <NavLink className="d-inline p-2 bg-dark text-white text-decoration-none" to="/genres">
-              Genres
-            </NavLink>
-            <NavLink className="d-inline p-2 bg-dark text-white text-decoration-none" to="/basket">
-              Basket
-            </NavLink>
+  const logOut = () => {
+    AuthService.logout();
+    localStorage.setItem('Role','');
+    setCurrentUser(undefined);
+  };
 
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
+  useEffect(() => {
+    const user = AuthService.getCurrentUser();
+    if (user) {
+      setCurrentUser(user);
+    }  
+  }, []);
 
-    )
-  }
+	const showNavbar = () => {
+    if(navRef.current)
+		navRef.current.classList.toggle("responsive_nav");
+	};
+
+	return (
+		<header>
+			<FaBook size={42} />
+			<nav ref={navRef}>
+				<a href="/">Home</a>
+        <a href="/genres">Genres</a>
+				<a href="/user">Basket</a>
+        {currentUser ? (
+          <a href="/login" onClick={logOut}>LogOut</a>
+        ):(
+        <div>
+          <a href="/login">Login</a>
+          <a href="/register">Sign up</a>
+        </div>
+        )}
+				
+				<button
+					className="nav-btn nav-close-btn"
+					onClick={showNavbar}>
+					<FaTimes />
+				</button>
+			</nav>
+			<button className="nav-btn" onClick={showNavbar}>
+				<FaBars />
+			</button>
+		</header>
+	);
 }
