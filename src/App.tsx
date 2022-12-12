@@ -18,6 +18,12 @@ export interface IUser {
   password: string,
 }
 
+//books puslapy sucentruot lentele
+
+//books puslapy gauti userId kad naudotojas galetu istrint savo knygas
+
+//komentaru modal padaryt
+
 const App: React.FC = () => {
   return (
     <div >

@@ -7,6 +7,8 @@ interface IBooks {
   UserId: string;
   Name: string;
   Author: string;
+  Price:number;
+  Quality:string;
 }
 const url="https://localhost:7051/api";
 const userStr = localStorage.getItem("user");
@@ -30,6 +32,8 @@ const addBook = async (id: number, book: IBooks) =>
   await axios.post(`${url}/genres/${id}/books`, {
     "Name": book.Name,
     "Author": book.Author,
+    "Price":book.Price,
+    "Quality":book.Quality,
     "content-type":"application/json",
     "certifiedToPost":"yes",
     "role":"User"}).then(function (response) {

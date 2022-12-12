@@ -6,7 +6,7 @@ export class Genres extends Component {
 
     render() {
         return (
-            <div className="mt-5 d-flex w-100 justify-content-left">
+            <div className="mt-5 d-flex w-100 justify-content-center">
                 <GenresTable />
             </div>
         )

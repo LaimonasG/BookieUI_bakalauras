@@ -10,6 +10,8 @@ export interface IBooks {
    UserId:string
    Name:string
    Author:string
+   Price:number
+   Quality:string
 }
 
 type Props = {
@@ -31,7 +33,9 @@ const BookForm = (props : Props) => {
       GenreId: 0,
       UserId:"",
       Name:"",
-      Author:""
+      Author:"",
+      Price:0,
+      Quality:""
     });
 
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,16 +43,14 @@ const BookForm = (props : Props) => {
         console.log('event target ',event.target);
         if(name == 'name')
           book.Name=value;
-
-          if(name == 'Author')
+        else if(name == 'Author')
           book.Author=value;
-        
+        else if(name == 'Price')
+          book.Price=parseInt(value);
+        else if(name == 'Quality')
+          book.Quality=value;
+  
     };
-
-    // const handleSetImage = (event: ChangeEvent<HTMLInputElement>, index: number) {
-    // //   const { files } = event.target;
-    // //   setSelectedImage(files[0]);
-    //  }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -60,12 +62,12 @@ const BookForm = (props : Props) => {
             messageHandling(obj);
         } else {
           const obj={method:"succeess",errorMessage:"Successfuly added new user"};
-          console.log('genre: ',genreId);
+          console.log('genre: ',book);
+          console.log(localStorage.getItem("user"));
             result = await addBook(parseInt(genreId!),book!);
             messageHandling(obj);
         }
         toggleModal();
-      //  onBookChange(result.bookData);
     };
 
     return (
@@ -87,6 +89,24 @@ const BookForm = (props : Props) => {
                     name="Author"
                     onChange={onChange}
                    // value={book!.Author}
+                   defaultValue=""
+                    required
+                />
+            </Form.Group>
+            <Form.Group>
+                <Form.Label className="names">Price</Form.Label>
+                <Form.Control
+                    name="Price"
+                    onChange={onChange}
+                   defaultValue=""
+                    required
+                />
+            </Form.Group>
+            <Form.Group>
+                <Form.Label className="names">Quality</Form.Label>
+                <Form.Control
+                    name="Quality"
+                    onChange={onChange}
                    defaultValue=""
                     required
                 />
