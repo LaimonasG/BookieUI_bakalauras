@@ -1,4 +1,3 @@
-import { axiosConfig} from "../axiosConfig";
 import axios from "axios"
 
 interface IBooks {
@@ -25,6 +24,7 @@ if(user)
 axios.defaults.headers.common = {'Authorization': `bearer ${user.accessToken}`}
 
 const getAllGenres = async () => await axios.get(`${url}/genres`, undefined).then((x) => x.data);
+
 const getAllBooks = async (id: number) =>
   await axios.get(`${url}/genres/${id}/books`, undefined).then((x) => x.data);
 
@@ -55,4 +55,20 @@ const editBook = async (idGenre: number, idBook: number, book: IBooks) =>
   const createBasket = async () =>
   await axios.post(`${url}/baskets`, undefined);
 
-export { getAllGenres, getAllBooks, addBook, editBook,deleteBook,getBasket,createBasket };
+  const addToBasket = async (idBook: number, idGenre: number) =>
+  await axios.put(`${url}/baskets`, 
+  {
+    "bookId":idBook,
+    "genreId":idGenre,
+    "content-type":"application/json",
+  }).then(function (response) {
+    console.log(response);
+  })
+    .catch(function (error) {
+      console.log(error.response.data);
+    });
+
+    const getComments = async (genreId: number,bookId:number) =>
+    await axios.get(`${url}/genres/${genreId}/books/${bookId}/comments`, undefined).then((x) => x.data);
+
+export { getAllGenres, getAllBooks, addBook, editBook,deleteBook,getBasket,createBasket,addToBasket,getComments };

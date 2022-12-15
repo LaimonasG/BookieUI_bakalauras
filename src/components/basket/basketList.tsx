@@ -1,21 +1,13 @@
 
 import React, { Component, MouseEventHandler, useEffect, useState } from 'react';
-import { getAllBooks,deleteBook,addToBasket } from "../../requests/genres";
-import { FaTrash,FaShoppingBasket } from "react-icons/fa";
+import { getBasket } from "../../requests/genres";
 import jwt_decode from "jwt-decode";
 import "./styles.css";
-import { Modal } from 'react-bootstrap';
-import Comments from '../comments/Comments';
-import { FaComment  } from "react-icons/fa";
-export interface IBook {
-    id: number,
-    "name": string,
-    "genreID": number,
-    "author": string,
-    "created": string,
-    "userId":string
-    "price":number,
-    "quality":string
+import { IBook } from '../books/BookList';
+export interface IBasket {
+    id:number;
+    userId:string,
+    books:IBook[]
 }
 
 interface MyToken {
@@ -23,57 +15,43 @@ interface MyToken {
   exp: number;
   sub:string;
 }
-export const BookList = () => {
-  const [books, setBooks] = useState<IBook[]>([])
+export const BasketList = () => {
+  const [basket, setBasket] = useState<IBasket | null>(null)
   const genreName=localStorage.getItem("genreName");
   const userStr = localStorage.getItem("user");
-  const [isOpen, setIsOpen] = useState<Boolean | any>(false);
-  const [currBook, setCurrBook] = useState<number>();
-
   let user=null;
   if (userStr)
     user = JSON.parse(userStr);
 
     const decodedToken = jwt_decode<MyToken>(user.accessToken);
 
-    async function GetBooks() {
-        const xd = await getAllBooks(parseInt(localStorage.getItem("genreId")!));
-        setBooks(xd);
+    async function GetBasket() {
+        const xd = await getBasket();
+        setBasket(xd);
       }
 
     async function onBookDelete (BookId:number) {
       const genreId=parseInt(localStorage.getItem("genreId")!);
       await deleteBook(genreId,BookId);
+      console.log('delete');
     };
 
     async function onAddToBasket (BookId:number) {
       const genreId=parseInt(localStorage.getItem("genreId")!);
       await addToBasket(BookId,genreId);
+      console.log('delete');
     };
-
-    function setAndToggle (bookId:number){
-      setCurrBook(bookId);
-      toggleFormStatus();
-  };
-
-  function toggleFormStatus (){
-    setIsOpen(!isOpen);
-};
-
 
     useEffect(() => {
         GetBooks();
-      });
+      }, []);
 
       if (books.length === 0) {
-        return(
-          <h1>No books exist in genre {genreName}.</h1>
-        ) 
+        return <h1>loading</h1>;
       }
         return (      
-        <div>
-          
-          <h3>{genreName}</h3>
+        <div >
+          <h3 className='d-flex justify-content-center'>{genreName}</h3>
           <table className='w-100'>
             <tbody>
             <tr id="header" className='bg-blue'>
@@ -103,30 +81,12 @@ export const BookList = () => {
               )
             }
             </td>
-            <td>
-              <button onClick={() => setAndToggle(x.id)} className='btn'>
-              <FaComment/>
-              </button>
-            </td>
             
           </tr>
         ))}
             </tbody>
         
         </table>
-
-        <Modal show={isOpen} onHide={toggleFormStatus}>
-                    <Modal.Header closeButton>
-                        <Modal.Title> Comments </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Comments 
-                            bookId={currBook!}
-                            toggleModal={setAndToggle!}
-                        />
-                    </Modal.Body>
-                </Modal>
-                
         </div>
     )
 }

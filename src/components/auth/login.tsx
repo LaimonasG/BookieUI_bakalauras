@@ -34,7 +34,7 @@ const Login: React.FC<Props> = () => {
 
     login(username, password).then(
       () => {
-        if(username === 'Admin')
+        if(username === 'Admin' || username === 'admin')
         localStorage.setItem('Role','Admin');
         else
         localStorage.setItem('Role','User');

@@ -43,7 +43,10 @@ class Books extends Component {
                     Add Book
                 </Button>
                 
+                <div className="d-flex justify-content-center">
                 <BookList />
+                </div>
+                
                 
                  <Modal show={isOpen} onHide={this.toggleFormStatus}>
                     <Modal.Header closeButton>

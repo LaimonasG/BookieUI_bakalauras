@@ -35,7 +35,6 @@ export const Navbar = () => {
 			<nav ref={navRef}>
 				<a href="/">Home</a>
         <a href="/genres">Genres</a>
-				<a href="/user">Basket</a>
         {currentUser ? (
           <a href="/login" onClick={logOut}>LogOut</a>
         ):(

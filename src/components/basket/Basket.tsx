@@ -1,7 +1,7 @@
 
 import React,{Component} from 'react';
 import { createBasket,getBasket } from '../../requests/genres';
-import { BookList } from '../books/BookList';
+import { BasketList } from './basketList';
 
 export class Basket extends Component{
 
