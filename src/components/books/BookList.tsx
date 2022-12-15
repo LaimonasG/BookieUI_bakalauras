@@ -7,6 +7,14 @@ import "./styles.css";
 import { Modal } from 'react-bootstrap';
 import Comments from '../comments/Comments';
 import { FaComment  } from "react-icons/fa";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
 export interface IBook {
     id: number,
     "name": string,
@@ -70,50 +78,48 @@ export const BookList = () => {
           <h1>No books exist in genre {genreName}.</h1>
         ) 
       }
-        return (      
-        <div>
-          
-          <h3>{genreName}</h3>
-          <table className='w-100'>
-            <tbody>
-            <tr id="header" className='bg-blue'>
-            <td >Name</td>
-            <td >Author</td>
-            <td >Price</td>
-            <td >Quality</td>
-            <td >Upload date</td>
-            </tr>
-                  {books.map((x, index) => (
-          <tr key={index} >
-            <td style={{ color: 'black' }}>{x.name}</td>
-            <td style={{ color: 'black' }}>{x.author}</td>
-            <td style={{ color: 'black' }}>{x.price}</td>
-            <td style={{ color: 'black' }}>{x.quality}</td>
-            <td style={{ color: 'black' }}>{x.created.substring(0,10)}</td>
-            <td>
-            {x.userId == decodedToken.sub || localStorage.getItem('Role') == 'Admin'  ?
-              <button onClick={() => onBookDelete(x.id)} className='btn btn-danger btn-sm rounded-0'>
+        return (  
+          <div>
+            <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+        </TableHead>
+        <TableBody>
+          {books.map((row) => (
+            <TableRow
+              key={row.name}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell align="right">{row.name}</TableCell>
+              <TableCell align="right">{row.author}</TableCell>
+              <TableCell align="right">{row.price}</TableCell>
+              <TableCell align="right">{row.quality}</TableCell>
+              <td>
+                 {row.userId == decodedToken.sub || localStorage.getItem('Role') == 'Admin'  ?
+              <button onClick={() => onBookDelete(row.id)} className='btn btn-danger btn-sm rounded-0'>
                   <FaTrash />
               </button>
               :
               (
-                <button onClick={() => onAddToBasket(x.id)} className='btn btn-primary btn-sm rounded-0'>
+                <button onClick={() => onAddToBasket(row.id)} className='btn btn-primary btn-sm rounded-0'>
                   <FaShoppingBasket />
               </button>
               )
             }
             </td>
             <td>
-              <button onClick={() => setAndToggle(x.id)} className='btn'>
+              <button onClick={() => setAndToggle(row.id)} className='btn'>
               <FaComment/>
               </button>
             </td>
-            
-          </tr>
-        ))}
-            </tbody>
-        
-        </table>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
 
         <Modal show={isOpen} onHide={toggleFormStatus}>
                     <Modal.Header closeButton>

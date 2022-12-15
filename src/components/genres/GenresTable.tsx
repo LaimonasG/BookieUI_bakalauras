@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { getAllGenres } from "../../requests/genres";
 import './styles.css';
+
 export interface IGenres {
   id: number;
   name: string;
