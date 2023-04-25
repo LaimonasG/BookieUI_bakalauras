@@ -1,0 +1,22 @@
+.chapter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.chapter-panel {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.chapter-content {
+  font-size: 1rem;
+  line-height: 1.5;
+}

@@ -34,10 +34,8 @@ const Login: React.FC<Props> = () => {
 
     login(username, password).then(
       () => {
-        if(username === 'Admin' || username === 'admin')
-        localStorage.setItem('Role','Admin');
-        else
-        localStorage.setItem('Role','User');
+        console.log("user reikšmė paspaudus login:", localStorage.getItem("user"));
+        console.log("role reikšmė atidarius login:", localStorage.getItem("role"));
         navigate("/home");
         window.location.reload();
       },
@@ -70,7 +68,7 @@ const Login: React.FC<Props> = () => {
         >
           <Form>
             <div className="form-group">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">Naudotojo vardas</label>
               <Field name="username" type="text" className="form-control" />
               <ErrorMessage
                 name="username"
@@ -80,7 +78,7 @@ const Login: React.FC<Props> = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Slaptažodis</label>
               <Field name="password" type="password" className="form-control" />
               <ErrorMessage
                 name="password"
@@ -94,7 +92,7 @@ const Login: React.FC<Props> = () => {
                 {loading && (
                   <span className="spinner-border spinner-border-sm"></span>
                 )}
-                <span>Login</span>
+                <span>Prisijungti</span>
               </button>
             </div>
 

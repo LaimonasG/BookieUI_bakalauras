@@ -1,67 +1,72 @@
 
 import React, { Component, MouseEventHandler, useEffect, useState } from 'react';
-import { getBasket } from "../../requests/genres";
+import { addToBasket, deleteBook } from "../../requests/BookController";
+import { MyToken } from "../../Interfaces"
 import jwt_decode from "jwt-decode";
 import "./styles.css";
-import { IBook } from '../books/BookList';
 export interface IBasket {
-    id:number;
-    userId:string,
-    books:IBook[]
+  id: number;
+  userId: string,
+  books: IBook[]
 }
 
-interface MyToken {
-  name: string;
-  exp: number;
-  sub:string;
+interface IBook {
+  id: number
+  GenreId: number
+  UserId: string
+  Name: string
+  Author: string
+  Price: number
+  Quality: string
 }
+
 export const BasketList = () => {
   const [basket, setBasket] = useState<IBasket | null>(null)
-  const genreName=localStorage.getItem("genreName");
+  const genreName = localStorage.getItem("genreName");
   const userStr = localStorage.getItem("user");
-  let user=null;
+  let user = null;
   if (userStr)
     user = JSON.parse(userStr);
 
-    const decodedToken = jwt_decode<MyToken>(user.accessToken);
+  const decodedToken = jwt_decode<MyToken>(user.accessToken);
 
-    async function GetBasket() {
-        const xd = await getBasket();
-        setBasket(xd);
-      }
+  // async function GetBasket() {
+  //   const xd = await getBasket();
+  //   //  setBasket(xd);
+  // }
 
-    async function onBookDelete (BookId:number) {
-      const genreId=parseInt(localStorage.getItem("genreId")!);
-      await deleteBook(genreId,BookId);
-      console.log('delete');
-    };
+  async function onBookDelete(BookId: number) {
+    const genreName = localStorage.getItem("genreName")!;
+    await deleteBook(genreName, BookId);
+    console.log('delete');
+  };
 
-    async function onAddToBasket (BookId:number) {
-      const genreId=parseInt(localStorage.getItem("genreId")!);
-      await addToBasket(BookId,genreId);
-      console.log('delete');
-    };
+  async function onAddToBasket(BookId: number) {
+    const genreName = localStorage.getItem("genreName")!;
+    await addToBasket(BookId, genreName);
+    console.log('delete');
+  };
 
-    useEffect(() => {
-        GetBooks();
-      }, []);
+  useEffect(() => {
+    GetBooks();
+  }, []);
 
-      if (books.length === 0) {
-        return <h1>loading</h1>;
-      }
-        return (      
-        <div >
-          <h3 className='d-flex justify-content-center'>{genreName}</h3>
-          <table className='w-100'>
-            <tbody>
-            <tr id="header" className='bg-blue'>
+  // if (books.length === 0) {
+  //   return <h1>loading</h1>;
+  // }
+  return (
+    <div >
+      <h3 className='d-flex justify-content-center'>{genreName}</h3>
+      <table className='w-100'>
+        <tbody>
+          <tr id="header" className='bg-blue'>
             <td >Name</td>
             <td >Author</td>
             <td >Price</td>
             <td >Quality</td>
             <td >Upload date</td>
-            </tr>
-                  {books.map((x, index) => (
+          </tr>
+          {/* {books.map((x, index) => (
           <tr key={index} >
             <td style={{ color: 'black' }}>{x.name}</td>
             <td style={{ color: 'black' }}>{x.author}</td>
@@ -82,11 +87,15 @@ export const BasketList = () => {
             }
             </td>
             
-          </tr>
-        ))}
-            </tbody>
-        
-        </table>
-        </div>
-    )
+          </tr> */}
+          ))
+        </tbody>
+
+      </table>
+    </div>
+  )
+}
+
+function GetBooks() {
+  throw new Error('Function not implemented.');
 }

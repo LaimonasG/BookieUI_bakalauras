@@ -1,24 +1,24 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import BookForm from "./BookForm";
-import {BookList} from "./BookList";
+import { BookList } from "./BookList";
 
-export interface IBooks {
-     id: number
-     GenreId: number
-     UserId:string
-     Name:string
-     Author:string
-  }
+interface IBooks {
+    id: number
+    GenreId: number
+    UserId: string
+    Name: string
+    Author: string
+}
 
 class Books extends Component {
     state = {
         isOpen: false,
-        books: [  
+        books: [
             {
-                Name:"book name",
-                Author:"book author"
-            }              
+                Name: "book name",
+                Author: "book author"
+            }
         ],
     };
 
@@ -27,38 +27,39 @@ class Books extends Component {
         this.setState({ isOpen: !isOpen });
     };
 
-    onBookChange = (book? : React.ChangeEventHandler<HTMLInputElement>) => {
+    onBookChange = (book?: React.ChangeEventHandler<HTMLInputElement>) => {
 
     };
 
     render() {
-        const { 
+        const {
             isOpen,
-            books, 
+            books,
         } = this.state;
+
 
         return (
             <div >
-                <Button onClick={this.toggleFormStatus} className='btn'>
+                {/* <Button onClick={this.toggleFormStatus} className='btn'>
                     Add Book
-                </Button>
-                
+                </Button> */}
+
                 <div className="d-flex justify-content-center">
-                <BookList />
+                    <BookList />
                 </div>
-                
-                
-                 <Modal show={isOpen} onHide={this.toggleFormStatus}>
+
+
+                {/* <Modal show={isOpen} onHide={this.toggleFormStatus}>
                     <Modal.Header closeButton>
                         <Modal.Title> Add New Book </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <BookForm 
+                        <BookForm
                             onBookChange={this.onBookChange}
                             toggleModal={this.toggleFormStatus}
                         />
                     </Modal.Body>
-                </Modal>
+                </Modal> */}
             </div>
         )
 

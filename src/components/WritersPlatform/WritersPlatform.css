@@ -1,0 +1,131 @@
+.writers-platform {
+  display: flex;
+  justify-content: space-between;
+  padding: 50px;
+  background-color: #E5E5E5;
+}
+
+.textsAndBooks {
+  display: flex;
+  width: 100%;
+}
+
+.books-and-texts {
+  flex: 1;
+  margin-right: 30px;
+}
+
+.statistics {
+  flex: 1;
+  max-width: 400px;
+  text-align: center;
+}
+
+.chart {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.books-and-texts,
+.statistics {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.book-list,
+.text-list {
+  margin-bottom: 2rem;
+}
+
+.book-list h3,
+.text-list h3 {
+  margin-bottom: 1rem;
+}
+
+.book-list ul,
+.text-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.book-list li,
+.text-list li {
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.book-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.book-price {
+  font-size: 1.2rem;
+}
+
+button {
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0077B5;
+}
+
+.chapter-list-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.chapter-list-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.chapter-list-container button {
+  margin-top: 1rem;
+}
+
+.chapter-list {
+  margin-top: 1rem;
+}
+
+.chapter-panel {
+  margin-bottom: 1rem;
+}
+
+.chapter-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.chapter-content {
+  font-size: 1rem;
+}
