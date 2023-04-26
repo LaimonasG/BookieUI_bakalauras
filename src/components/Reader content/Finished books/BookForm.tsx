@@ -1,7 +1,7 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import { Form, Button } from 'react-bootstrap';
-import { addBook, editBook } from "../../requests/BookController";
-import { messageHandling } from '../extra/MessageHandling';
+import { addBook, editBook } from "../../../requests/BookController";
+import { messageHandling } from '../../extra/MessageHandling';
 
 
 interface IBooks {
@@ -55,14 +55,14 @@ const BookForm = (props: Props) => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let result = null;
-    const genreId = localStorage.getItem("genreId");
+    const genreName = localStorage.getItem("genreName");
     if (bookData) {
       const obj = { method: "succeess", errorMessage: "Successfuly updated user" };
-      result = await editBook(1, bookData.id, book!);
+      result = await editBook(genreName!, bookData.id, book!);
       messageHandling(obj);
     } else {
       const obj = { method: "succeess", errorMessage: "Successfuly added new user" };
-      result = await addBook(parseInt(genreId!), book!);
+      result = await addBook(genreName!, book!);
       messageHandling(obj);
     }
     toggleModal();

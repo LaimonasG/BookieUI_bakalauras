@@ -1,0 +1,13 @@
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.booklist-wrapper,
+.textlist-wrapper {
+  width: 100%;
+  position: relative;
+}

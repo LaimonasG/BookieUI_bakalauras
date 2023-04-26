@@ -1,7 +1,7 @@
 .modal-content {
   background-color: #ffffff;
   color: #000;
-  border: none;
+  border: 2px solid #F9AA33 ;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -9,6 +9,8 @@
 .modal-header {
   border-bottom: none;
   padding: 1rem;
+  background-color: #F9AA33 ;
+  color: #ffffff;
 }
 
 .modal-title {
@@ -23,17 +25,21 @@
 
 p {
   margin-bottom: 0.5rem;
+  font-size: 1.1rem;
 }
 
-.book-cover {
+.text-cover {
   width: 100%;
-  object-fit: cover;
-  border-radius: 5px;
+  max-height: 300px;
+  max-width:200px;
+  object-fit: contain;
 }
 
 .action-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
+  justify-items: center;
 }
 
 .btn-primary,
@@ -44,14 +50,14 @@ p {
 }
 
 .btn-primary {
-  background-color: #4b7bec;
-  border-color: #4b7bec;
+  background-color: #4CAF50 ;
+  border-color: #4CAF50 ;
   margin-left: 1rem;
 }
 
 .btn-secondary {
-  background-color: #f7b731;
-  border-color: #f7b731;
+  background-color: #3f51b5;
+  border-color: #3f51b5;
 }
 
 .btn-primary:hover,

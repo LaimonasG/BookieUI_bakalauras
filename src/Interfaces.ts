@@ -9,7 +9,7 @@ export interface IBookBought {
   userId: string
   author:string
   isFinished:number
-  coverImage:string
+  coverImageUrl:string
 }
 
 export interface IBookToBuy {
@@ -22,17 +22,32 @@ export interface IBookToBuy {
   userId: string
   author:string
   isFinished:number
-  coverImage:string
+  coverImageUrl:string
 }
 
 export interface ITextsBought {
-  Id: number
-  Name: string
-  GenreName: string
-  Content: string
-  Price: number
-  Created: Date
-  UserId: string
+  id: number
+  name: string
+  genreName: string
+  content: string
+  description:string
+  price: number
+  created: Date
+  userId: string
+  coverImageUrl:string
+  author:string
+}
+
+export interface ITextsToBuy {
+  id: number
+  name: string
+  description:string
+  genreName: string
+  price: number
+  created: Date
+  userId: string
+  coverImageUrl:string
+  author:string
 }
 
 export interface IChapters {

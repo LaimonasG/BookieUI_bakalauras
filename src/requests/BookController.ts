@@ -20,8 +20,11 @@ if (userStr)
 if(user)
 axios.defaults.headers.common = {'Authorization': `bearer ${user.accessToken}`}
 
-const getAllBooks = async (genreName: string) =>
-  await axios.get(`${url}/genres/${genreName}/books`, undefined).then((x) => x.data);
+const getAllBooksFinished = async (genreName: string) =>
+  await axios.get(`${url}/genres/${genreName}/books/finished`, undefined).then((x) => x.data);
+
+const getAllBooksUnfinished = async (genreName: string) =>
+await axios.get(`${url}/genres/${genreName}/books/unfinished`, undefined).then((x) => x.data);
 
 const addBook = async (genreName: string, book: IBooks) =>
   await axios.post(`${url}/genres/${genreName}/books`, {
@@ -57,5 +60,5 @@ const editBook = async (genreName: string, idBook: number, book: IBooks) =>
       console.log(error.response.data);
     });
 
-  export {getAllBooks, addBook, editBook,deleteBook,addToBasket}
+  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,addToBasket}
 

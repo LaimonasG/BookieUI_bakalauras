@@ -3,7 +3,7 @@ import Home from './components/Home/Home';
 import { Genres } from './components/genres/Genres';
 import { Basket } from './components/basket/Basket';
 import { Navbar } from './components/NavBar/MainNavigation';
-import Books from './components/books/Books';
+import Books from './components/Reader content/Content';
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
 import Profile from "./components/auth/profile";
