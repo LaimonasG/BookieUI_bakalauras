@@ -1,4 +1,5 @@
 import axios from "axios"
+import { IBookAdd } from "../Interfaces";
 
 interface IBooks {
   id: number;
@@ -9,7 +10,7 @@ interface IBooks {
   Price:number;
   Quality:string;
 }
-const url="https://localhost:7010/api";
+const url="https://localhost:5001/api";
 const userStr = localStorage.getItem("user");
 
 
@@ -26,20 +27,27 @@ const getAllBooksFinished = async (genreName: string) =>
 const getAllBooksUnfinished = async (genreName: string) =>
 await axios.get(`${url}/genres/${genreName}/books/unfinished`, undefined).then((x) => x.data);
 
-const addBook = async (genreName: string, book: IBooks) =>
-  await axios.post(`${url}/genres/${genreName}/books`, {
-    "Name": book.Name,
-    "Author": book.Author,
-    "Price":book.Price,
-    "Quality":book.Quality,
-    "content-type":"application/json",
-    "certifiedToPost":"yes",
-    "role":"User"}).then(function (response) {
+const addBook = async (genreName: string, book: IBookAdd) => {
+  const formData = new FormData();
+  formData.append("Name", book.name);
+  formData.append("Description", book.description);
+  formData.append("ChapterPrice", book.chapterPrice.toString());
+  formData.append("BookPrice", book.bookPrice.toString());
+  formData.append("CoverImage", book.coverImage);
+
+  await axios
+    .post(`${url}/genres/${genreName}/books`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(function (response) {
       console.log(response);
     })
-      .catch(function (error) {
-        console.log(error.response.data);
-      });
+    .catch(function (error) {
+      console.log(error.response.data);
+    });
+};
 
 const editBook = async (genreName: string, idBook: number, book: IBooks) =>
   await axios.put(`${url}/genres/${genreName}/books/${idBook}`, undefined);

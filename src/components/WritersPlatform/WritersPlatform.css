@@ -8,6 +8,7 @@
 .textsAndBooks {
   display: flex;
   width: 100%;
+  justify-content: space-between;
 }
 
 .books-and-texts {
@@ -17,7 +18,6 @@
 
 .statistics {
   flex: 1;
-  max-width: 400px;
   text-align: center;
 }
 
@@ -34,10 +34,47 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.add-buttons {
+.add-button-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 1rem;
+}
+
+.add-btn {
+  background-color: var(--color-2);
+  color: white;
+}
+
+.add-btn:hover {
+  background-color: var(--color-2-hover);
+  color: white;
+}
+
+.btn-color1 {
+  background-color: var(--color-1);
+  color: white;
+}
+
+.btn-color1:hover {
+  background-color: var(--color-1-hover);
+}
+
+.btn-color2 {
+  background-color: var(--color-2);
+  color: white;
+}
+
+.btn-color2:hover {
+  background-color: var(--color-2-hover);
+}
+
+.btn-color3 {
+  background-color: var(--color-3);
+  color: white;
+}
+
+.btn-color3:hover {
+  background-color: var(--color-3-hover);
 }
 
 .book-list,
@@ -50,43 +87,45 @@
   margin-bottom: 1rem;
 }
 
-.book-list ul,
-.text-list ul {
-  list-style: none;
-  margin: 0;
+.book-list ul, .text-list ul {
+  list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
-.book-list li,
-.text-list li {
-  background-color: #f4f4f4;
-  border-radius: 5px;
-  padding: 1rem;
+.book-list li, .text-list li {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-4);
+  border-radius: 4px;
   margin-bottom: 1rem;
+  background-color: var(--color-5);
+  color: var(--color-4);
 }
 
-.book-name {
-  font-size: 1.2rem;
+.book-list .book-name, .text-list .book-name {
+  margin-bottom: 0.25rem;
   font-weight: bold;
 }
 
-.book-price {
-  font-size: 1.2rem;
+.book-list .book-price, .text-list .book-price {
+  margin-bottom: 0.25rem;
 }
 
-button {
-  background-color: #008CBA;
+.book-list .book-description, .text-list .book-description {
+  margin-bottom: 0.5rem;
+}
+
+.book-list div, .text-list div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.book-list button, .text-list button {
   color: white;
   border: none;
-  border-radius: 5px;
   padding: 0.5rem 1rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background-color: #0077B5;
 }
 
 .chapter-list-overlay {
@@ -129,3 +168,24 @@ button:hover {
 .chapter-content {
   font-size: 1rem;
 }
+
+.scrollable-panel {
+  max-height: 300px; /* Adjust the height as per your requirement */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-1) var(--color-5);
+}
+
+.scrollable-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollable-panel::-webkit-scrollbar-track {
+  background: var(--color-5);
+}
+
+.scrollable-panel::-webkit-scrollbar-thumb {
+  background-color: var(--color-4);
+  border-radius: 10px;
+}
+

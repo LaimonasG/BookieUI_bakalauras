@@ -57,10 +57,6 @@ export const Navbar = () => {
       </BootstrapNavbar.Toggle>
       <BootstrapNavbar.Collapse id="navbar-collapse" className="justify-content-end" in={isNavExpanded} onExited={handleNavCollapse}>
         <Nav className="navbar-nav-custom">
-          {/* <Nav.Link as={Link} to="/" onClick={handleNavCollapse}>
-            <FontAwesomeIcon icon={faHome} className="nav-item-icon" />
-            Home
-          </Nav.Link> */}
           <Nav.Link as={Link} to="/žanrai" onClick={handleNavCollapse}>
             <FontAwesomeIcon icon={faList} className="nav-item-icon" />
             Žanrai
@@ -71,7 +67,7 @@ export const Navbar = () => {
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
                 Profilis
               </Nav.Link>
-              <Nav.Link as={Link} to="/rašytojas" onClick={handleLogout}>
+              <Nav.Link as={Link} to="/rašytojas" onClick={handleNavCollapse}>
                 <FontAwesomeIcon icon={faPenNib} className="nav-item-icon" />
                 Rašytojo platforma
               </Nav.Link>

@@ -1,28 +1,47 @@
 import React from 'react';
-import { IChapters } from '../../Interfaces';
+import { Modal, Button } from 'react-bootstrap';
+import { IChapters, IBookBought } from '../../Interfaces';
 import './ChapterList.css';
 
-interface Props {
-  chapters: IChapters[] | null;
-}
+type BookInformationModalProps = {
+  book: IBookBought;
+  show: boolean;
+  onHide: () => void;
+};
 
-function ChapterList(props: Props) {
-  const { chapters } = props;
+const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide }) => {
 
-  if (!chapters) {
-    return <div>No chapters added yet.</div>;
+  if (book.chapters.length == 0) {
+    return (<p>Knyga dar neturi skyrių.</p>)
   }
-
   return (
-    <div className="chapter-list">
-      {chapters.map((chapter, index) => (
-        <div key={index} className="chapter-panel">
-          <h2 className="chapter-title">{chapter.Name}</h2>
-          <p className="chapter-content">{chapter.Content}</p>
-        </div>
-      ))}
-    </div>
+    <Modal
+      show={show}
+      onHide={onHide}
+      size="xl"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      style={{ maxWidth: '100%' }}
+      backdrop="static"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {book.name}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {book.chapters.map((chapter: IChapters, index: number) => (
+          <div key={index}>
+            <h5 className="chapter-title">{chapter.name}</h5>
+            <pre className="chapter-content">{chapter.content}</pre>
+          </div>
+        ))}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
   );
-}
+};
 
-export default ChapterList;
+export default ChaptersModal;

@@ -1,7 +1,6 @@
 import './App.css';
 import Home from './components/Home/Home';
-import { Genres } from './components/genres/Genres';
-import { Basket } from './components/basket/Basket';
+import { Genres } from './components/Genres/Genres';
 import { Navbar } from './components/NavBar/MainNavigation';
 import Books from './components/Reader content/Content';
 import Login from "./components/auth/login";
@@ -32,7 +31,6 @@ function App() {
           <Route path="/registruotis" element={<Register />} />
           <Route path="/profilis" element={<Profile />} />
           <Route path='/žanrai' element={<Genres />} />
-          <Route path='/krepšelis' element={<Basket />} />
           <Route path='/turinys/*' element={<Books />} />
           <Route path='/rašytojas' element={<WritersPlatform useNavigate={useNavigate} />} />
         </Routes>

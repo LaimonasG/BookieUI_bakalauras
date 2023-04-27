@@ -2,10 +2,13 @@ import React, { Component, useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { setUserRole } from "../../requests/AdminController";
-import { IBookBought, ITextsBought, ISetRoleDto, ITexts } from '../../Interfaces';
+import { IBookBought, ITextsBought, ISetRoleDto, IChapters, getPointsWord, IBookAdd } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
+import { addBook } from "../../requests/BookController";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ChapterList from '../Chapters/ChapterList';
+import TextReadView from '../Texts/TextReadView';
+import AddBookForm from './books/AddBookForm';
 import 'chartkick/chart.js';
 import './WritersPlatform.css';
 
@@ -28,7 +31,7 @@ interface IWritersPlatformState {
   isConfirmationOpen: boolean;
   isOpen: boolean;
   books: IBookBought[];
-  texts: ITexts[];
+  texts: ITextsBought[];
   pieChartData: any[];
   lineChartData: any;
 }
@@ -61,8 +64,13 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [books, setBooks] = useState<IBookBought[]>([]);
   const [texts, setTexts] = useState<ITextsBought[]>([]);
   const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
+  const [selectedtext, setSelectedText] = useState<ITextsBought | null>(null);
   const [chapters, setChapters] = useState<IChapters[] | null>(null);
   const [showChapterList, setShowChapterList] = useState(false);
+  const [showTextModal, setShowTextModal] = useState(false);
+  const [showAddBookModal, setShowAddBookModal] = useState(false);
+  const [showAddTextModal, setShowAddTextModal] = useState(false);
+  const [showAddChapterModal, setShowAddChapterModal] = useState(false);
   const [userRole, setUserRole] = useState<string | null>("");
   const [pieChartData, setPieChartData] = useState<any[]>([
     ["Fantasy", 10],
@@ -98,6 +106,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       const booksData = await GetBooks();
       setBooks(booksData);
       GetTexts();
+
     }
     fetchData();
     // setUserRole(localStorage.getItem("role"));
@@ -121,23 +130,60 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   };
 
   const handleAddBook = () => {
-    // handle add book logic here
+    setShowAddBookModal(true);
   };
 
   const handleAddText = () => {
     // handle add text logic here
   };
 
-  function handleCloseChapterListClick() {
-    setSelectedBook(null);
-  }
+  const handleAddChapter = () => {
+    // handle add book logic here
+  };
 
   async function handleReadBookClick(book: IBookBought) {
     const chapters = await GetChaptersForBook(book.id, book.genreName);
+    book.chapters = chapters;
     setSelectedBook(book);
     setShowChapterList(true);
-    setChapters(chapters);
   }
+
+  async function handleReadTextClick(text: ITextsBought) {
+    setSelectedText(text);
+    setShowTextModal(true);
+    console.log(texts);
+  }
+
+  const handleHideModal = () => {
+    setShowChapterList(false);
+    setShowTextModal(false);
+    setShowAddBookModal(false);
+    setShowAddChapterModal(false);
+    setShowAddTextModal(false);
+  };
+
+  const handleBookFormSubmit = async (
+    name: string,
+    genre: string,
+    description: string,
+    chapterPrice: number,
+    bookPrice: number,
+    coverImage: File
+  ) => {
+    const book: IBookAdd = {
+      name: name,
+      description: description,
+      chapterPrice: chapterPrice.toString(),
+      bookPrice: bookPrice.toString(),
+      coverImage: coverImage,
+    };
+
+    console.log(book);
+
+    const xd = await addBook(genre, book);
+    console.log(name, description, chapterPrice, bookPrice, coverImage);
+  };
+
 
   return (
     <div>
@@ -154,40 +200,50 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       <div className="writers-platform">
         <div className="textsAndBooks">
           <div className="books-and-texts">
-            <h2>Jūsų knygos ir tekstai</h2>
-            <div className="add-buttons">
-              <Button variant="primary" onClick={handleAddBook}>
-                Prdėti tekstą
+            <div className="add-button-container">
+              <Button className="add-btn" onClick={handleAddText}>
+                Pridėti tekstą
               </Button>
-              <Button variant="primary" onClick={handleAddText}>
+              <Button className="add-btn" onClick={handleAddBook}>
                 Pridėti knygą
               </Button>
             </div>
+
             <div className="book-list">
               <h3>Knygos</h3>
               {books.length === 0 ? (
                 <p>Knygų sąrašas tuščias</p>
               ) : (
-                <ul>
-                  {books.map((book) => (
-                    <li key={book.id}>
-                      <p className="book-name"> Knygos pavadinimas: {book.name}</p>
-                      <p className="book-price"> Kaina: {book.price} €</p>
-                      <div>
-                        <button onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
-                        <button>Komentarai</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                <div className="scrollable-panel">
+                  <ul>
+                    {books.map((book) => (
+                      <li key={book.id}>
+                        <p className="book-name"> Knygos pavadinimas: {book.name}</p>
+                        <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
+                        <p className="book-description"> Įkelta: {new Date(book.created.toString()).toISOString().split('T')[0]}</p>
+                        <div>
+                          <button className="view-content btn-color1" onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
+                          <button className="comments btn-color3">Komentarai</button>
+                          <button className="add-chapter btn-color2">Pridėti skyrių</button>
+                        </div>
+                      </li>
+                    ))}
+                    {showChapterList && selectedBook && (
+                      <ChapterList
+                        book={selectedBook}
+                        show={showChapterList}
+                        onHide={handleHideModal}
+                      />
+                    )}
 
-              {selectedBook && (
-                <div className="chapter-list-overlay">
-                  <div className="chapter-list-container">
-                    <button onClick={handleCloseChapterListClick}>Uždaryti</button>
-                    <ChapterList chapters={chapters} />
-                  </div>
+                    {showAddBookModal && (
+                      <AddBookForm
+                        show={showAddBookModal}
+                        onHide={handleHideModal}
+                        onSubmit={handleBookFormSubmit}
+                      />
+                    )}
+                  </ul>
                 </div>
               )}
             </div>
@@ -197,13 +253,29 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
               {texts.length === 0 ? (
                 <p>Tekstų sąrašas tuščias</p>
               ) : (
-                <ul>
-                  {texts.map((text) => (
-                    <li key={text.Id}>
-                      <p>{text.Content}</p>
-                    </li>
-                  ))}
-                </ul>
+                <div className="scrollable-panel">
+                  <ul>
+                    {texts.map((text) => (
+                      <li key={text.id}>
+                        <p className="book-name"> Teksto pavadinimas: {text.name}</p>
+                        <p className="book-price"> Kaina: {text.price} {getPointsWord(text.price)}</p>
+                        <p className="book-description"> Įkelta: {new Date(text.created.toString()).toISOString().split('T')[0]}</p>
+                        <div>
+                          <button className="view-content btn-color1" onClick={() => handleReadTextClick(text)}>Peržiūrėti turinį</button>
+                          <button className="comments btn-color2">Komentarai</button>
+                        </div>
+                      </li>
+
+                    ))}
+                    {showTextModal && selectedtext && (
+                      <TextReadView
+                        text={selectedtext}
+                        show={showTextModal}
+                        onHide={handleHideModal}
+                      />
+                    )}
+                  </ul>
+                </div>
               )}
             </div>
           </div>

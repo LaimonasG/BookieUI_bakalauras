@@ -1,0 +1,26 @@
+.text-read-view .modal-header {
+  background-color: var(--color-1);
+  color: #ffffff;
+}
+
+.text-read-view .modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.text-read-view .modal-body {
+  font-size: 1rem;
+}
+
+.text-read-view-close-btn {
+  background-color: var(--color-2);
+  color: #ffffff;
+  border: none;
+  transition-duration: 0.4s;
+}
+
+.text-read-view-close-btn:hover {
+  background-color: var(--color-2-hover);
+  color: #606060;
+}
+

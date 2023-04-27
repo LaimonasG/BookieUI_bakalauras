@@ -25,6 +25,14 @@ export interface IBookToBuy {
   coverImageUrl:string
 }
 
+export interface IBookAdd {
+  name: string
+  description: string
+  chapterPrice: string
+  bookPrice: string
+  coverImage: File
+}
+
 export interface ITextsBought {
   id: number
   name: string
@@ -51,11 +59,11 @@ export interface ITextsToBuy {
 }
 
 export interface IChapters {
-Id:number
-BookId:number
-UserId:string
-Name:string
-Content:string
+id:number
+bookId:number
+userId:string
+name:string
+content:string
 }
 
 export interface ITexts {
@@ -71,4 +79,14 @@ export interface MyToken {
   name: string;
   exp: number;
   sub: string;
+}
+
+export function getPointsWord(points: number) {
+  if (points % 10 === 1 && points % 100 !== 11) {
+    return "taškas";
+  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
+    return "taškai";
+  } else {
+    return "taškų";
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { IBookToBuy } from "../../../Interfaces";
+import { IBookToBuy, getPointsWord } from "../../../Interfaces";
 import "./BookView.css";
 
 type BookInformationModalProps = {
@@ -8,16 +8,6 @@ type BookInformationModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
-
-function getPointsWord(points: number) {
-  if (points % 10 === 1 && points % 100 !== 11) {
-    return "taškas";
-  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
-    return "taškai";
-  } else {
-    return "taškų";
-  }
-}
 
 const BookView: React.FC<BookInformationModalProps> = ({
   book,

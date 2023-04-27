@@ -9,7 +9,7 @@ interface IBooks {
   Price: number;
   Quality: string;
 }
-const url = "https://localhost:7010/api";
+const url = "https://localhost:5001/api";
 const userStr = localStorage.getItem("user");
 
 
