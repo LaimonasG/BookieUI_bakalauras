@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { getTokenExpirationTime, getCurrentUser, logout } from './services/auth.service';
+
 export interface IBookBought {
   id: number
   name: string
@@ -31,6 +34,14 @@ export interface IBookAdd {
   chapterPrice: string
   bookPrice: string
   coverImage: File
+}
+
+export interface ITextAdd {
+  coverImage:File
+  content:File
+  name:string
+  price:string
+  description:string
 }
 
 export interface ITextsBought {
@@ -81,6 +92,25 @@ export interface MyToken {
   sub: string;
 }
 
+export interface IGenres {
+  id: number;
+  name: string;
+}
+
+export interface IAnswer {
+  id: number;
+  content: string;
+  correct:number;
+  questionId:number
+}
+
+export interface IQuestion {
+  id: number;
+  question: string;
+  points:number;
+  date:Date;
+}
+
 export function getPointsWord(points: number) {
   if (points % 10 === 1 && points % 100 !== 11) {
     return "taškas";
@@ -90,3 +120,4 @@ export function getPointsWord(points: number) {
     return "taškų";
   }
 }
+

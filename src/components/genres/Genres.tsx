@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import { GenresTable } from './GenresTable';
 
@@ -11,6 +10,4 @@ export class Genres extends Component {
             </div>
         )
     }
-
-
 }

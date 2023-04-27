@@ -1,0 +1,46 @@
+.profile {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1rem;
+  height: 100vh;
+  justify-content: space-between;
+  padding: 50px;
+  background-color: #E5E5E5;
+}
+
+.personal-info-panel {
+  grid-column: 1;
+  grid-row: 1 ;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.daily-question-panel {
+  grid-column: 1;
+  grid-row: 2;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bought-books-panel {
+  grid-column: 2;
+  grid-row: 1;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.texts-panel {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

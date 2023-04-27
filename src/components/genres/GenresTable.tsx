@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { getAllGenres } from "../../requests/GenresController";
+import { IGenres } from '../../Interfaces';
 import './styles.css';
 
-export interface IGenres {
-  id: number;
-  name: string;
-}
 
 export const GenresTable = () => {
   const [genres, setGenres] = useState<IGenres[]>([]);

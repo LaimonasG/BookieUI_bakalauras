@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import * as AuthService from '../../services/auth.service';
+import { getTokenExpirationTime, getCurrentUser, logout } from '../../services/auth.service';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faHome, faList, faUser, faSignOutAlt, faPenNib } from '@fortawesome/free-solid-svg-icons';
@@ -20,9 +20,31 @@ export const Navbar = () => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const user = await AuthService.getCurrentUser();
+        const user = await getCurrentUser();
         if (user !== null) {
           setCurrentUser(user);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user !== null) {
+          // Check if the user token has expired
+          const tokenExpirationTime = getTokenExpirationTime(user);
+          if (tokenExpirationTime && Date.now() >= tokenExpirationTime) {
+            logout();
+            setCurrentUser(undefined);
+          } else {
+            setCurrentUser(user);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -41,7 +63,7 @@ export const Navbar = () => {
   };
 
   const handleLogout = () => {
-    AuthService.logout();
+    logout();
     localStorage.setItem('Role', '');
     setCurrentUser(undefined);
   };
@@ -57,17 +79,17 @@ export const Navbar = () => {
       </BootstrapNavbar.Toggle>
       <BootstrapNavbar.Collapse id="navbar-collapse" className="justify-content-end" in={isNavExpanded} onExited={handleNavCollapse}>
         <Nav className="navbar-nav-custom">
-          <Nav.Link as={Link} to="/žanrai" onClick={handleNavCollapse}>
+          <Nav.Link as={Link} to="/genres" onClick={handleNavCollapse}>
             <FontAwesomeIcon icon={faList} className="nav-item-icon" />
             Žanrai
           </Nav.Link>
           {currentUser ? (
             <>
-              <Nav.Link as={Link} to="/profilis" onClick={handleNavCollapse}>
+              <Nav.Link as={Link} to="/profile" onClick={handleNavCollapse}>
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
                 Profilis
               </Nav.Link>
-              <Nav.Link as={Link} to="/rašytojas" onClick={handleNavCollapse}>
+              <Nav.Link as={Link} to="/writer" onClick={handleNavCollapse}>
                 <FontAwesomeIcon icon={faPenNib} className="nav-item-icon" />
                 Rašytojo platforma
               </Nav.Link>
@@ -78,11 +100,11 @@ export const Navbar = () => {
             </>
           ) : (
             <>
-              <Nav.Link as={Link} to="/prisijungti" onClick={handleNavCollapse}>
+              <Nav.Link as={Link} to="/login" onClick={handleNavCollapse}>
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
                 Login
               </Nav.Link>
-              <Nav.Link as={Link} to="/registruotis" onClick={handleNavCollapse}>
+              <Nav.Link as={Link} to="/register" onClick={handleNavCollapse}>
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
                 Sign Up
               </Nav.Link>

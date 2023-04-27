@@ -2,7 +2,7 @@
 
 import axios from "axios"
 
-const url="https://localhost:5001/api";
+const url="https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 

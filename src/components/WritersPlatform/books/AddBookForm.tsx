@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import { getAllGenres } from '../../../requests/GenresController';
 import './AddBookForm.css';
-import { IGenres } from '../../genres/GenresTable';
+import { useDropzone } from 'react-dropzone';
+import { IGenres } from '../../../Interfaces';
+import { toast } from 'react-toastify';
 
 interface IBookFormModalProps {
   show: boolean;
+  genrelist: IGenres[];
   onHide: () => void;
   onSubmit: (name: string, genre: string, description: string, chapterPrice: number, bookPrice: number, coverImage: File) => void;
 }
 
-const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }) => {
+const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, genrelist }) => {
   const [name, setName] = useState('');
   const [genres, setGenres] = useState<IGenres[]>([]);
   const [genre, setGenre] = useState<IGenres>();
@@ -21,17 +23,13 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
   const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
-    const fetchGenres = async () => {
-      const fetchedGenres = await getAllGenres();
-      setGenres(fetchedGenres);
-    };
-
-    fetchGenres();
+    setGenres(genrelist);
   }, []);
 
   const handleSubmit = () => {
+    console.log('Slapia makstis pries submita:', coverImage);
     if (!name || !description || name.length > 25 || description.length > 25 || !genre || !coverImage) {
-      setValidationError('All fields are required, and name and description must be no longer than 25 symbols.');
+      setValidationError('Visi laukai yra privalomi ir pavadinimo bei aprašymo laukai negali būti ilgesni nei 25 simboliai.');
       return;
     }
 
@@ -39,16 +37,28 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
     onHide();
   };
 
+  function handleSubmittedSuccessfully() {
+    toast.success('Knyga įkelta sėkmingai!', {
+      position: 'bottom-center',
+      autoClose: 3000, // milliseconds
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
+
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Insert a book</Modal.Title>
+        <Modal.Title>Knygos informacija</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {validationError && <p className="text-danger">{validationError}</p>}
         <Form>
           <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Pavadinimas</Form.Label>
             <Form.Control
               type="text"
               value={name}
@@ -58,7 +68,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
           </Form.Group>
 
           <Form.Group controlId="genre">
-            <Form.Label>Genre</Form.Label>
+            <Form.Label>Žanras</Form.Label>
             <Form.Control
               as="select"
               value={genre?.id}
@@ -67,7 +77,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
                 setGenre(selectedGenre);
               }}
             >
-              <option value="">Select a genre</option>
+              <option value="">Pasirinkite žanrą</option>
               {genres.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.name}
@@ -77,7 +87,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
           </Form.Group>
 
           <Form.Group controlId="description">
-            <Form.Label>Description</Form.Label>
+            <Form.Label>Aprašymas</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
@@ -88,7 +98,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
           </Form.Group>
 
           <Form.Group controlId="chapterPrice">
-            <Form.Label>Chapter Price</Form.Label>
+            <Form.Label>Skyriaus kaina</Form.Label>
             <Form.Control
               type="number"
               step="0.01"
@@ -98,7 +108,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
           </Form.Group>
 
           <Form.Group controlId="bookPrice">
-            <Form.Label>Book Price</Form.Label>
+            <Form.Label>Knygos kaina</Form.Label>
             <Form.Control
               type="number"
               step="0.01"
@@ -108,25 +118,28 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
           </Form.Group>
 
           <Form.Group controlId="coverImage">
-            <Form.Label>Cover Image</Form.Label>
+            <Form.Label>Viršelio nuotrauka</Form.Label>
             <Form.Control
               type="file"
               accept="image/*"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.target.files && e.target.files.length > 0) {
+                  console.log('Ruda siknaskyle onChange file uploade:', e.target.files[0]);
                   setCoverImage(e.target.files[0]);
                 }
               }}
             />
           </Form.Group>
+          <input type="file" name="" id="" />
+
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
-          Cancel
+          Atšaukti
         </Button>
         <Button variant="primary" onClick={handleSubmit}>
-          Submit
+          Pateikti
         </Button>
       </Modal.Footer>
     </Modal>

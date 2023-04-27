@@ -1,5 +1,6 @@
 import axios from "axios"
 import { IBookAdd } from "../Interfaces";
+import { toast } from 'react-toastify';
 
 interface IBooks {
   id: number;
@@ -10,7 +11,7 @@ interface IBooks {
   Price:number;
   Quality:string;
 }
-const url="https://localhost:5001/api";
+const url="https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 
@@ -45,6 +46,15 @@ const addBook = async (genreName: string, book: IBookAdd) => {
       console.log(response);
     })
     .catch(function (error) {
+      toast.error('Knygos įkelti nepavyko.', {
+        position: 'bottom-center',
+        autoClose: 3000, // milliseconds
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.log(error.response.data);
     });
 };

@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const url="https://localhost:5001/api";
+const url="https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 
@@ -15,7 +15,7 @@ interface ISetRoleDto {
   roleName: string
 }
 
-const getWriterTexts = async () =>
+  const getWriterTexts = async () =>
   await axios.get(`${url}/writer/texts`, undefined).then((x) => x.data);
 
   const getWriterBooks = async () =>

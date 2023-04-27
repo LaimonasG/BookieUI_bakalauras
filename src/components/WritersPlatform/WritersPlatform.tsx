@@ -2,15 +2,19 @@ import React, { Component, useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { setUserRole } from "../../requests/AdminController";
-import { IBookBought, ITextsBought, ISetRoleDto, IChapters, getPointsWord, IBookAdd } from '../../Interfaces';
+import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
+import { getAllGenres } from '../../requests/GenresController';
 import { addBook } from "../../requests/BookController";
+import { addText } from "../../requests/TextsController";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ChapterList from '../Chapters/ChapterList';
 import TextReadView from '../Texts/TextReadView';
 import AddBookForm from './books/AddBookForm';
+import AddTextForm from './texts/AddTextForm';
 import 'chartkick/chart.js';
 import './WritersPlatform.css';
+import useFetchCurrentUser from "../../useFetchCurrentUser";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -63,6 +67,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [books, setBooks] = useState<IBookBought[]>([]);
   const [texts, setTexts] = useState<ITextsBought[]>([]);
+  const [genres, setGenres] = useState<IGenres[]>([]);
   const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
   const [selectedtext, setSelectedText] = useState<ITextsBought | null>(null);
   const [chapters, setChapters] = useState<IChapters[] | null>(null);
@@ -71,6 +76,8 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [showAddBookModal, setShowAddBookModal] = useState(false);
   const [showAddTextModal, setShowAddTextModal] = useState(false);
   const [showAddChapterModal, setShowAddChapterModal] = useState(false);
+  const [updatePage, setUpdatePage] = useState(false);
+
   const [userRole, setUserRole] = useState<string | null>("");
   const [pieChartData, setPieChartData] = useState<any[]>([
     ["Fantasy", 10],
@@ -88,7 +95,12 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   async function GetBooks() {
     const xd = await getWriterBooks();
-    return xd;
+    setBooks(xd);
+  }
+
+  async function GetGenres() {
+    const xd = await getAllGenres();
+    setGenres(xd);
   }
 
   async function GetTexts() {
@@ -100,17 +112,13 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     const data = await getBookChapters(bookId, genreName);
     return data;
   }
+  const onAuthenticated = () => {
+    GetTexts();
+    GetGenres();
+    GetBooks();
+  };
 
-  useEffect(() => {
-    async function fetchData() {
-      const booksData = await GetBooks();
-      setBooks(booksData);
-      GetTexts();
-
-    }
-    fetchData();
-    // setUserRole(localStorage.getItem("role"));
-  }, []);
+  useFetchCurrentUser(onAuthenticated, updatePage);
 
   const toggleFormStatus = () => {
     setIsOpen(!isOpen);
@@ -134,7 +142,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   };
 
   const handleAddText = () => {
-    // handle add text logic here
+    setShowAddTextModal(true);
   };
 
   const handleAddChapter = () => {
@@ -160,6 +168,8 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     setShowAddBookModal(false);
     setShowAddChapterModal(false);
     setShowAddTextModal(false);
+
+    setUpdatePage(true);
   };
 
   const handleBookFormSubmit = async (
@@ -178,10 +188,27 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       coverImage: coverImage,
     };
 
-    console.log(book);
-
     const xd = await addBook(genre, book);
     console.log(name, description, chapterPrice, bookPrice, coverImage);
+  };
+
+  const handleTextFormSubmit = async (
+    name: string,
+    genre: string,
+    description: string,
+    textPrice: number,
+    coverImage: File,
+    content: File
+  ) => {
+    const text: ITextAdd = {
+      name: name,
+      description: description,
+      price: textPrice.toString(),
+      content: content,
+      coverImage: coverImage,
+    };
+
+    const xd = await addText(genre, text);
   };
 
 
@@ -239,8 +266,18 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                     {showAddBookModal && (
                       <AddBookForm
                         show={showAddBookModal}
+                        genrelist={genres}
                         onHide={handleHideModal}
                         onSubmit={handleBookFormSubmit}
+                      />
+                    )}
+
+                    {showAddTextModal && (
+                      <AddTextForm
+                        show={showAddTextModal}
+                        genrelist={genres}
+                        onHide={handleHideModal}
+                        onSubmit={handleTextFormSubmit}
                       />
                     )}
                   </ul>

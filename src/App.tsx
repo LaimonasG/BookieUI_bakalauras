@@ -2,12 +2,14 @@ import './App.css';
 import Home from './components/Home/Home';
 import { Genres } from './components/Genres/Genres';
 import { Navbar } from './components/NavBar/MainNavigation';
-import Books from './components/Reader content/Content';
+import Content from './components/Reader content/Content';
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
-import Profile from "./components/auth/profile";
+import Profile from "./components/profile/Profile";
 import WritersPlatform from './components/WritersPlatform/WritersPlatform';
 import { Helmet } from 'react-helmet';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { BrowserRouter, Link, NavLink, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -27,14 +29,15 @@ function App() {
       <div className="container mt-3">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/prisijungti" element={<Login />} />
-          <Route path="/registruotis" element={<Register />} />
-          <Route path="/profilis" element={<Profile />} />
-          <Route path='/žanrai' element={<Genres />} />
-          <Route path='/turinys/*' element={<Books />} />
-          <Route path='/rašytojas' element={<WritersPlatform useNavigate={useNavigate} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path='/genres' element={<Genres />} />
+          <Route path='/contents/*' element={<Content />} />
+          <Route path='/writer' element={<WritersPlatform useNavigate={useNavigate} />} />
         </Routes>
       </div>
+      <ToastContainer />
     </div>
   );
 }

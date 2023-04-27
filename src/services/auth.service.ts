@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
-const API_URL = "https://localhost:5001/api";
+const API_URL = "https://localhost:7010/api";
 
 export const register = (username: string, email: string, password: string) => {
   return axios.post(API_URL + "/register", {
@@ -64,3 +64,16 @@ export const getCurrentUser = () => {
 
   return null;
 };
+
+const getTokenExpirationTime = (token: string): number => {
+  const decodedToken: any = jwt_decode(token);
+
+  // Ensure the decoded token has the 'exp' property
+  if (!decodedToken.hasOwnProperty('exp')) {
+    throw new Error('Token does not contain expiration time');
+  }
+
+  const exp: number = decodedToken.exp;
+  return exp * 1000; // convert expiration time from seconds to milliseconds
+};
+export {getTokenExpirationTime};
