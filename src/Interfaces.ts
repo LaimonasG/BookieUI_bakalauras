@@ -104,12 +104,36 @@ export interface IAnswer {
   questionId:number
 }
 
+export interface IAnsweredQuestionDto {
+content:string;
+isCorrect:number;
+}
+
 export interface IQuestion {
   id: number;
   question: string;
   points:number;
   date:Date;
+  answers:IAnswer[];
 }
+
+export interface IProfile {
+  id: number;
+  name: string;
+  surname:string;
+  userName:string;
+  email:string;
+  points:number;
+}
+
+export interface IPersonalInfo {
+  name: string;
+  surname:string;
+  userName:string;
+  email:string;
+}
+
+
 
 export function getPointsWord(points: number) {
   if (points % 10 === 1 && points % 100 !== 11) {

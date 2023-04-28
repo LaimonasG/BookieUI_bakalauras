@@ -1,0 +1,68 @@
+.text-list {
+  margin-bottom: 2rem;
+}
+
+.text-list h3 {
+  margin-bottom: 1rem;
+}
+
+.text-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.text-list li {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-4);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background-color: var(--color-5);
+  color: var(--color-4);
+}
+
+.text-list .text-name {
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+
+.text-list .text-price {
+  margin-bottom: 0.25rem;
+}
+
+.text-list .text-description {
+  margin-bottom: 0.5rem;
+}
+
+.text-list div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.text-list button {
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.scrollable-panel {
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-1) var(--color-5);
+}
+
+.scrollable-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollable-panel::-webkit-scrollbar-track {
+  background: var(--color-5);
+}
+
+.scrollable-panel::-webkit-scrollbar-thumb {
+  background-color: var(--color-4);
+  border-radius: 10px;
+}

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import DailyQuestion from './DailyQuestion';
 import './Profile.css';
 import useFetchCurrentUser from "../../useFetchCurrentUser";
+import PersonalInfo from './PersonalInfo';
+import BoughtBooks from './BoughtBooksPanel';
+import BoughtTexts from './BoughtTextsPanel';
 
 const Profile: React.FC = () => {
   const [updatePage, setUpdatePage] = useState(false);
@@ -15,7 +18,7 @@ const Profile: React.FC = () => {
   return (
     <div className="profile">
       <div className="personal-info-panel">
-        {/* Personal info panel content */}
+        <PersonalInfo />
       </div>
 
       <div className="daily-question-panel">
@@ -23,11 +26,11 @@ const Profile: React.FC = () => {
       </div>
 
       <div className="bought-books-panel">
-        {/* Bought books panel content */}
+        <BoughtBooks />
       </div>
 
       <div className="texts-panel">
-        {/* Texts panel content */}
+        <BoughtTexts />
       </div>
     </div>
   );

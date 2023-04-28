@@ -5,8 +5,8 @@ import { register } from "../../services/auth.service";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 export interface IUser {
-  username:string,
-  email:string,
+  username: string,
+  email: string,
   password: string,
 }
 
@@ -60,8 +60,7 @@ const Register: React.FC = () => {
       (error) => {
         const resMessage =
           (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
+            error.response.data) ||
           error.message ||
           error.toString();
 

@@ -31,6 +31,7 @@ export const login = (username: string, password: string) => {
       if (response.data.accessToken) {
         const decodedToken: any = jwt_decode(response.data.accessToken);
         const roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        console.log("Decoded token:", decodedToken);
         let assignedRole = '';
 
         if (roles.includes('BookieAdmin')) {

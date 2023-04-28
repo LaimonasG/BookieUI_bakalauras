@@ -15,6 +15,7 @@ import AddTextForm from './texts/AddTextForm';
 import 'chartkick/chart.js';
 import './WritersPlatform.css';
 import useFetchCurrentUser from "../../useFetchCurrentUser";
+import { toast } from "react-toastify";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -146,7 +147,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   };
 
   const handleAddChapter = () => {
-    // handle add book logic here
+    // handle add chapter logic here
   };
 
   async function handleReadBookClick(book: IBookBought) {
@@ -189,7 +190,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     };
 
     const xd = await addBook(genre, book);
-    console.log(name, description, chapterPrice, bookPrice, coverImage);
+    handleBookSubmittedSuccessfully();
   };
 
   const handleTextFormSubmit = async (
@@ -209,7 +210,32 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     };
 
     const xd = await addText(genre, text);
+    handleTextSubmittedSuccessfully();
   };
+
+  function handleBookSubmittedSuccessfully() {
+    toast.success('Knyga įkelta sėkmingai!', {
+      position: 'bottom-center',
+      autoClose: 3000, // milliseconds
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
+
+  function handleTextSubmittedSuccessfully() {
+    toast.success('Tekstas įkeltas sėkmingai!', {
+      position: 'bottom-center',
+      autoClose: 3000, // milliseconds
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
 
 
   return (

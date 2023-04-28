@@ -42,8 +42,7 @@ const Login: React.FC<Props> = () => {
       (error) => {
         const resMessage =
           (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
+            error.response.data) ||
           error.message ||
           error.toString();
 

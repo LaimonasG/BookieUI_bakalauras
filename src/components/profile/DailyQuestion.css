@@ -12,10 +12,18 @@
   margin-bottom: 1rem;
 }
 
+.daily-question-panel .answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
 .daily-question-panel label {
-  display: block;
+  display: flex;
+  align-items: center;
   font-size: 1rem;
   margin-bottom: 0.5rem;
+  cursor: pointer;
 }
 
 .daily-question-panel input[type="radio"] {

@@ -27,7 +27,6 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
   }, []);
 
   const handleSubmit = () => {
-    console.log('Slapia makstis pries submita:', coverImage);
     if (!name || !description || name.length > 25 || description.length > 25 || !genre || !coverImage) {
       setValidationError('Visi laukai yra privalomi ir pavadinimo bei aprašymo laukai negali būti ilgesni nei 25 simboliai.');
       return;
@@ -36,18 +35,6 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
     onSubmit(name, genre.name, description, parseFloat(chapterPrice), parseFloat(bookPrice), coverImage);
     onHide();
   };
-
-  function handleSubmittedSuccessfully() {
-    toast.success('Knyga įkelta sėkmingai!', {
-      position: 'bottom-center',
-      autoClose: 3000, // milliseconds
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
 
   return (
     <Modal show={show} onHide={onHide}>
