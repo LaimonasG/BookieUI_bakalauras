@@ -4,7 +4,11 @@ import { IAnswer, IQuestion, IAnsweredQuestionDto } from '../../Interfaces';
 import { getTodaysQuestion, getLastAnswerTime, answerQuestion } from '../../requests/ProfileController'
 import { toast } from "react-toastify";
 
-const DailyQuestion: React.FC = () => {
+interface DailyQuestionProps {
+  onQuestionAnswered: () => void;
+}
+
+const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => {
   const [questionAnswered, setQuestionAnswered] = useState(false);
   const [question, setQuestion] = useState<IQuestion | null>();
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -16,10 +20,14 @@ const DailyQuestion: React.FC = () => {
     console.log("question", question!.id);
     console.log("answer", selectedAnswer!);
     const result = await answerQuestion(question!.id, selectedAnswer!);
-    console.log("aaaa", result);
-    if (result.isCorrect == 1)
-      handleAnsweredCorrectly(result.content); else
+    console.log("aaaa", result.correct);
+    if (result.correct === 1) {
+      handleAnsweredCorrectly(result.content);
+      onQuestionAnswered();
+    } else {
       handleAnsweredInCorrectly(result.content);
+    }
+
   };
 
   useEffect(() => {
@@ -36,7 +44,7 @@ const DailyQuestion: React.FC = () => {
 
   async function GetLastAnswerTime() {
     const xd = await getLastAnswerTime();
-    setLastAnswerTime(new Date("0001-01-01T00:00:00"));
+    setLastAnswerTime(new Date("2023-04-25T15:00:00"));
   }
 
   useEffect(() => {
@@ -48,6 +56,11 @@ const DailyQuestion: React.FC = () => {
 
         const timeRemaining = Math.max(0, nextQuestionTime.getTime() - now.getTime());
         setTimeUntilNextQuestion(timeRemaining);
+
+        if (timeRemaining === 0) {
+          setQuestionAnswered(false);
+          GetQuestion();
+        }
       };
 
       const intervalId = setInterval(updateTimeRemaining, 1000);
@@ -57,6 +70,7 @@ const DailyQuestion: React.FC = () => {
       };
     }
   }, [lastAnswerTime]);
+
 
   function handleAnsweredCorrectly(answer: string) {
     toast.success(`Klausimas atsakytas teisingai! Teisingas atsakymas: ${answer}`, {

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { ITextsToBuy } from "../../../Interfaces";
+import { ITextsToBuy, handleConfirmed, handleDenied } from "../../../Interfaces";
 import "./TextView.css";
+import { purchaseText } from '../../../requests/TextsController';
 
 type TextInformationModalProps = {
   text: ITextsToBuy;
@@ -24,9 +25,17 @@ const TextView: React.FC<TextInformationModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  useEffect(() => {
-    console.log(text.coverImageUrl);
-  }, [text]);
+
+  const handleBuyText = async (text: ITextsToBuy) => {
+    const response = await purchaseText(text.id, text.genreName);
+    if (response === 'success') {
+      handleConfirmed(`Tekstą ${text.name} galite rasti savo profilyje.`);
+      onClose();
+    } else {
+      handleDenied(response);
+      onClose();
+    }
+  }
 
   return (
     <Modal show={isOpen} onHide={onClose} centered backdrop="static">
@@ -49,8 +58,7 @@ const TextView: React.FC<TextInformationModalProps> = ({
               />
             </div>
             <div className="action-buttons">
-              <Button variant="secondary">Skaityti</Button>
-              <Button variant="primary">Pirkti</Button>
+              <Button variant="primary" onClick={() => handleBuyText(text)}>Pirkti</Button>
             </div>
           </div>
         </div>

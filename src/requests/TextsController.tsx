@@ -1,8 +1,8 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { ITextAdd } from "../Interfaces";
 import { toast } from 'react-toastify';
+import { url } from "../App";
 
-const url = "https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 
@@ -24,28 +24,51 @@ const addText = async (genreName: string, text: ITextAdd) => {
   formData.append("Price", text.price.toString());
   formData.append("Description", text.description);
 
-  await axios
-    .post(`${url}/genres/${genreName}/texts`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      toast.error('Teksto įkelti nepavyko.', {
-        position: 'bottom-center',
-        autoClose: 3000, // milliseconds
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+  try {
+    const response = await axios
+      .post(`${url}/genres/${genreName}/texts`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      console.log(error.response.data);
-    });
+    if (response.status === 200) {
+      return 'success';
+    } else {
+      return 'failed';
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
 };
 
-export { getAllTexts, addText }
+const purchaseText = async (textId: number, genreName: string): Promise<string> => {
+  try {
+    const response = await axios.put(`${url}/genres/${genreName}/texts/${textId}/buy`, undefined);
+
+    if (response.status === 200) {
+      return 'success';
+    } else {
+      return 'failed';
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
+};
+
+
+export { getAllTexts, addText, purchaseText }
 

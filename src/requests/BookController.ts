@@ -1,6 +1,7 @@
-import axios from "axios"
-import { IBookAdd } from "../Interfaces";
+import axios, { AxiosError } from "axios"
+import { IBookAdd, IBookToBuy, IChaptersAdd } from "../Interfaces";
 import { toast } from 'react-toastify';
+import { url } from "../App";
 
 interface IBooks {
   id: number;
@@ -11,7 +12,6 @@ interface IBooks {
   Price:number;
   Quality:string;
 }
-const url="https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 
@@ -22,13 +22,14 @@ if (userStr)
 if(user)
 axios.defaults.headers.common = {'Authorization': `bearer ${user.accessToken}`}
 
-const getAllBooksFinished = async (genreName: string) =>
+const getAllBooksFinished = async (genreName: string):Promise<IBookToBuy[]> =>
   await axios.get(`${url}/genres/${genreName}/books/finished`, undefined).then((x) => x.data);
 
-const getAllBooksUnfinished = async (genreName: string) =>
+const getAllBooksUnfinished = async (genreName: string):Promise<IBookToBuy[]> =>
 await axios.get(`${url}/genres/${genreName}/books/unfinished`, undefined).then((x) => x.data);
 
 const addBook = async (genreName: string, book: IBookAdd) => {
+  try {
   const formData = new FormData();
   formData.append("Name", book.name);
   formData.append("Description", book.description);
@@ -36,27 +37,57 @@ const addBook = async (genreName: string, book: IBookAdd) => {
   formData.append("BookPrice", book.bookPrice.toString());
   formData.append("CoverImage", book.coverImage);
 
-  await axios
+  const response=await axios
     .post(`${url}/genres/${genreName}/books`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      toast.error('Knygos įkelti nepavyko.', {
-        position: 'bottom-center',
-        autoClose: 3000, // milliseconds
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      console.log(error.response.data);
     });
+    if (response.status === 200) {
+      return 'success';
+    } else {
+      return 'failed';
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
+};
+
+const addChapter = async (chapter:IChaptersAdd,genreName:string) => {
+  try {
+  const formData = new FormData();
+  formData.append("File", chapter.content);
+  formData.append("Name", chapter.name);
+  formData.append("IsFinished", chapter.isFinished.toString());
+
+  const response=await axios
+    .post(`${url}/genres/${genreName}/books/${chapter.bookId}/chapters`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200) {
+      return 'success';
+    } else {
+      return 'failed';
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
 };
 
 const editBook = async (genreName: string, idBook: number, book: IBooks) =>
@@ -65,18 +96,47 @@ const editBook = async (genreName: string, idBook: number, book: IBooks) =>
   const deleteBook = async (genreName: string, idBook: number) =>
   await axios.delete(`${url}/genres/${genreName}/books/${idBook}`, undefined);
 
-  const addToBasket = async (idBook: number, genreName: string) =>
-  await axios.put(`${url}/baskets`, 
-  {
-    "bookId":idBook,
-    "genreName":genreName,
-    "content-type":"application/json",
-  }).then(function (response) {
-    console.log(response);
-  })
-    .catch(function (error) {
-      console.log(error.response.data);
-    });
+  const purchaseBook = async (bookId: number, genreName: string): Promise<string> => {
+    try {
+      const response = await axios.put(`${url}/genres/${genreName}/books/${bookId}/buy`, undefined);
+  
+      if (response.status === 200) {
+        return 'success';
+      } else {
+        return 'failed';
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+        return errorDataString;
+      } else {
+        console.error(error);
+        return 'error';
+      }
+    }
+  };
 
-  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,addToBasket}
+  const subscribeToBook = async (bookId: number, genreName: string): Promise<string> => {
+    try {
+      const response = await axios.put(`${url}/genres/${genreName}/books/${bookId}/subscribe`, undefined);
+  
+      if (response.status === 200) {
+        return 'success';
+      } else {
+        return 'failed';
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+        return errorDataString;
+      } else {
+        console.error(error);
+        return 'error';
+      }
+    }
+  };
+
+  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter}
 

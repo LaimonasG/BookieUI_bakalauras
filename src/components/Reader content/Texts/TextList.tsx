@@ -90,7 +90,6 @@ export const TextList = () => {
                 <div className="text-tile-details">
                   <h2 className="text-tile-title">{text.name}</h2>
                   <p className="text-tile-author">{text.author}</p>
-                  <p className="text-tile-description">{text.description}</p>
                   <div className="text-tile-footer"></div>
                 </div>
               </div>

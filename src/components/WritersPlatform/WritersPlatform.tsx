@@ -1,11 +1,11 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, Dispatch } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { setUserRole } from "../../requests/AdminController";
-import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd } from '../../Interfaces';
+import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
 import { getAllGenres } from '../../requests/GenresController';
-import { addBook } from "../../requests/BookController";
+import { addBook, addChapter } from "../../requests/BookController";
 import { addText } from "../../requests/TextsController";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ChapterList from '../Chapters/ChapterList';
@@ -16,6 +16,7 @@ import 'chartkick/chart.js';
 import './WritersPlatform.css';
 import useFetchCurrentUser from "../../useFetchCurrentUser";
 import { toast } from "react-toastify";
+import AddChapterForm from "./chapters/AddChapterForm";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -40,6 +41,10 @@ interface IWritersPlatformState {
   pieChartData: any[];
   lineChartData: any;
 }
+
+type ChaptersCount = {
+  [bookId: number]: number;
+};
 
 const ConfirmationModal: React.FC<IConfirmationModalProps> = ({ isOpen, onClose, onAgree }) => {
   return (
@@ -71,7 +76,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [genres, setGenres] = useState<IGenres[]>([]);
   const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
   const [selectedtext, setSelectedText] = useState<ITextsBought | null>(null);
-  const [chapters, setChapters] = useState<IChapters[] | null>(null);
   const [showChapterList, setShowChapterList] = useState(false);
   const [showTextModal, setShowTextModal] = useState(false);
   const [showAddBookModal, setShowAddBookModal] = useState(false);
@@ -96,7 +100,19 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   async function GetBooks() {
     const xd = await getWriterBooks();
-    setBooks(xd);
+
+    // Loop through all books and fetch their chapters
+    const booksWithChapters = await Promise.all(
+      xd.map(async (book: IBookBought) => {
+        const chapters = await getBookChapters(book.id, book.genreName);
+        return {
+          ...book,
+          chapters: chapters,
+        };
+      })
+    );
+
+    setBooks(booksWithChapters);
   }
 
   async function GetGenres() {
@@ -146,13 +162,30 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     setShowAddTextModal(true);
   };
 
-  const handleAddChapter = () => {
-    // handle add chapter logic here
+  const handleAddChapter = (book: IBookBought) => {
+    setSelectedBook(book);
+    setShowAddChapterModal(true);
+  };
+
+  const handleChapterFormSubmit = async (file: File, name: string, isFinished: number) => {
+    const chapter: IChaptersAdd = {
+      name: name,
+      content: file,
+      isFinished: isFinished,
+      bookId: selectedBook!.id,
+    };
+
+    const response = await addChapter(chapter, selectedBook!.genreName);
+    if (response === 'success') {
+      handleConfirmed(`Skyrius ${chapter.name} pridėtas prie knygos ${selectedBook!.name}.`);
+      await GetBooks();
+    } else {
+      handleDenied(response);
+    }
   };
 
   async function handleReadBookClick(book: IBookBought) {
-    const chapters = await GetChaptersForBook(book.id, book.genreName);
-    book.chapters = chapters;
+    console.log('knyga', book.chapters?.length)
     setSelectedBook(book);
     setShowChapterList(true);
   }
@@ -169,6 +202,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     setShowAddBookModal(false);
     setShowAddChapterModal(false);
     setShowAddTextModal(false);
+    setShowAddChapterModal(false);
 
     setUpdatePage(true);
   };
@@ -189,8 +223,12 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       coverImage: coverImage,
     };
 
-    const xd = await addBook(genre, book);
-    handleBookSubmittedSuccessfully();
+    const response = await addBook(genre, book);
+    if (response === 'success') {
+      handleConfirmed(`Knyga ${book.name} pridėta sėkmingai.`);
+    } else {
+      handleDenied(response);
+    }
   };
 
   const handleTextFormSubmit = async (
@@ -209,34 +247,13 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       coverImage: coverImage,
     };
 
-    const xd = await addText(genre, text);
-    handleTextSubmittedSuccessfully();
+    const response = await addText(genre, text);
+    if (response === 'success') {
+      handleConfirmed(`tekstas ${text.name} pridėtas sėkmingai.`);
+    } else {
+      handleDenied(response);
+    }
   };
-
-  function handleBookSubmittedSuccessfully() {
-    toast.success('Knyga įkelta sėkmingai!', {
-      position: 'bottom-center',
-      autoClose: 3000, // milliseconds
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
-
-  function handleTextSubmittedSuccessfully() {
-    toast.success('Tekstas įkeltas sėkmingai!', {
-      position: 'bottom-center',
-      autoClose: 3000, // milliseconds
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
-
 
   return (
     <div>
@@ -248,8 +265,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
             onAgree={handleAgree}
           />
         )} */}
-
-
       <div className="writers-platform">
         <div className="textsAndBooks">
           <div className="books-and-texts">
@@ -275,41 +290,54 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                         <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
                         <p className="book-description"> Įkelta: {new Date(book.created.toString()).toISOString().split('T')[0]}</p>
                         <div>
-                          <button className="view-content btn-color1" onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
+                          {book.chapters?.length === 0 ? (
+                            <button disabled={true} className="btn-disabled">Peržiūrėti turinį</button>
+                          ) : (
+                            <button className="view-content btn-color1" onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
+                          )}
                           <button className="comments btn-color3">Komentarai</button>
-                          <button className="add-chapter btn-color2">Pridėti skyrių</button>
+                          <button className="add-chapter btn-color2" onClick={() => handleAddChapter(book)}>Pridėti skyrių</button>
                         </div>
                       </li>
                     ))}
-                    {showChapterList && selectedBook && (
-                      <ChapterList
-                        book={selectedBook}
-                        show={showChapterList}
-                        onHide={handleHideModal}
-                      />
-                    )}
-
-                    {showAddBookModal && (
-                      <AddBookForm
-                        show={showAddBookModal}
-                        genrelist={genres}
-                        onHide={handleHideModal}
-                        onSubmit={handleBookFormSubmit}
-                      />
-                    )}
-
-                    {showAddTextModal && (
-                      <AddTextForm
-                        show={showAddTextModal}
-                        genrelist={genres}
-                        onHide={handleHideModal}
-                        onSubmit={handleTextFormSubmit}
-                      />
-                    )}
                   </ul>
                 </div>
               )}
             </div>
+
+            {showChapterList && selectedBook && (
+              <ChapterList
+                book={selectedBook}
+                show={showChapterList}
+                onHide={handleHideModal}
+              />
+            )}
+
+            {showAddBookModal && (
+              <AddBookForm
+                show={showAddBookModal}
+                genrelist={genres}
+                onHide={handleHideModal}
+                onSubmit={handleBookFormSubmit}
+              />
+            )}
+
+            {showAddTextModal && (
+              <AddTextForm
+                show={showAddTextModal}
+                genrelist={genres}
+                onHide={handleHideModal}
+                onSubmit={handleTextFormSubmit}
+              />
+            )}
+
+            {showAddChapterModal && (
+              <AddChapterForm
+                show={showAddChapterModal}
+                onHide={handleHideModal}
+                onSubmit={handleChapterFormSubmit}
+              />
+            )}
 
             <div className="text-list">
               <h3>Tekstai</h3>

@@ -1,6 +1,6 @@
 import axios from "axios"
+import { url } from "../App";
 
-const url="https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 

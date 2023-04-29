@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { IBookToBuy, getPointsWord } from "../../../Interfaces";
+import { IBookToBuy, getPointsWord, handleConfirmed, handleDenied } from "../../../Interfaces";
 import "./BookView.css";
+import { purchaseBook } from '../../../requests/BookController';
 
 type BookInformationModalProps = {
   book: IBookToBuy;
@@ -14,10 +15,16 @@ const BookView: React.FC<BookInformationModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  useEffect(() => {
-    console.log(book.coverImageUrl);
-  }, [book]);
-
+  const handleBuyBook = async (book: IBookToBuy) => {
+    const response = await purchaseBook(book.id, book.genreName);
+    if (response === 'success') {
+      handleConfirmed(`Knygą ${book.name} galite rasti savo profilyje.`);
+      onClose();
+    } else {
+      handleDenied(response);
+      onClose();
+    }
+  }
   return (
     <Modal show={isOpen} onHide={onClose} centered backdrop="static">
       <Modal.Header closeButton>
@@ -28,7 +35,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
           <div className="w-75">
             <p className="mb-2"><strong>Autorius:</strong> {book.author}</p>
             <p className="mb-2"><strong>Aprašymas:</strong> {book.description}</p>
-            <p className="mb-2"><strong>Kaina:</strong> {book.price} {getPointsWord(book.price)} </p>
+            <p className="mb-2"><strong>Kaina:</strong> {book.bookPrice} {getPointsWord(book.bookPrice)} </p>
           </div>
           <div className="w-25 d-flex flex-column justify-content-between align-items-center">
             <div className="mb-4">
@@ -39,8 +46,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
               />
             </div>
             <div className="action-buttons">
-              <Button variant="secondary">Skaityti</Button>
-              <Button variant="primary">Pirkti</Button>
+              <Button variant="primary" onClick={() => handleBuyBook(book)}>Pirkti</Button>
             </div>
           </div>
         </div>

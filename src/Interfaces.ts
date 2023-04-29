@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { getTokenExpirationTime, getCurrentUser, logout } from './services/auth.service';
+import { toast } from 'react-toastify';
 
 export interface IBookBought {
   id: number
   name: string
-  chapters: IChapters[]
+  chapters: IChapters[] | null;
   genreName: string
   description: string
   price: number
@@ -20,7 +21,9 @@ export interface IBookToBuy {
   name: string
   genreName: string
   description: string
-  price: number
+  chapterPrice: number
+  bookPrice: number
+  chapterCount:number;
   created: Date
   userId: string
   author:string
@@ -77,6 +80,13 @@ name:string
 content:string
 }
 
+export interface IChaptersAdd {
+  bookId:number
+  isFinished:number;
+  name:string
+  content:File
+  }
+
 export interface ITexts {
   Id: number,
   Content: string,
@@ -106,7 +116,7 @@ export interface IAnswer {
 
 export interface IAnsweredQuestionDto {
 content:string;
-isCorrect:number;
+correct:number;
 }
 
 export interface IQuestion {
@@ -133,6 +143,17 @@ export interface IPersonalInfo {
   email:string;
 }
 
+export interface IPayment{
+  id:number;
+  points:number;
+  price:number;
+}
+
+export interface ICreatePayment{
+  points:number;
+  price:number;
+}
+
 
 
 export function getPointsWord(points: number) {
@@ -144,4 +165,28 @@ export function getPointsWord(points: number) {
     return "taškų";
   }
 }
+export function handleConfirmed(message: string) {
+  toast.success(message, {
+    position: 'bottom-center',
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+}
+
+export function handleDenied(message: string) {
+  toast.error(message, {
+    position: 'bottom-center',
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+}
+
 

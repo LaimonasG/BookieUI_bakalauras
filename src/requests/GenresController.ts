@@ -1,4 +1,5 @@
 import axios from "axios"
+import { url } from "../App";
 
 interface IBooks {
   id: number;
@@ -9,7 +10,6 @@ interface IBooks {
   Price:number;
   Quality:string;
 }
-const url="https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 

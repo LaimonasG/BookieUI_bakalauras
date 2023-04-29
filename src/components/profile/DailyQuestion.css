@@ -28,6 +28,8 @@
 
 .daily-question-panel input[type="radio"] {
   margin-right: 0.5rem;
+  width: 24px; 
+  height: 24px; 
 }
 
 .daily-question-panel button {

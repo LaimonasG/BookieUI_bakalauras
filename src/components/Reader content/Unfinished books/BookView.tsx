@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { IBookToBuy } from "../../../Interfaces";
+import { IBookToBuy, getPointsWord, handleConfirmed, handleDenied } from "../../../Interfaces";
 import "./BookView.css";
+import { subscribeToBook } from '../../../requests/BookController';
 
 type BookInformationModalProps = {
   book: IBookToBuy;
@@ -9,24 +10,21 @@ type BookInformationModalProps = {
   onClose: () => void;
 };
 
-function getPointsWord(points: number) {
-  if (points % 10 === 1 && points % 100 !== 11) {
-    return "taškas";
-  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
-    return "taškai";
-  } else {
-    return "taškų";
-  }
-}
-
 const BookView: React.FC<BookInformationModalProps> = ({
   book,
   isOpen,
   onClose,
 }) => {
-  useEffect(() => {
-    console.log(book.coverImageUrl);
-  }, [book]);
+  const handleSubscribeToBook = async (book: IBookToBuy) => {
+    const response = await subscribeToBook(book.id, book.genreName);
+    if (response === 'success') {
+      handleConfirmed(`Knygos ${book.name} prenumerata sėkmingai aktyvuota.`);
+      onClose();
+    } else {
+      handleDenied(response);
+      onClose();
+    }
+  }
 
   return (
     <Modal show={isOpen} onHide={onClose} centered backdrop="static">
@@ -38,7 +36,8 @@ const BookView: React.FC<BookInformationModalProps> = ({
           <div className="w-75">
             <p className="mb-2"><strong>Autorius:</strong> {book.author}</p>
             <p className="mb-2"><strong>Aprašymas:</strong> {book.description}</p>
-            <p className="mb-2"><strong>Kaina:</strong> {book.price} {getPointsWord(book.price)} </p>
+            <p className="mb-2"><strong>Pradinė įmoka už skyrius:</strong> {book.chapterPrice * book.chapterCount} {getPointsWord(book.chapterPrice * book.chapterCount)} </p>
+            <p className="mb-2"><strong>Skyriaus kaina:</strong> {book.chapterPrice} {getPointsWord(book.chapterPrice)} </p>
           </div>
           <div className="w-25 d-flex flex-column justify-content-between align-items-center">
             <div className="mb-4">
@@ -49,8 +48,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
               />
             </div>
             <div className="action-buttons">
-              <Button variant="secondary">Skaityti</Button>
-              {book.isFinished === 1 ? <Button variant="primary">Pirkti</Button> : <Button variant="primary">Prenumeruoti</Button>}
+              <Button variant="primary" onClick={() => handleSubscribeToBook(book)}>Prenumeruoti</Button>
             </div>
           </div>
         </div>

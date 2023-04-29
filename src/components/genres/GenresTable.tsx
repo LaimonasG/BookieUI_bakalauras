@@ -32,7 +32,7 @@ export const GenresTable = () => {
 
       row.push(
         <a
-          href="turinys/index"
+          href="contents/*"
           key={genre.id}
           onClick={() => {
             localStorage.setItem("genreName", genre.name);

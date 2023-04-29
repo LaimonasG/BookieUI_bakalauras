@@ -26,6 +26,7 @@
   width: 100%;
 }
 
+
 .books-and-texts,
 .statistics {
   background-color: #ffffff;
@@ -57,6 +58,11 @@
 
 .btn-color1:hover {
   background-color: var(--color-1-hover);
+}
+
+.btn-disabled {
+  background-color: #999;
+  cursor: not-allowed;
 }
 
 .btn-color2 {

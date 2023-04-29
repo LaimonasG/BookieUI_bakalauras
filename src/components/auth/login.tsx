@@ -22,8 +22,8 @@ const Login: React.FC<Props> = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("This field is required!"),
-    password: Yup.string().required("This field is required!"),
+    username: Yup.string().required("Naudotojo vardo laukas būtinas."),
+    password: Yup.string().required("Slaptažodžio laukas būtinas. "),
   });
 
   const handleLogin = (formValue: { username: string; password: string }) => {

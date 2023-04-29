@@ -15,7 +15,7 @@ import { BrowserRouter, Link, NavLink, Route, Routes, useNavigate, useLocation }
 import { useEffect, useState } from 'react';
 import { color } from '@mui/system';
 
-
+export const url = "https://localhost:5001/api";
 
 function App() {
   return (

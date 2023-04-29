@@ -4,34 +4,10 @@ import BookForm from "./Unfinished books/BookForm";
 import { UnfinBookList } from "./Unfinished books/BookList";
 import { FinBookList } from "./Finished books/BookList";
 import { TextList } from "./Texts/TextList";
+import './styles.css';
 
 class Content extends Component {
-    state = {
-        isOpen: false,
-        books: [
-            {
-                Name: "book name",
-                Author: "book author"
-            }
-        ],
-    };
-
-    toggleFormStatus = () => {
-        const { isOpen } = this.state;
-        this.setState({ isOpen: !isOpen });
-    };
-
-    onBookChange = (book?: React.ChangeEventHandler<HTMLInputElement>) => {
-
-    };
-
     render() {
-        const {
-            isOpen,
-            books,
-        } = this.state;
-
-
         return (
             <div className="content-container">
                 <div className="booklist-wrapper">

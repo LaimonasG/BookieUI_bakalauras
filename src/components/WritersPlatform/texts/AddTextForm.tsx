@@ -116,7 +116,6 @@ const TextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, 
               accept="image/*"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.target.files && e.target.files.length > 0) {
-                  console.log('Ruda siknaskyle onChange file uploade:', e.target.files[0]);
                   setCoverImage(e.target.files[0]);
                 }
               }}
@@ -130,7 +129,6 @@ const TextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, 
               accept=".pdf"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.target.files && e.target.files.length > 0) {
-                  console.log('Ruda siknaskyle onChange file uploade:', e.target.files[0]);
                   setContentFile(e.target.files[0]);
                 }
               }}

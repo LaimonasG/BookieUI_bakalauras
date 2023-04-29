@@ -1,10 +1,10 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { url } from "../App";
 
-const API_URL = "https://localhost:7010/api";
 
 export const register = (username: string, email: string, password: string) => {
-  return axios.post(API_URL + "/register", {
+  return axios.post(url + "/register", {
     username,
     email,
     password,
@@ -22,7 +22,7 @@ export const register = (username: string, email: string, password: string) => {
 
 export const login = (username: string, password: string) => {
   return axios
-    .post(API_URL + "/login", {
+    .post(url + "/login", {
       username,
       password,
     })

@@ -7,17 +7,12 @@ import BookView from './BookView';
 
 export const FinBookList = () => {
   const [books, setBooks] = useState<IBookToBuy[]>([]);
-  const [texts, setTexts] = useState<IBookToBuy[]>([]);
-  const [finishedBooks, setFinishedBooks] = useState<IBookToBuy[]>([]);
-  const [subscribeBooks, setSubscribeBooks] = useState<IBookToBuy[]>([]);
   const genreName = localStorage.getItem("genreName");
   const userStr = localStorage.getItem("user");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currBook, setCurrBook] = useState<IBookToBuy>();
   const [showLeftArrow, setShowLeftArrow] = useState<boolean>(false);
   const [showRightArrow, setShowRightArrow] = useState<boolean>(true);
-  const [showLeftArrowTexts, setShowLeftArrowTexts] = useState<boolean>(false);
-  const [showRightArrowTexts, setShowRightArrowTexts] = useState<boolean>(true);
   const [scrollLeftAmount, setScrollLeftAmount] = useState<number>(0);
 
   let user = null;

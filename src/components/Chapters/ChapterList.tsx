@@ -11,7 +11,7 @@ type BookInformationModalProps = {
 
 const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide }) => {
 
-  if (book.chapters.length == 0) {
+  if (book.chapters?.length == 0) {
     return (<p>Knyga dar neturi skyrių.</p>)
   }
   return (
@@ -30,7 +30,7 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {book.chapters.map((chapter: IChapters, index: number) => (
+        {book.chapters?.map((chapter: IChapters, index: number) => (
           <div key={index}>
             <h5 className="chapter-title">{chapter.name}</h5>
             <pre className="chapter-content">{chapter.content}</pre>

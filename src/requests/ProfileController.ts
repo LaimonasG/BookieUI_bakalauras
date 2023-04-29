@@ -1,9 +1,9 @@
-import axios from "axios";
-import { IAnsweredQuestionDto, IQuestion, IBookAdd, IPersonalInfo } from "../Interfaces";
+import axios, { AxiosError } from "axios";
+import { IAnsweredQuestionDto, IQuestion, IBookAdd, IPersonalInfo, IPayment, ICreatePayment } from "../Interfaces";
 import { toast } from 'react-toastify';
 import { useParams } from "react-router-dom";
+import { url } from "../App";
 
-const url = "https://localhost:7010/api";
 const userStr = localStorage.getItem("user");
 
 let user = null;
@@ -42,10 +42,36 @@ const getLastAnswerTime = async () =>
 
 const answerQuestion = async (questionId: number, answerId: number): Promise<IAnsweredQuestionDto> =>
   await axios.put(`${url}/profiles/dailyQuestion`, {
-    data: {
       "QuestionID": questionId,
-      "AnswerID": answerId
-    }
+      "AnswerID": answerId  
   }).then((x) => x.data); 
 
-export { getTodaysQuestion, getLastAnswerTime, answerQuestion,getProfile,updatePersonalInfo,getProfileBooks,getProfileTexts };
+  const getAvailablePayments = async (): Promise<IPayment[]> =>
+  await axios.get(`${url}/profiles/payForPoints`).then((x) => x.data);
+
+  const payForPoints = async (paymentId: number): Promise<string> => {
+    try {
+      const response = await axios.put(`${url}/profiles/payForPoints/${paymentId}`, {
+        data: {
+          "PaymentId": paymentId
+        }
+      });
+  
+      if (response.status === 200) {
+        return 'success';
+      } else {
+        return 'failed';
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+      } else {
+        console.error(error);
+        return 'error';
+      }
+    }
+  };
+  
+export { getTodaysQuestion, getLastAnswerTime, answerQuestion,getProfile,updatePersonalInfo,getProfileBooks,getProfileTexts,getAvailablePayments,payForPoints };

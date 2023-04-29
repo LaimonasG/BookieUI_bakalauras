@@ -25,26 +25,26 @@ const Register: React.FC = () => {
     username: Yup.string()
       .test(
         "len",
-        "The username must be between 3 and 20 characters.",
+        "Naudotojo vardo reikšmė turi būti 3-25 simbolių ilgio. ",
         (val: any) =>
           val &&
           val.toString().length >= 3 &&
-          val.toString().length <= 20
+          val.toString().length <= 25
       )
-      .required("This field is required!"),
+      .required("Naudotojo vardo laukas būtinas."),
     email: Yup.string()
-      .email("This is not a valid email.")
-      .required("This field is required!"),
+      .email("Tai ne validus elektroninis paštas.")
+      .required("Elektroninio pašto laukas būtinas."),
     password: Yup.string()
       .test(
         "len",
-        "The password must be between 6 and 40 characters.",
+        "Slaptažodžio reikšmė turi būti 6-40 simbolių ilgio.",
         (val: any) =>
           val &&
           val.toString().length >= 6 &&
           val.toString().length <= 40
       )
-      .required("This field is required!"),
+      .required("Slaptažodžio laukas būtinas."),
   });
 
   const handleRegister = (formValue: IUser) => {
@@ -87,7 +87,7 @@ const Register: React.FC = () => {
             {!successful && (
               <div>
                 <div className="form-group">
-                  <label htmlFor="username"> Username </label>
+                  <label htmlFor="username"> Naudotojo vardas </label>
                   <Field name="username" type="text" className="form-control" />
                   <ErrorMessage
                     name="username"
@@ -97,7 +97,7 @@ const Register: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email"> Email </label>
+                  <label htmlFor="email"> Elektroninis paštas </label>
                   <Field name="email" type="email" className="form-control" />
                   <ErrorMessage
                     name="email"
@@ -107,7 +107,7 @@ const Register: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="password"> Password </label>
+                  <label htmlFor="password"> Slaptažodis </label>
                   <Field
                     name="password"
                     type="password"

@@ -1,24 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import './PersonalInfo.css';
 import UpdateInfoFormModal from './EditPersonalInfo';
 import { IProfile, IPersonalInfo } from '../../Interfaces';
 import { getProfile, updatePersonalInfo } from '../../requests/ProfileController';
+import BuyPoints from './BuyPoints';
 
-const PersonalInfo: React.FC = () => {
+interface PersonalInfoRef {
+  fetchPoints: () => void;
+}
+
+const PersonalInfo = forwardRef<PersonalInfoRef, {}>((props, ref) => {
   const [currentUser, setCurrentUser] = useState<IProfile>();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showPayModal, setShowPayModal] = useState(false);
+
+  const fetchUserData = useCallback(async () => {
+    const xd = await getProfile();
+    setCurrentUser(xd);
+  }, []);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const xd = await getProfile();
-      setCurrentUser(xd);
-    };
-
     fetchUserData();
-  }, []);
+  }, [fetchUserData]);
+
+  useImperativeHandle(ref, () => ({
+    fetchPoints: fetchUserData,
+  }));
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
 
   const handleEditInfo = () => {
     setShowUpdateModal(true);
+  };
+
+  const handlePointsUpdated = () => {
+    fetchUserData();
   };
 
   const handleUpdateInfo = async (userName: string, name: string, surname: string, email: string) => {
@@ -47,7 +65,7 @@ const PersonalInfo: React.FC = () => {
   };
 
   const handleBuyMorePoints = () => {
-    // Implement buying more points functionality
+    setShowPayModal(true);
   };
 
   return (
@@ -72,8 +90,14 @@ const PersonalInfo: React.FC = () => {
           onUpdate={handleUpdateInfo}
         />
       )}
+      {showPayModal && (
+        <BuyPoints
+          onClose={() => setShowPayModal(false)}
+          onPointsUpdated={handlePointsUpdated}
+        />
+      )}
     </div>
   );
-};
+});
 
 export default PersonalInfo;
