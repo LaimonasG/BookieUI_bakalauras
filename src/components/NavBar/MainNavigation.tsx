@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTokenExpirationTime, getCurrentUser, logout } from '../../services/auth.service';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faHome, faList, faUser, faSignOutAlt, faPenNib } from '@fortawesome/free-solid-svg-icons';
 import { faBook } from '@fortawesome/free-solid-svg-icons/faBook';
@@ -16,6 +16,8 @@ interface IUser {
 export const Navbar = () => {
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+
+  const location = useLocation();
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -79,17 +81,31 @@ export const Navbar = () => {
       </BootstrapNavbar.Toggle>
       <BootstrapNavbar.Collapse id="navbar-collapse" className="justify-content-end" in={isNavExpanded} onExited={handleNavCollapse}>
         <Nav className="navbar-nav-custom">
-          <Nav.Link as={Link} to="/genres" onClick={handleNavCollapse}>
+          <Nav.Link
+            as={Link}
+            to="/genres"
+            onClick={handleNavCollapse}
+            className={location.pathname === "/genres" ? "nav-link-active" : ""}
+          >
             <FontAwesomeIcon icon={faList} className="nav-item-icon" />
             Žanrai
           </Nav.Link>
           {currentUser ? (
             <>
-              <Nav.Link as={Link} to="/profile" onClick={handleNavCollapse}>
+              <Nav.Link
+                as={Link}
+                to="/profile"
+                onClick={handleNavCollapse}
+                className={location.pathname === "/profile" ? "nav-link-active" : ""}
+              >
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
                 Profilis
               </Nav.Link>
-              <Nav.Link as={Link} to="/writer" onClick={handleNavCollapse}>
+              <Nav.Link
+                as={Link}
+                to="/writer"
+                onClick={handleNavCollapse}
+                className={location.pathname === "/writer" ? "nav-link-active" : ""}>
                 <FontAwesomeIcon icon={faPenNib} className="nav-item-icon" />
                 Rašytojo platforma
               </Nav.Link>
@@ -100,13 +116,21 @@ export const Navbar = () => {
             </>
           ) : (
             <>
-              <Nav.Link as={Link} to="/login" onClick={handleNavCollapse}>
+              <Nav.Link
+                as={Link}
+                to="/login"
+                onClick={handleNavCollapse}
+                className={location.pathname === "/login" ? "nav-link-active" : ""}>
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
                 Login
               </Nav.Link>
-              <Nav.Link as={Link} to="/register" onClick={handleNavCollapse}>
+              <Nav.Link
+                as={Link}
+                to="/register"
+                onClick={handleNavCollapse}
+                className={location.pathname === "/register" ? "nav-link-active" : ""}>
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
-                Sign Up
+                Registruotis
               </Nav.Link>
             </>
           )}

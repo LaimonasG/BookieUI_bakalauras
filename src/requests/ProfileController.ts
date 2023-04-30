@@ -18,15 +18,33 @@ if (user) {
 const getProfile = async () =>
   await axios.get(`${url}/profiles`).then((x) => x.data);
 
-  const updatePersonalInfo = async (dto:IPersonalInfo): Promise<IPersonalInfo> =>
-  await axios.put(`${url}/profiles/info`, {
-    data: {
-      "Username": dto.userName,
-      "Email": dto.email,
-      "Name":dto.name,
-      "Surname":dto.userName
+  const updatePersonalInfo = async (dto:IPersonalInfo) =>{
+    try{
+      const response=await axios.put(`${url}/profiles/info`, {
+        "Username": dto.userName,
+        "Email": dto.email,
+        "Name":dto.name,
+        "Surname":dto.surname
+      
+    }); 
+    if (response.status === 200) {
+      return 'success';
+    } else {
+      return 'failed';
     }
-  }).then((x) => x.data); 
+  }catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+      } else {
+        console.error(error);
+        return 'error';
+      }
+    }
+  };
+  
+  
 
   const getProfileBooks = async () =>
   await axios.get(`${url}/profiles/books`).then((x) => x.data);

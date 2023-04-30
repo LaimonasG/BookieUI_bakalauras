@@ -82,10 +82,18 @@ content:string
 
 export interface IChaptersAdd {
   bookId:number
-  isFinished:number;
+  isFinished:number
   name:string
   content:File
   }
+
+  export interface IChaptersAdded {
+    bookId:number
+    isFinished:number
+    name:string
+    content:File
+    chargedUsersCount:number
+    }
 
 export interface ITexts {
   Id: number,
@@ -164,6 +172,24 @@ export function getPointsWord(points: number) {
   } else {
     return "taškų";
   }
+}
+
+export function getAddedWord(points: number) {
+  if (points===1) {
+    return "pridėtas";
+  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
+    return "pridėti";
+  } else {
+    return "pridėta";
+  }
+}
+
+export function getSubscriberWord(points: number) {
+  if (points===1) {
+    return "prenumeratorių";
+  } else  {
+    return "prenumeratorius";
+  } 
 }
 export function handleConfirmed(message: string) {
   toast.success(message, {

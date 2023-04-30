@@ -29,6 +29,11 @@ interface ISetRoleDto {
 
   const getBookChapters = async (bookId:number,genreName:string) =>
   await axios.get(`${url}/genres/${genreName}/books/${bookId}/chapters`, undefined).then((x) => x.data);
+  
+const chargeUsers = async (bookId: number, chapterId: number): Promise<number> =>
+await axios.put(`${url}/profiles/pay`, {
+    "bookId": bookId,
+    "chapterId": chapterId  
+}).then((x) => x.data); 
 
-
-  export {getWriterTexts,getWriterBooks,getWriterText,getWriterBook,getBookChapters}
+  export {getWriterTexts,getWriterBooks,getWriterText,getWriterBook,getBookChapters,chargeUsers}

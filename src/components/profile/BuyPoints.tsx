@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getAvailablePayments, payForPoints } from '../../requests/ProfileController';
-import { IPayment, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
+import { IPayment, getAddedWord, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './BuyPoints.css';
-import { toast } from 'react-toastify';
 
 interface PaymentOffersProps {
   onClose: () => void;
@@ -30,7 +29,7 @@ const PaymentOffers: React.FC<PaymentOffersProps> = ({ onClose, onPointsUpdated 
     if (selectedOffer) {
       const response = await payForPoints(selectedOffer.id);
       if (response === 'success') {
-        handleConfirmed(`Mokėjimas patvirtintas, jums pridėti ${selectedOffer.points} ${getPointsWord(selectedOffer.points)}`);
+        handleConfirmed(`Mokėjimas patvirtintas, jums ${getAddedWord(selectedOffer.points)} ${selectedOffer.points} ${getPointsWord(selectedOffer.points)}`);
         onPointsUpdated();
         onClose();
       } else {

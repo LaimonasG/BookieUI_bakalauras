@@ -27,7 +27,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
   }, []);
 
   const handleSubmit = () => {
-    if (!name || !description || name.length > 25 || description.length > 25 || !genre || !coverImage) {
+    if (!name || !description || name.length > 25 || description.length > 150 || !genre || !coverImage) {
       setValidationError('Visi laukai yra privalomi ir pavadinimo bei aprašymo laukai negali būti ilgesni nei 25 simboliai.');
       return;
     }
@@ -80,7 +80,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              maxLength={25}
+              maxLength={150}
             />
           </Form.Group>
 
@@ -111,13 +111,12 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
               accept="image/*"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.target.files && e.target.files.length > 0) {
-                  console.log('Ruda siknaskyle onChange file uploade:', e.target.files[0]);
                   setCoverImage(e.target.files[0]);
                 }
               }}
             />
           </Form.Group>
-          <input type="file" name="" id="" />
+
 
         </Form>
       </Modal.Body>

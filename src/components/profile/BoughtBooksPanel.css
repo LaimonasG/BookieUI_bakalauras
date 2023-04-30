@@ -66,3 +66,9 @@
   background-color: var(--color-4);
   border-radius: 10px;
 }
+
+.book-finished-indicator {
+  margin-left: 10px;
+  font-size: 20px;
+  background-color: var(--color-3);
+}

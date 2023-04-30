@@ -121,7 +121,6 @@ export const UnfinBookList = () => {
                   <div className="book-tile-details">
                     <h2 className="book-tile-title">{book.name}</h2>
                     <p className="book-tile-author">{book.author}</p>
-                    <p className="book-tile-description">{book.description}</p>
                     <div className="book-tile-footer"></div>
                   </div>
                 </div>

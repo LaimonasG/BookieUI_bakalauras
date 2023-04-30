@@ -41,9 +41,11 @@ const BoughtBooks: React.FC = () => {
                 <p className="book-name"> Knygos pavadinimas: {book.name}</p>
                 <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
                 <p className="book-description"> Įkelta: {new Date(book.created.toString()).toISOString().split('T')[0]}</p>
+
                 <div>
                   <button className="view-content btn-color1" onClick={() => readBook(book)}>Peržiūrėti turinį</button>
                   <button className="comments btn-color3">Komentarai</button>
+                  <span className="book-finished-indicator">{book.isFinished ? "●" : "○"}</span>
                 </div>
               </li>
             ))}

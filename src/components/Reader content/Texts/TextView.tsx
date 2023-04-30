@@ -29,7 +29,7 @@ const TextView: React.FC<TextInformationModalProps> = ({
   const handleBuyText = async (text: ITextsToBuy) => {
     const response = await purchaseText(text.id, text.genreName);
     if (response === 'success') {
-      handleConfirmed(`Tekstą ${text.name} galite rasti savo profilyje.`);
+      handleConfirmed(`Tekstą "${text.name}" galite rasti savo profilyje.`);
       onClose();
     } else {
       handleDenied(response);

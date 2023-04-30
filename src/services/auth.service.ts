@@ -27,11 +27,9 @@ export const login = (username: string, password: string) => {
       password,
     })
     .then((response) => {
-      console.log("Prisijungimo duomenys:",response.data)
       if (response.data.accessToken) {
         const decodedToken: any = jwt_decode(response.data.accessToken);
         const roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        console.log("Decoded token:", decodedToken);
         let assignedRole = '';
 
         if (roles.includes('BookieAdmin')) {
@@ -48,6 +46,7 @@ export const login = (username: string, password: string) => {
 
         localStorage.setItem("user", JSON.stringify(response.data));
         localStorage.setItem("role", assignedRole);
+
       }
 
       return response.data;

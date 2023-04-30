@@ -14,14 +14,12 @@ import { useNavigate } from 'react-router-dom';
       const fetchCurrentUser = async () => {
         try {
           const user = getCurrentUser();
-          console.log('user:',user);
           if (user !== null) {
             const tokenExpirationTime = getTokenExpirationTime(user.accessToken);
             if (tokenExpirationTime && Date.now() >= tokenExpirationTime) {
               logout();
               navigate('/login')          
             } else {
-              console.log('all good g');
               memoizedOnAuthenticated();
             }
           }

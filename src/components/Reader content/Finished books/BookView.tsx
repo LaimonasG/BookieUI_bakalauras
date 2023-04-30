@@ -18,7 +18,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
   const handleBuyBook = async (book: IBookToBuy) => {
     const response = await purchaseBook(book.id, book.genreName);
     if (response === 'success') {
-      handleConfirmed(`Knygą ${book.name} galite rasti savo profilyje.`);
+      handleConfirmed(`Knygą "${book.name}" galite rasti savo profilyje.`);
       onClose();
     } else {
       handleDenied(response);

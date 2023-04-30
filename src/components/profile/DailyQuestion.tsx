@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './DailyQuestion.css';
-import { IAnswer, IQuestion, IAnsweredQuestionDto } from '../../Interfaces';
+import { IAnswer, IQuestion, IAnsweredQuestionDto, handleConfirmed, handleDenied } from '../../Interfaces';
 import { getTodaysQuestion, getLastAnswerTime, answerQuestion } from '../../requests/ProfileController'
 import { toast } from "react-toastify";
 
@@ -17,15 +17,12 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
 
   const handleSubmit = async () => {
     setQuestionAnswered(true);
-    console.log("question", question!.id);
-    console.log("answer", selectedAnswer!);
     const result = await answerQuestion(question!.id, selectedAnswer!);
-    console.log("aaaa", result.correct);
     if (result.correct === 1) {
-      handleAnsweredCorrectly(result.content);
+      handleConfirmed(result.content);
       onQuestionAnswered();
     } else {
-      handleAnsweredInCorrectly(result.content);
+      handleDenied(result.content);
     }
 
   };
@@ -70,31 +67,6 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
       };
     }
   }, [lastAnswerTime]);
-
-
-  function handleAnsweredCorrectly(answer: string) {
-    toast.success(`Klausimas atsakytas teisingai! Teisingas atsakymas: ${answer}`, {
-      position: 'bottom-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
-
-  function handleAnsweredInCorrectly(answer: string) {
-    toast.error(`Klausimas atsakytas neteisingai! Teisingas atsakymas: ${answer}`, {
-      position: 'bottom-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
 
   const renderDailyQuestion = () => {
     const now = new Date();

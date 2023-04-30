@@ -33,7 +33,7 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
         {book.chapters?.map((chapter: IChapters, index: number) => (
           <div key={index}>
             <h5 className="chapter-title">{chapter.name}</h5>
-            <pre className="chapter-content">{chapter.content}</pre>
+            <p dangerouslySetInnerHTML={{ __html: chapter.content }} />
           </div>
         ))}
       </Modal.Body>

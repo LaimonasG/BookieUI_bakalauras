@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import './PersonalInfo.css';
 import UpdateInfoFormModal from './EditPersonalInfo';
-import { IProfile, IPersonalInfo } from '../../Interfaces';
+import { IProfile, IPersonalInfo, handleConfirmed, handleDenied } from '../../Interfaces';
 import { getProfile, updatePersonalInfo } from '../../requests/ProfileController';
 import BuyPoints from './BuyPoints';
 
@@ -46,6 +46,7 @@ const PersonalInfo = forwardRef<PersonalInfoRef, {}>((props, ref) => {
       }
       return {
         ...prevUser,
+        userName,
         name,
         surname,
         email,
@@ -58,10 +59,14 @@ const PersonalInfo = forwardRef<PersonalInfoRef, {}>((props, ref) => {
       surname,
       email,
     };
+    console.log("updated info", personalInfo);
 
-
-    const result = await updatePersonalInfo(personalInfo);
     setShowUpdateModal(false);
+    const result = await updatePersonalInfo(personalInfo);
+    if (result === "success")
+      handleConfirmed(`Asmeninė informacija atnaujinta sėkmingai.`);
+    else
+      handleDenied(result);
   };
 
   const handleBuyMorePoints = () => {

@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect, Dispatch } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { setUserRole } from "../../requests/AdminController";
-import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd } from '../../Interfaces';
+import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
 import { getAllGenres } from '../../requests/GenresController';
 import { addBook, addChapter } from "../../requests/BookController";
@@ -15,8 +15,8 @@ import AddTextForm from './texts/AddTextForm';
 import 'chartkick/chart.js';
 import './WritersPlatform.css';
 import useFetchCurrentUser from "../../useFetchCurrentUser";
-import { toast } from "react-toastify";
 import AddChapterForm from "./chapters/AddChapterForm";
+import { login } from "../../services/auth.service";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -24,7 +24,7 @@ interface IConfirmationModalProps {
   onAgree: () => void;
 }
 
-async function SetRole(dto: ISetRoleDto) {
+async function SetUserRole(dto: ISetRoleDto) {
   const xd = await setUserRole(dto);
   localStorage.setItem("role", "BookieWriter");
 }
@@ -55,13 +55,15 @@ const ConfirmationModal: React.FC<IConfirmationModalProps> = ({ isOpen, onClose,
       <Modal.Body>
         <p>Ar sutinkate su puslapio privatumo politika?</p>
         <p>Apie ją galite paskaityti čia: https://bookie.privatumas.lt</p>
+        <p></p>
+        <p>Patvirtinus sutikimą, jums reikės prisijungti iš naujo.</p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
-          Back to Home Page
+          Grįžti į namų puslapį
         </Button>
         <Button variant="primary" onClick={onAgree}>
-          Agree
+          Sutinku
         </Button>
       </Modal.Footer>
     </Modal>
@@ -83,7 +85,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [showAddChapterModal, setShowAddChapterModal] = useState(false);
   const [updatePage, setUpdatePage] = useState(false);
 
-  const [userRole, setUserRole] = useState<string | null>("");
+  const [userrole, setUserrole] = useState<string | null>("");
   const [pieChartData, setPieChartData] = useState<any[]>([
     ["Fantasy", 10],
     ["Mystery", 20],
@@ -97,6 +99,11 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     "2022-04-01": 8,
     "2022-05-01": 5
   });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setUserrole(localStorage.getItem("role"));
+  }, []);
 
   async function GetBooks() {
     const xd = await getWriterBooks();
@@ -125,10 +132,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     setTexts(xd);
   }
 
-  async function GetChaptersForBook(bookId: number, genreName: string): Promise<IChapters[]> {
-    const data = await getBookChapters(bookId, genreName);
-    return data;
-  }
   const onAuthenticated = () => {
     GetTexts();
     GetGenres();
@@ -137,12 +140,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   useFetchCurrentUser(onAuthenticated, updatePage);
 
-  const toggleFormStatus = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleConfirmationClose = () => {
-    const navigate = useNavigate();
     navigate("/");
   };
 
@@ -150,8 +148,9 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     const setRole: ISetRoleDto = {
       roleName: "BookieWriter"
     };
-    SetRole(setRole);
+    SetUserRole(setRole);
     setIsConfirmationOpen(false);
+    navigate("/login");
   };
 
   const handleAddBook = () => {
@@ -176,16 +175,19 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     };
 
     const response = await addChapter(chapter, selectedBook!.genreName);
-    if (response === 'success') {
-      handleConfirmed(`Skyrius ${chapter.name} pridėtas prie knygos ${selectedBook!.name}.`);
+    if (response.errorMessage === '') {
+      if (response.chargedUsersCount === 0) {
+        handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook!.name}".`);
+      } else {
+        handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook!.name}". Taškai gauti už ${response.chargedUsersCount} ${getSubscriberWord(response.chargedUsersCount)}`);
+      }
       await GetBooks();
     } else {
-      handleDenied(response);
+      handleDenied(response.errorMessage);
     }
   };
 
   async function handleReadBookClick(book: IBookBought) {
-    console.log('knyga', book.chapters?.length)
     setSelectedBook(book);
     setShowChapterList(true);
   }
@@ -193,7 +195,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   async function handleReadTextClick(text: ITextsBought) {
     setSelectedText(text);
     setShowTextModal(true);
-    console.log(texts);
   }
 
   const handleHideModal = () => {
@@ -225,7 +226,8 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
     const response = await addBook(genre, book);
     if (response === 'success') {
-      handleConfirmed(`Knyga ${book.name} pridėta sėkmingai.`);
+      handleConfirmed(`Knyga "${book.name}" pridėta sėkmingai.`);
+      GetBooks();
     } else {
       handleDenied(response);
     }
@@ -249,7 +251,8 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
     const response = await addText(genre, text);
     if (response === 'success') {
-      handleConfirmed(`tekstas ${text.name} pridėtas sėkmingai.`);
+      handleConfirmed(`Tekstas "${text.name}" pridėtas sėkmingai.`);
+      GetTexts();
     } else {
       handleDenied(response);
     }
@@ -257,14 +260,14 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   return (
     <div>
-      {/* {userRole !== "BookieWriter" &&
-        userRole !== "Admin" && (
+      {userrole !== "BookieWriter" &&
+        userrole !== "Admin" && (
           <ConfirmationModal
             isOpen={isConfirmationOpen}
             onClose={handleConfirmationClose}
             onAgree={handleAgree}
           />
-        )} */}
+        )}
       <div className="writers-platform">
         <div className="textsAndBooks">
           <div className="books-and-texts">
@@ -296,7 +299,9 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                             <button className="view-content btn-color1" onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
                           )}
                           <button className="comments btn-color3">Komentarai</button>
-                          <button className="add-chapter btn-color2" onClick={() => handleAddChapter(book)}>Pridėti skyrių</button>
+                          {book.isFinished === 0 && (
+                            <button className="add-chapter btn-color2" onClick={() => handleAddChapter(book)}>Pridėti skyrių</button>
+                          )}
                         </div>
                       </li>
                     ))}

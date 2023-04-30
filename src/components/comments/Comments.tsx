@@ -33,9 +33,7 @@ const Comments = (props: Props) => {
 
   async function GetComments() {
     const xd = await getComments(parseInt(localStorage.getItem("genreId")!), bookId);
-    console.log('initial value: ', xd);
     setComments(xd);
-    console.log('set value: ', comments);
   }
 
   useEffect(() => {

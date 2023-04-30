@@ -18,8 +18,7 @@ interface ISetRoleDto {
 }
 
 const setUserRole = async (dto:ISetRoleDto) =>
-  await axios.post(`${url}/admin`, undefined).then(function (response) {
-    console.log(response);
+  await axios.post(`${url}/admin`, dto).then(function (response) {
   })
     .catch(function (error) {
       console.log(error.response.data);

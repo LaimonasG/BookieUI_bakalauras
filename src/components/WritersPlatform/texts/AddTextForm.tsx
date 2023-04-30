@@ -27,29 +27,14 @@ const TextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, 
   }, []);
 
   const handleSubmit = () => {
-    console.log('Slapia makstis pries submita:', coverImage);
-    if (!name || !description || name.length > 25 || description.length > 25 || !genre || !coverImage || !contentFile || !textPrice) {
+    if (!name || !description || name.length > 25 || description.length > 150 || !genre || !coverImage || !contentFile || !textPrice) {
       setValidationError('Visi laukai yra privalomi ir pavadinimo bei aprašymo laukai negali būti ilgesni nei 25 simboliai.');
       return;
     }
 
     onSubmit(name, genre.name, description, parseFloat(textPrice), coverImage, contentFile);
     onHide();
-    handleSubmittedSuccessfully();
   };
-
-
-  function handleSubmittedSuccessfully() {
-    toast.success('Tekstas įkeltas sėkmingai!', {
-      position: 'bottom-center',
-      autoClose: 3000, // milliseconds
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
 
   return (
     <Modal show={show} onHide={onHide}>
@@ -95,7 +80,7 @@ const TextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, 
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              maxLength={25}
+              maxLength={150}
             />
           </Form.Group>
 

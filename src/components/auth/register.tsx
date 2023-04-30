@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { register } from "../../services/auth.service";
-import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { register, login } from "../../services/auth.service";
+import { NavigateFunction, json, useNavigate } from 'react-router-dom';
 
 export interface IUser {
   username: string,
@@ -54,8 +54,24 @@ const Register: React.FC = () => {
       (response) => {
         setMessage(response.data.message);
         setSuccessful(true);
-        navigate("/home");
-        window.location.reload();
+
+        // Perform login after successful registration
+        login(username, password).then(
+          (data) => {
+            navigate("/home");
+            window.location.reload();
+          },
+          (error) => {
+            const resMessage =
+              (error.response &&
+                error.response.data) ||
+              error.message ||
+              error.toString();
+
+            setMessage(resMessage);
+            setSuccessful(false);
+          }
+        );
       },
       (error) => {
         const resMessage =
@@ -121,7 +137,7 @@ const Register: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                  <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
+                  <button type="submit" className="btn btn-primary btn-block">Registruotis</button>
                 </div>
               </div>
             )}

@@ -43,10 +43,10 @@ const addBook = async (genreName: string, book: IBookAdd) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       return 'success';
     } else {
-      return 'failed';
+      return 'Error status'+response.status.toString();
     }
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -60,32 +60,36 @@ const addBook = async (genreName: string, book: IBookAdd) => {
   }
 };
 
-const addChapter = async (chapter:IChaptersAdd,genreName:string) => {
+const addChapter = async (chapter: IChaptersAdd, genreName: string) => {
   try {
-  const formData = new FormData();
-  formData.append("File", chapter.content);
-  formData.append("Name", chapter.name);
-  formData.append("IsFinished", chapter.isFinished.toString());
+    const formData = new FormData();
+    formData.append("File", chapter.content);
+    formData.append("Name", chapter.name);
+    formData.append("IsFinished", chapter.isFinished.toString());
 
-  const response=await axios
-    .post(`${url}/genres/${genreName}/books/${chapter.bookId}/chapters`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    if (response.status === 200) {
-      return 'success';
+    const response = await axios.post(
+      `${url}/genres/${genreName}/books/${chapter.bookId}/chapters`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      return { errorMessage: '', chargedUsersCount: response.data.chargedUsersCount };
     } else {
-      return 'failed';
+      return { errorMessage: 'failed', chargedUsersCount: 0 };
     }
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response && axiosError.response.status === 400) {
       const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
-      return errorDataString;
+      return { errorMessage: errorDataString, chargedUserCount: 0 };
     } else {
       console.error(error);
-      return 'error';
+      return { errorMessage: 'error', chargedUserCount: 0 };
     }
   }
 };

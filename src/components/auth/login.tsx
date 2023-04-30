@@ -5,9 +5,8 @@ import * as Yup from "yup";
 
 import { login } from "../../services/auth.service";
 
-type Props = {}
-
-const Login: React.FC<Props> = () => {
+export type LoginProps = {}
+const Login: React.FC = (LoginProps) => {
   let navigate: NavigateFunction = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -23,7 +22,7 @@ const Login: React.FC<Props> = () => {
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Naudotojo vardo laukas būtinas."),
-    password: Yup.string().required("Slaptažodžio laukas būtinas. "),
+    password: Yup.string().required("Slaptažodžio laukas būtinas"),
   });
 
   const handleLogin = (formValue: { username: string; password: string }) => {
@@ -34,8 +33,6 @@ const Login: React.FC<Props> = () => {
 
     login(username, password).then(
       () => {
-        console.log("user reikšmė paspaudus login:", localStorage.getItem("user"));
-        console.log("role reikšmė atidarius login:", localStorage.getItem("role"));
         navigate("/home");
         window.location.reload();
       },
