@@ -27,34 +27,13 @@ export const Navbar = () => {
           setCurrentUser(user);
         }
       } catch (error) {
-        console.error(error);
+        //console.error(error);
       }
     };
 
     fetchCurrentUser();
   }, []);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const user = await getCurrentUser();
-        if (user !== null) {
-          // Check if the user token has expired
-          const tokenExpirationTime = getTokenExpirationTime(user);
-          if (tokenExpirationTime && Date.now() >= tokenExpirationTime) {
-            logout();
-            setCurrentUser(undefined);
-          } else {
-            setCurrentUser(user);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
 
   const handleNavToggle = () => {
     setIsNavExpanded(!isNavExpanded);

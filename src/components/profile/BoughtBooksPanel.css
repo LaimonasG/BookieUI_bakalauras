@@ -72,3 +72,13 @@
   font-size: 20px;
   background-color: var(--color-3);
 }
+
+.btn-unsubscribe{
+background-color: var(--color-6);
+color: white;
+}
+
+.btn-unsubscribe:hover{
+  background-color: var(--color-6-hover);
+  color: white;
+}

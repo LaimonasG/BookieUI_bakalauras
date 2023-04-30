@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './BoughtbooksPanel.css';
-import { IBookBought, getPointsWord } from '../../Interfaces';
+import './BoughtBooksPanel.css';
+import { IBookBought, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
 import ChapterList from '../Chapters/ChapterList';
 import { getProfileBooks } from '../../requests/ProfileController';
+import { unsubscribeToBook } from '../../requests/BookController';
 
 
 const BoughtBooks: React.FC = () => {
@@ -22,6 +23,16 @@ const BoughtBooks: React.FC = () => {
   const readBook = (book: IBookBought) => {
     setSelectedBook(book);
     setShowChapterList(true);
+  };
+
+  const unsubscribe = async (book: IBookBought) => {
+    const response = await unsubscribeToBook(book.id, book.genreName);
+    if (response === 'success') {
+      handleConfirmed(`Knygos "${book.name}" prenumerata nutraukta.`);
+      await getProfileBooks();
+    } else {
+      handleDenied(response);
+    }
   };
 
   const handleHideModal = () => {
@@ -45,7 +56,9 @@ const BoughtBooks: React.FC = () => {
                 <div>
                   <button className="view-content btn-color1" onClick={() => readBook(book)}>Peržiūrėti turinį</button>
                   <button className="comments btn-color3">Komentarai</button>
-                  <span className="book-finished-indicator">{book.isFinished ? "●" : "○"}</span>
+                  {book.isFinished === 0 &&
+                    <button className="btn-unsubscribe" onClick={() => unsubscribe(book)}>Nutraukti prenumeratą</button>
+                  }
                 </div>
               </li>
             ))}

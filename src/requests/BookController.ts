@@ -142,5 +142,26 @@ const editBook = async (genreName: string, idBook: number, book: IBooks) =>
     }
   };
 
-  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter}
+  const unsubscribeToBook = async (bookId: number, genreName: string): Promise<string> => {
+    try {
+      const response = await axios.put(`${url}/genres/${genreName}/books/${bookId}/unsubscribe`, undefined);
+  
+      if (response.status === 200) {
+        return 'success';
+      } else {
+        return 'failed';
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+        return errorDataString;
+      } else {
+        console.error(error);
+        return 'error';
+      }
+    }
+  };
+
+  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook}
 
