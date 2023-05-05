@@ -33,7 +33,7 @@ const Login: React.FC = (LoginProps) => {
 
     login(username, password).then(
       () => {
-        navigate("/home");
+        navigate("/");
         window.location.reload();
       },
       (error) => {

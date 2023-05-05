@@ -58,7 +58,7 @@ const Register: React.FC = () => {
         // Perform login after successful registration
         login(username, password).then(
           (data) => {
-            navigate("/home");
+            navigate("/");
             window.location.reload();
           },
           (error) => {

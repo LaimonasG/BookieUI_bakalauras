@@ -1,6 +1,5 @@
 import React, { Component, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import BookForm from "./Unfinished books/BookForm";
 import { UnfinBookList } from "./Unfinished books/BookList";
 import { FinBookList } from "./Finished books/BookList";
 import { TextList } from "./Texts/TextList";
@@ -13,7 +12,7 @@ class Content extends Component {
                 <div className="booklist-wrapper">
                     <FinBookList />
                 </div>
-                <div className="textlist-wrapper">
+                <div className="booklist-wrapper">
                     <UnfinBookList />
                 </div>
                 <div className="textlist-wrapper">

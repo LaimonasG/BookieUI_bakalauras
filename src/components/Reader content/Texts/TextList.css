@@ -64,6 +64,12 @@
   flex-shrink: 0;
 }
 
+.text-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 1rem;
+}
+
 .text-tile-price {
   font-size: 1.2rem;
   font-weight: bold;
@@ -90,7 +96,6 @@
   height: 4px;
   background-color: #606060;
 }
-
 
 .text-tiles-grid,
 .text-tiles-grid {

@@ -15,8 +15,24 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
   const [surname, setSurname] = useState(currentUser?.surname || '');
   const [email, setEmail] = useState(currentUser?.email || '');
   const [username, setUsername] = useState(currentUser?.userName || '');
+  const [validationError, setValidationError] = useState('');
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
 
   const handleSubmit = () => {
+    if (!name || !surname) {
+      setValidationError('Vardo ir pavardės laukai privalomi.');
+      return;
+    }
+    if (!username) {
+      setValidationError('Naudotojo vardas privalomas.');
+      return;
+    }
+    const isEmailInvalid = email.length > 0 && !emailRegex.test(email);
+    if (isEmailInvalid) {
+      setValidationError('Elektroninis paštas nėra validus.');
+      return;
+    }
     onUpdate(username, name, surname, email);
     onHide();
   };
@@ -33,6 +49,8 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
             <Form.Control
               type="text"
               value={username}
+              maxLength={25}
+              minLength={3}
               onChange={(e) => setUsername(e.target.value)}
             />
           </Form.Group>
@@ -42,6 +60,7 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
             <Form.Control
               type="text"
               value={name}
+              maxLength={12}
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
@@ -51,6 +70,7 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
             <Form.Control
               type="text"
               value={surname}
+              maxLength={12}
               onChange={(e) => setSurname(e.target.value)}
             />
           </Form.Group>
@@ -61,6 +81,8 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              minLength={5}
+              maxLength={30}
             />
           </Form.Group>
         </Form>

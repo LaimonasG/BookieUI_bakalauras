@@ -101,7 +101,7 @@ export const Navbar = () => {
                 onClick={handleNavCollapse}
                 className={location.pathname === "/login" ? "nav-link-active" : ""}>
                 <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
-                Login
+                Prisijungti
               </Nav.Link>
               <Nav.Link
                 as={Link}

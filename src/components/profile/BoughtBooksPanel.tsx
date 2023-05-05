@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './BoughtBooksPanel.css';
 import { IBookBought, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
 import ChapterList from '../Chapters/ChapterList';
+import CommentList from '../comments/CommentsList';
 import { getProfileBooks } from '../../requests/ProfileController';
 import { unsubscribeToBook } from '../../requests/BookController';
-
+import { Pagination } from 'react-bootstrap';
 
 const BoughtBooks: React.FC = () => {
   const [books, setBooks] = useState<IBookBought[]>([]);
   const [showChapterList, setShowChapterList] = useState(false);
   const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
+  const [isBookCommentsOpen, setIsBookCommentsOpen] = useState<boolean>(false);
+
+  //pagination
+  const [pageBook, setBookPage] = useState(0);
+  const perPage = 2;
+  const numBookPages = Math.ceil(books.length / perPage);
+  const booksToDisplay = books.slice(pageBook * perPage, (pageBook + 1) * perPage);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -29,7 +36,8 @@ const BoughtBooks: React.FC = () => {
     const response = await unsubscribeToBook(book.id, book.genreName);
     if (response === 'success') {
       handleConfirmed(`Knygos "${book.name}" prenumerata nutraukta.`);
-      await getProfileBooks();
+      const xd = await getProfileBooks();
+      setBooks(xd);
     } else {
       handleDenied(response);
     }
@@ -37,31 +45,44 @@ const BoughtBooks: React.FC = () => {
 
   const handleHideModal = () => {
     setShowChapterList(false);
+    setIsBookCommentsOpen(false);
   }
 
+  const handleOpenBookComments = (book: IBookBought) => {
+    setSelectedBook(book);
+    setIsBookCommentsOpen(true);
+  }
+
+
   return (
-    <div className="book-list">
-      <h3>Knygos</h3>
-      {books.length === 0 ? (
-        <p>Knygų sąrašas tuščias</p>
-      ) : (
-        <div className="scrollable-panel">
+    <div className="book-list-container">
+      <div className="book-list">
+        <h3>Knygos</h3>
+        {books.length === 0 ? (
+          <p>Knygų sąrašas tuščias</p>
+        ) : (
           <ul>
-            {books.map((book) => (
+            {booksToDisplay.map((book) => (
               <li key={book.id}>
                 <p className="book-name"> Knygos pavadinimas: {book.name}</p>
-                <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
+                {book.isFinished === 1 &&
+                  <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
+                }
                 <p className="book-description"> Įkelta: {new Date(book.created.toString()).toISOString().split('T')[0]}</p>
-
                 <div>
-                  <button className="view-content btn-color1" onClick={() => readBook(book)}>Peržiūrėti turinį</button>
-                  <button className="comments btn-color3">Komentarai</button>
+                  {book.chapters?.length === 0 ? (
+                    <button disabled={true} className="btn-disabled">Peržiūrėti turinį</button>
+                  ) : (
+                    <button className="view-content btn-color1" onClick={() => readBook(book)}>Peržiūrėti turinį</button>
+                  )}
+                  <button className="comments btn-color3" onClick={() => handleOpenBookComments(book)}>Komentarai</button>
                   {book.isFinished === 0 &&
                     <button className="btn-unsubscribe" onClick={() => unsubscribe(book)}>Nutraukti prenumeratą</button>
                   }
                 </div>
               </li>
             ))}
+
             {showChapterList && selectedBook && (
               <ChapterList
                 book={selectedBook}
@@ -69,10 +90,42 @@ const BoughtBooks: React.FC = () => {
                 onHide={handleHideModal}
               />
             )}
+            {isBookCommentsOpen &&
+              <CommentList
+                isOpen={isBookCommentsOpen}
+                onClose={handleHideModal}
+                isProfile={true}
+                entityId={selectedBook!.id}
+                commentType='Book'
+                genreName={selectedBook!.genreName}
+                bookId={0}
+              />
+            }
           </ul>
-        </div>
+        )}
+      </div>
+      {numBookPages > 1 && (
+        <Pagination
+          size="sm"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "1rem",
+          }}
+        >
+          {Array.from(Array(numBookPages), (e, i) => (
+            <Pagination.Item
+              key={i}
+              active={i === pageBook}
+              onClick={() => setBookPage(i)}
+            >
+              {i + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
       )}
     </div>
+
   );
 };
 

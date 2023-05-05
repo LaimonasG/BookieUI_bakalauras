@@ -35,33 +35,38 @@ p {
   object-fit: contain;
 }
 
-.action-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+.buttons-container {
+  display: flex;
+  justify-content: center;
   gap: 1rem;
-  justify-items: center;
+  margin-top: 2rem;
 }
 
-.btn-primary,
-.btn-secondary {
+.btn-custom {
   font-weight: bold;
   border: none;
   border-radius: 5px;
 }
 
-.btn-primary {
-  background-color: #4CAF50 ;
-  border-color: #4CAF50 ;
+.btn-custom-buy {
+  background-color: var(--color-2);
+  border-color: var(--color-2);
   margin-left: 1rem;
+  color: #ffffff;
 }
 
-.btn-secondary {
-  background-color: #3f51b5;
-  border-color: #3f51b5;
+.btn-custom-comments {
+  background-color: var(--color-3);
+  border-color: var(--color-3);
+  color: #ffffff;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover {
-  background-color: #fff;
-  color: #000;
+.btn-custom-buy:hover {
+  background-color: var(--color-2-hover);
+  color: #ffffff;
+}
+
+.btn-custom-comments:hover {
+  background-color: var(--color-3-hover);
+  color: #ffffff;
 }

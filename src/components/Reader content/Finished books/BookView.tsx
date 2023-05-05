@@ -31,25 +31,16 @@ const BookView: React.FC<BookInformationModalProps> = ({
         <Modal.Title>{book.name}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="d-flex align-items-start justify-content-between">
-          <div className="w-75">
-            <p className="mb-2"><strong>Autorius:</strong> {book.author}</p>
-            <p className="mb-2"><strong>Aprašymas:</strong> {book.description}</p>
-            <p className="mb-2"><strong>Kaina:</strong> {book.bookPrice} {getPointsWord(book.bookPrice)} </p>
-          </div>
-          <div className="w-25 d-flex flex-column justify-content-between align-items-center">
-            <div className="mb-4">
-              <img
-                src={book.coverImageUrl}
-                alt={`Cover of ${book.name}`}
-                className="book-cover"
-              />
-            </div>
-            <div className="action-buttons">
-              <Button variant="primary" onClick={() => handleBuyBook(book)}>Pirkti</Button>
-            </div>
-          </div>
+        <div className="book-info">
+          <p className="mb-2"><strong>Autorius:</strong> {book.author}</p>
+          <p className="mb-2"><strong>Aprašymas:</strong> {book.description}</p>
+          <p className="mb-2"><strong>Kaina:</strong> {book.bookPrice} {getPointsWord(book.bookPrice)} </p>
         </div>
+        <div className="buttons-container">
+          <Button variant="custom-buy" className="btn-custom" onClick={() => handleBuyBook(book)}>Pirkti</Button>
+          <Button variant="custom-comments" className="btn-custom">Komentarai</Button>
+        </div>
+
       </Modal.Body>
     </Modal>
   );

@@ -27,8 +27,8 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
   }, []);
 
   const handleSubmit = () => {
-    if (!name || !description || name.length > 25 || description.length > 150 || !genre || !coverImage) {
-      setValidationError('Visi laukai yra privalomi ir pavadinimo bei aprašymo laukai negali būti ilgesni nei 25 simboliai.');
+    if (!name || !description || !genre || !coverImage) {
+      setValidationError('Visi laukai yra privalomi.');
       return;
     }
 

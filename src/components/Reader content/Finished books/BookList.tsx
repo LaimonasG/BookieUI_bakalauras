@@ -95,7 +95,7 @@ export const FinBookList = () => {
 
   if (books.length === 0) {
     return (
-      <h1>Žanras "{genreName}" dar neturi knygų.</h1>
+      <div></div>
     )
   }
   return (

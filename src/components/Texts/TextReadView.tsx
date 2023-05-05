@@ -17,6 +17,7 @@ const TextReadView: React.FC<TextInformationModalProps> = ({ text, show, onHide 
   if (text.content.length === 0) {
     return <p>Tekstas tuščias.</p>;
   }
+
   return (
     <Modal
       show={show}
@@ -30,6 +31,15 @@ const TextReadView: React.FC<TextInformationModalProps> = ({ text, show, onHide 
         <Modal.Title id="contained-modal-title-vcenter">{text.name}</Modal.Title>
       </Modal.Header>
       <Modal.Body onClick={handleContentClick}>
+        <div className="text-cover-container">
+          <div className="mb-4">
+            <img
+              src={text.coverImageUrl}
+              alt={`Tekstos "${text.name}" viršelis.`}
+              className="text-cover"
+            />
+          </div>
+        </div>
         <p dangerouslySetInnerHTML={{ __html: text.content }} />
       </Modal.Body>
       <Modal.Footer>

@@ -1,5 +1,6 @@
 import axios from "axios"
 import { url } from "../App";
+import { IChapters } from "../Interfaces";
 
 const userStr = localStorage.getItem("user");
 
@@ -27,7 +28,7 @@ interface ISetRoleDto {
   const getWriterText = async (textId:number) =>
   await axios.get(`${url}/writer/texts/${textId}`, undefined).then((x) => x.data);
 
-  const getBookChapters = async (bookId:number,genreName:string) =>
+  const getBookChapters = async (bookId:number,genreName:string) : Promise<IChapters> =>
   await axios.get(`${url}/genres/${genreName}/books/${bookId}/chapters`, undefined).then((x) => x.data);
   
 const chargeUsers = async (bookId: number, chapterId: number): Promise<number> =>

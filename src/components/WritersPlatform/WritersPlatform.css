@@ -86,6 +86,7 @@
 .book-list,
 .text-list {
   margin-bottom: 2rem;
+  height: 350px;
 }
 
 .book-list h3,
@@ -134,6 +135,7 @@
   cursor: pointer;
 }
 
+
 .chapter-list-overlay {
   position: fixed;
   top: 0;
@@ -175,23 +177,44 @@
   font-size: 1rem;
 }
 
-.scrollable-panel {
-  max-height: 300px; /* Adjust the height as per your requirement */
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-1) var(--color-5);
+.comments-pager {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }
 
-.scrollable-panel::-webkit-scrollbar {
-  width: 10px;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
 }
 
-.scrollable-panel::-webkit-scrollbar-track {
-  background: var(--color-5);
+.pagination .page-item {
+  margin: 0 2px;
 }
 
-.scrollable-panel::-webkit-scrollbar-thumb {
-  background-color: var(--color-4);
-  border-radius: 10px;
+.pagination .page-link {
+  color: var(--color-4);
+  background-color: var(--color-5);
+  border: 1px solid var(--color-4);
 }
 
+.pagination .page-link:focus,
+.pagination .page-link:hover {
+  color: var(--color-3);
+  background-color: var(--color-5-hover);
+  border-color: var(--color-3);
+}
+
+.pagination .page-item.active .page-link {
+  color: var(--color-5);
+  background-color: var(--color-3);
+  border-color: var(--color-3);
+}
+
+.pagination .page-item.disabled .page-link {
+  color: var(--color-5-hover);
+  background-color: var(--color-5);
+  border-color: var(--color-4-hover);
+}

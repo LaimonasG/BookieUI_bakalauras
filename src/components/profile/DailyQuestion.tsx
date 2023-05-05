@@ -11,18 +11,22 @@ interface DailyQuestionProps {
 const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => {
   const [questionAnswered, setQuestionAnswered] = useState(false);
   const [question, setQuestion] = useState<IQuestion | null>();
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(-1);
   const [lastAnswerTime, setLastAnswerTime] = useState<Date>();
   const [timeUntilNextQuestion, setTimeUntilNextQuestion] = useState(0);
 
   const handleSubmit = async () => {
+    if (!selectedAnswer) {
+      return;
+    }
     setQuestionAnswered(true);
+    setSelectedAnswer(null);
     const result = await answerQuestion(question!.id, selectedAnswer!);
     if (result.correct === 1) {
-      handleConfirmed(result.content);
+      handleConfirmed(`Puiku! Jūsų pasirinkimas "${result.content}" yra teisingas.`);
       onQuestionAnswered();
     } else {
-      handleDenied(result.content);
+      handleDenied(`Deja, jūsų pasirinkimas buvo neteisingas. Teisingas variantas yra "${result.content}".`);
     }
 
   };
@@ -41,7 +45,7 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
 
   async function GetLastAnswerTime() {
     const xd = await getLastAnswerTime();
-    setLastAnswerTime(new Date("2023-04-25T15:00:00"));
+    setLastAnswerTime(new Date("2023-04-25T15:00:00")); //date set just for testing purposes
   }
 
   useEffect(() => {
@@ -114,7 +118,12 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
               </div>
             ))}
           </div>
-          <button onClick={handleSubmit}>Pateikti</button>
+          <button
+            onClick={handleSubmit}
+            disabled={selectedAnswer === -1}
+          >
+            Pateikti
+          </button>
         </div>
       );
     }

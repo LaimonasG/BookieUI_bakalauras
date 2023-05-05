@@ -5,6 +5,9 @@ import useFetchCurrentUser from "../../useFetchCurrentUser";
 import PersonalInfo from './PersonalInfo';
 import BoughtBooks from './BoughtBooksPanel';
 import BoughtTexts from './BoughtTextsPanel';
+import { getProfileBooks } from '../../requests/ProfileController';
+import { unsubscribeToBook } from '../../requests/BookController';
+import { IBookBought, handleConfirmed, handleDenied } from '../../Interfaces';
 
 interface PersonalInfoRef {
   fetchPoints: () => void;
@@ -21,6 +24,7 @@ const Profile: React.FC = () => {
   const handleQuestionAnswered = () => {
     personalInfoRef.current?.fetchPoints();
   };
+
 
   useFetchCurrentUser(onAuthenticated, updatePage);
   return (

@@ -100,6 +100,16 @@ export interface ITexts {
   Content: string,
 }
 
+export interface IBooks {
+  id: number;
+  GenreId: number;
+  UserId: string;
+  Name: string;
+  Author: string;
+  Price:number;
+  Quality:string;
+}
+
 export interface ISetRoleDto {
   roleName: string
 }
@@ -162,7 +172,19 @@ export interface ICreatePayment{
   price:number;
 }
 
+export interface IComment{
+  id:number;
+  entityId:number;
+  entityType:string;
+  date:Date;
+  content:string;
+  userId:string;
+  username:string;
+}
 
+export interface ICreateComment{
+Content:string;
+}
 
 export function getPointsWord(points: number) {
   if (points % 10 === 1 && points % 100 !== 11) {
@@ -213,6 +235,21 @@ export function handleDenied(message: string) {
     draggable: true,
     progress: undefined,
   });
+}
+
+
+
+export function handleBeingAdded(message: string) {
+  let toastId: any = null;
+  toastId=toast.info(message, {
+    position: 'bottom-center',
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+  return toastId;
 }
 
 

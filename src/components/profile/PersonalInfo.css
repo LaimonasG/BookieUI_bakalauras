@@ -46,9 +46,9 @@
 }
 
 .buy-btn:hover {
-  background-color: var(--color-2-hover);
+  background-color: var(--color-3-hover);
 }
 
 .edit-btn:hover {
-  background-color: var(--color-3-hover);
+  background-color: var(--color-2-hover);
 }

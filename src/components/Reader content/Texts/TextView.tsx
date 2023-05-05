@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { ITextsToBuy, handleConfirmed, handleDenied } from "../../../Interfaces";
+import { IComment, ITextsToBuy, getPointsWord, handleConfirmed, handleDenied } from "../../../Interfaces";
 import "./TextView.css";
 import { purchaseText } from '../../../requests/TextsController';
+import CommentList from '../../comments/CommentsList';
+import { getTextComments } from '../../../requests/CommentsController';
 
 type TextInformationModalProps = {
   text: ITextsToBuy;
@@ -10,21 +12,13 @@ type TextInformationModalProps = {
   onClose: () => void;
 };
 
-function getPointsWord(points: number) {
-  if (points % 10 === 1 && points % 100 !== 11) {
-    return "taškas";
-  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
-    return "taškai";
-  } else {
-    return "taškų";
-  }
-}
-
 const TextView: React.FC<TextInformationModalProps> = ({
   text,
   isOpen,
   onClose,
 }) => {
+  const [comments, setComments] = useState<IComment[]>([]);
+  const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
 
   const handleBuyText = async (text: ITextsToBuy) => {
     const response = await purchaseText(text.id, text.genreName);
@@ -37,31 +31,45 @@ const TextView: React.FC<TextInformationModalProps> = ({
     }
   }
 
+  const handleOnCommentsClose = () => {
+    setIsCommentsOpen(false);
+  }
+
+  const handleOpenComments = async (text: ITextsToBuy) => {
+    console.log("ID:", text.id);
+    console.log("User:", localStorage.getItem("user"));
+    const response = await getTextComments(text.id, text.genreName);
+    if (response) {
+      setComments(response);
+    } else {
+      setComments([]);
+    }
+    setIsCommentsOpen(true);
+  }
+
   return (
     <Modal show={isOpen} onHide={onClose} centered backdrop="static">
       <Modal.Header closeButton>
         <Modal.Title>{text.name}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="d-flex align-items-start justify-content-between">
-          <div className="w-75">
-            <p className="mb-2"><strong>Autorius:</strong> {text.author}</p>
-            <p className="mb-2"><strong>Aprašymas:</strong> {text.description}</p>
-            <p className="mb-2"><strong>Kaina:</strong> {text.price} {getPointsWord(text.price)} </p>
-          </div>
-          <div className="w-25 d-flex flex-column justify-content-between align-items-center">
-            <div className="mb-4">
-              <img
-                src={text.coverImageUrl}
-                alt={`Cover of ${text.name}`}
-                className="text-cover"
-              />
-            </div>
-            <div className="action-buttons">
-              <Button variant="primary" onClick={() => handleBuyText(text)}>Pirkti</Button>
-            </div>
-          </div>
+        <div className="book-info">
+          <p className="mb-2"><strong>Autorius:</strong> {text.author}</p>
+          <p className="mb-2"><strong>Aprašymas:</strong> {text.description}</p>
+          <p className="mb-2"><strong>Kaina:</strong> {text.price} {getPointsWord(text.price)} </p>
         </div>
+        <div className="buttons-container">
+          <Button variant="custom-buy" className="btn-custom" onClick={() => handleBuyText(text)}>Pirkti</Button>
+          <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(text)}>Komentarai</Button>
+        </div>
+        <CommentList
+          isOpen={isCommentsOpen}
+          onClose={handleOnCommentsClose}
+          isProfile={false}
+          entityId={text.id}
+          commentType='Text'
+          genreName={text.genreName}
+        />
       </Modal.Body>
     </Modal>
   );

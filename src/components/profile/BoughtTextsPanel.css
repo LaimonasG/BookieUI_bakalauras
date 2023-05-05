@@ -1,5 +1,6 @@
 .text-list {
   margin-bottom: 2rem;
+  height: 450px;
 }
 
 .text-list h3 {
@@ -47,22 +48,13 @@
   cursor: pointer;
 }
 
-.scrollable-panel {
-  max-height: 300px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-1) var(--color-5);
+.text-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 450px;
+  overflow: auto;
 }
 
-.scrollable-panel::-webkit-scrollbar {
-  width: 10px;
-}
-
-.scrollable-panel::-webkit-scrollbar-track {
-  background: var(--color-5);
-}
-
-.scrollable-panel::-webkit-scrollbar-thumb {
-  background-color: var(--color-4);
-  border-radius: 10px;
+.book-list {
+  flex-grow: 1;
 }

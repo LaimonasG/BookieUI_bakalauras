@@ -1,17 +1,8 @@
 import axios, { AxiosError } from "axios"
-import { IBookAdd, IBookToBuy, IChaptersAdd } from "../Interfaces";
+import { IBookAdd, IBookToBuy, IBooks, IChaptersAdd } from "../Interfaces";
 import { toast } from 'react-toastify';
 import { url } from "../App";
 
-interface IBooks {
-  id: number;
-  GenreId: number;
-  UserId: string;
-  Name: string;
-  Author: string;
-  Price:number;
-  Quality:string;
-}
 const userStr = localStorage.getItem("user");
 
 
