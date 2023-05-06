@@ -1,17 +1,3 @@
- /* .genre-image {
-  height: 200px;
-  background-image: url(/path/to/image.jpg);
-  background-position: center;
-  background-size: cover;
-} 
-
- .genre-tile img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}  */
-
 .genres-container {
   display: flex;
   flex-wrap: wrap;

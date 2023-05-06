@@ -2,14 +2,14 @@ import React, { Component, useState, useEffect, Dispatch } from "react";
 import { Button, Modal, Pagination } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { setUserRole } from "../../requests/AdminController";
-import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord, handleBeingAdded } from '../../Interfaces';
+import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord, handleBeingAdded, IStatus } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
 import { getAllGenres } from '../../requests/GenresController';
 import { addBook, addChapter } from "../../requests/BookController";
 import { addText } from "../../requests/TextsController";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-import ChapterList from '../Chapters/ChapterList';
-import TextReadView from '../Texts/TextReadView';
+import ChapterList from '../chapters/ChapterList';
+import TextReadView from '../texts/TextReadView';
 import AddBookForm from './books/AddBookForm';
 import TextFormModal from './texts/AddTextForm';
 import 'chartkick/chart.js';
@@ -340,16 +340,24 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                       <p className="book-name"> Knygos pavadinimas: {book.name}</p>
                       <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
                       <p className="book-description"> Įkelta: {new Date(book.created.toString()).toISOString().split('T')[0]}</p>
+                      <p className={`book-status status-${IStatus[book.status]}`}> Statusas: {IStatus[book.status]}</p>
+                      {book.statusComment &&
+                        <p className="book-description"> Komentaras: {book.statusComment}</p>
+                      }
                       <div>
-                        {book.chapters?.length === 0 ? (
-                          <button disabled={true} className="btn-disabled">Peržiūrėti turinį</button>
-                        ) : (
-                          <button className="view-content btn-color1" onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
-                        )}
-                        <button className="comments btn-color3" onClick={() => handleOpenBookComments(book)}>Komentarai</button>
-                        {book.isFinished === 0 && (
-                          <button className="add-chapter btn-color2" onClick={() => handleAddChapter(book)}>Pridėti skyrių</button>
-                        )}
+                        {book.status == IStatus.Patvirtinta &&
+                          <div>
+                            {book.chapters?.length === 0 ? (
+                              <button disabled={true} className="btn-disabled">Peržiūrėti turinį</button>
+                            ) : (
+                              <button className="view-content btn-color1" onClick={() => handleReadBookClick(book)}>Peržiūrėti turinį</button>
+                            )}
+                            <button className="comments btn-color3" onClick={() => handleOpenBookComments(book)}>Komentarai</button>
+                            {book.isFinished === 0 && (
+                              <button className="add-chapter btn-color2" onClick={() => handleAddChapter(book)}>Pridėti skyrių</button>
+                            )}
+                          </div>
+                        }
                       </div>
                     </li>
                   ))}

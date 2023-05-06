@@ -218,3 +218,19 @@
   background-color: var(--color-5);
   border-color: var(--color-4-hover);
 }
+
+.status-Pateikta {
+  color: #0070c0;
+}
+
+.status-Vertinama {
+  color: #ff9c00;
+}
+
+.status-Patvirtinta {
+  color: #009933;
+}
+
+.status-Atmesta {
+  color: #cc0000;
+}

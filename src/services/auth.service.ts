@@ -32,8 +32,8 @@ export const login = (username: string, password: string) => {
         const roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         let assignedRole = '';
 
-        if (roles.includes('BookieAdmin')) {
-          assignedRole = 'BookieAdmin';
+        if (roles.includes('Admin')) {
+          assignedRole = 'Admin';
         } else if (roles.includes('BookieWriter')) {
           assignedRole = 'BookieWriter';
         } else if (roles.includes('BookieReader')) {

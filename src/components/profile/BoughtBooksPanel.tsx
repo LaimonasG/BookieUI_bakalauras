@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './BoughtBooksPanel.css';
 import { IBookBought, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
-import ChapterList from '../Chapters/ChapterList';
+import ChapterList from '../chapters/ChapterList';
 import CommentList from '../comments/CommentsList';
 import { getProfileBooks } from '../../requests/ProfileController';
 import { unsubscribeToBook } from '../../requests/BookController';

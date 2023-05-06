@@ -14,6 +14,15 @@ export interface IBookBought {
   author:string
   isFinished:number
   coverImageUrl:string
+  status:IStatus
+  statusComment:string
+}
+
+export enum IStatus{
+  Pateikta,
+  Vertinama,
+  Patvirtinta,
+  Atmesta
 }
 
 export interface IBookToBuy {
@@ -141,7 +150,7 @@ export interface IQuestion {
   id: number;
   question: string;
   points:number;
-  date:Date;
+  dateToRelease:Date;
   answers:IAnswer[];
 }
 
@@ -185,6 +194,14 @@ export interface IComment{
 export interface ICreateComment{
 Content:string;
 }
+
+export interface IUser{
+  id:string;
+  userName:string;
+  email:string;
+  isBlocked:number;
+  points:number;
+  }
 
 export function getPointsWord(points: number) {
   if (points % 10 === 1 && points % 100 !== 11) {
