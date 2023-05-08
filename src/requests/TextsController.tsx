@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { ITextAdd } from "../Interfaces";
+import { ITextAdd, ITextsBought } from "../Interfaces";
 import { toast } from 'react-toastify';
 import { url } from "../App";
 
@@ -48,6 +48,38 @@ const addText = async (genreName: string, text: ITextAdd) => {
   }
 };
 
+const updateText = async (genreName: string, text: ITextsBought, coverImage: File, content: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("File", content);
+    formData.append("CoverImage", coverImage);
+    formData.append("Name", text.name);
+    formData.append("Price", text.price.toString());
+    formData.append("Description", text.description);
+
+    const response = await axios
+      .put(`${url}/genres/${genreName}/texts/${text.id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    if (response.status === 200) {
+      return 'success';
+    } else {
+      return 'Error status' + response.status.toString();
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
+};
+
 const purchaseText = async (textId: number, genreName: string): Promise<string> => {
   try {
     const response = await axios.put(`${url}/genres/${genreName}/texts/${textId}/buy`, undefined);
@@ -70,5 +102,5 @@ const purchaseText = async (textId: number, genreName: string): Promise<string> 
 };
 
 
-export { getAllTexts, addText, purchaseText }
+export { getAllTexts, addText, purchaseText, updateText }
 

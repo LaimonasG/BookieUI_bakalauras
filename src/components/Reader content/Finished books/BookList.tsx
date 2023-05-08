@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getAllBooksFinished } from "../../../requests/BookController";
 import jwt_decode from "jwt-decode";
-import { MyToken, IBookToBuy } from "../../../Interfaces";
+import { MyToken, IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
 import './BookList.css';
 import BookView from './BookView';
+import { AxiosError } from 'axios';
+import { getUserBlockedStatus } from '../../../requests/AdminController';
+import { Pagination } from 'react-bootstrap';
 
 export const FinBookList = () => {
   const [books, setBooks] = useState<IBookToBuy[]>([]);
@@ -14,22 +17,27 @@ export const FinBookList = () => {
   const [showLeftArrow, setShowLeftArrow] = useState<boolean>(false);
   const [showRightArrow, setShowRightArrow] = useState<boolean>(true);
   const [scrollLeftAmount, setScrollLeftAmount] = useState<number>(0);
+  const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+  const handleAxiosError = useHandleAxiosError();
 
-  let user = null;
-  if (userStr)
-    user = JSON.parse(userStr);
-
-  let decodedToken: MyToken | undefined;
-  try {
-    decodedToken = jwt_decode<MyToken>(user.accessToken);
-  } catch (error) {
-    console.log('User does not have a token yet');
-  }
+  //pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 4;
+  const paginatedBooks = books.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+  const totalPages = Math.ceil(books.length / itemsPerPage);
 
   async function GetBooks() {
-    const xd = await getAllBooksFinished(localStorage.getItem("genreName")!);
-    setBooks(xd);
+    try {
+      const xd = await getAllBooksFinished(localStorage.getItem("genreName")!);
+      setBooks(xd);
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
   }
+
+  const handlePageClick = (selectedPage: number) => {
+    setCurrentPage(selectedPage - 1);
+  };
 
   const handleTileClick = (event: React.MouseEvent<HTMLDivElement>, book: IBookToBuy) => {
     event.stopPropagation();
@@ -41,57 +49,15 @@ export const FinBookList = () => {
     setIsOpen(!isOpen);
   };
 
-  function scrollRight() {
-    const container = document.getElementById('book-tiles-scroll-container');
-    const tileWidth = getTileWidth();
-
-    if (container && tileWidth) {
-      container.scrollTo({
-        left: scrollLeftAmount + tileWidth,
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  function scrollLeft() {
-    const container = document.getElementById('book-tiles-scroll-container');
-    const tileWidth = getTileWidth();
-
-    if (container && tileWidth) {
-      container.scrollTo({
-        left: scrollLeftAmount - tileWidth,
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  function getTileWidth(): number | null {
-    const container = document.getElementById('book-tiles-scroll-container');
-    if (!container) return null;
-
-    const tile = container.querySelector('.book-tile');
-    if (!tile) return null;
-
-    const style = getComputedStyle(tile);
-    const width = parseFloat(style.width);
-    const marginLeft = parseFloat(style.marginLeft);
-    const marginRight = parseFloat(style.marginRight);
-
-    return width + marginLeft + marginRight;
-  }
-
-  function handleScroll(e: React.UIEvent<HTMLDivElement>) {
-    const container = e.currentTarget;
-    const scrollLeft = container.scrollLeft;
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-    setScrollLeftAmount(scrollLeft);
-    setShowLeftArrow(scrollLeft > 0);
-    setShowRightArrow(scrollLeft < maxScrollLeft);
-  }
-
   useEffect(() => {
     GetBooks();
-  }, [Date.now()]);
+    SetUserBlockedStatus();
+  }, []);
+
+  async function SetUserBlockedStatus() {
+    const isBlocked = await getUserBlockedStatus();
+    setIsUserBlocked(isBlocked);
+  }
 
   if (books.length === 0) {
     return (
@@ -99,43 +65,39 @@ export const FinBookList = () => {
     )
   }
   return (
-    <div className="book-tiles-scrollable">
-      <div className="book-tiles-section">
-        <h2 className="book-tiles-section-title">Išleistos knygos</h2>
-        <div className="book-tiles-scroll-wrapper">
-          {showLeftArrow && (
-            <div className="book-tiles-scroll-arrow book-tiles-scroll-arrow-left" onClick={scrollLeft}>
-              <i className="fas fa-chevron-left"></i>
-            </div>
-          )}
-          <div className="book-tiles-scroll-container" onScroll={handleScroll}>
-            <div className="book-tiles-grid">
-              {books.map((book, index) => (
-                <div className="book-tile" key={index} onClick={(event) => handleTileClick(event, book)}>
-                  <img src={book.coverImageUrl} alt={book.name} className="book-tile-image" />
-                  <div className="book-tile-details">
-                    <h2 className="book-tile-title">{book.name}</h2>
-                    <p className="book-tile-author">{book.author}</p>
-                    <div className="book-tile-footer"></div>
-                  </div>
-                </div>
-              ))}
+    <div className="book-tiles-section">
+      <h2 className="book-tiles-section-title">Išleistos knygos</h2>
+      <div className="book-tiles-grid">
+        {paginatedBooks.map((book, index) => (
+          <div className="book-tile" key={index} onClick={(event) => handleTileClick(event, book)}>
+            <img src={book.coverImageUrl} alt={book.name} className="book-tile-image" />
+            <div className="book-tile-details">
+              <h2 className="book-tile-title">{book.name}</h2>
+              <p className="book-tile-author">{book.author}</p>
+              <div className="book-tile-footer"></div>
             </div>
           </div>
-          {showRightArrow && (
-            <div className="book-tiles-scroll-arrow book-tiles-scroll-arrow-right" onClick={scrollRight}>
-              <i className="fas fa-chevron-right"></i>
-            </div>
-          )}
-        </div>
-        {currBook && (
-          <BookView
-            book={currBook}
-            isOpen={isOpen}
-            onClose={toggleFormStatus}
-          />
-        )}
+        ))}
       </div>
+      <Pagination className="justify-content-center">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Pagination.Item
+            key={index}
+            active={index === currentPage}
+            onClick={() => handlePageClick(index + 1)}
+          >
+            {index + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+      {currBook && (
+        <BookView
+          book={currBook}
+          isOpen={isOpen}
+          onClose={toggleFormStatus}
+          isBlocked={isUserBlocked}
+        />
+      )}
     </div>
   );
 }

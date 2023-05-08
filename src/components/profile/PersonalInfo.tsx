@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import './PersonalInfo.css';
 import UpdateInfoFormModal from './EditPersonalInfo';
-import { IProfile, IPersonalInfo, handleConfirmed, handleDenied } from '../../Interfaces';
+import { IProfile, IPersonalInfo, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import { getProfile, updatePersonalInfo } from '../../requests/ProfileController';
 import BuyPoints from './BuyPoints';
+import { AxiosError } from 'axios';
 
 interface PersonalInfoRef {
   fetchPoints: () => void;
@@ -14,9 +15,16 @@ const PersonalInfo = forwardRef<PersonalInfoRef, {}>((props, ref) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showPayModal, setShowPayModal] = useState(false);
 
+  const handleAxiosError = useHandleAxiosError();
+
+
   const fetchUserData = useCallback(async () => {
-    const xd = await getProfile();
-    setCurrentUser(xd);
+    try {
+      const xd = await getProfile();
+      setCurrentUser(xd);
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
   }, []);
 
   useEffect(() => {
@@ -62,11 +70,16 @@ const PersonalInfo = forwardRef<PersonalInfoRef, {}>((props, ref) => {
     console.log("updated info", personalInfo);
 
     setShowUpdateModal(false);
-    const result = await updatePersonalInfo(personalInfo);
-    if (result === "success")
-      handleConfirmed(`Asmeninė informacija atnaujinta sėkmingai.`);
-    else
-      handleDenied(result);
+    try {
+      const result = await updatePersonalInfo(personalInfo);
+      if (result === "success") {
+        handleConfirmed(`Asmeninė informacija atnaujinta sėkmingai.`);
+      } else {
+        handleDenied(result);
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
   };
 
   const handleBuyMorePoints = () => {

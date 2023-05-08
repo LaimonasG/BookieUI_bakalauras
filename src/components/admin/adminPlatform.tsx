@@ -2,41 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { Pagination, Modal, Button, Form, Table } from 'react-bootstrap';
 import './adminPlatform.css';
 import { getAllQuestions, getAllUsers, setUserPoints, updateBlockedStatus } from '../../requests/AdminController';
-import { IQuestion, IUser } from '../../Interfaces';
+import { IQuestion, IUser, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import DailyQuestionTable from './DailyQuestionTable';
-
-const ITEMS_PER_PAGE = 10;
+import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import BookTable from './adminBooksTable';
+import TextsTable from './adminTextsTable';
 
 const AdminPage = () => {
   const [users, setUsers] = useState<IUser[]>([]);
-  const [currentUserPage, setCurrentUserPage] = useState(1);
-  const [currentBookPage, setCurrentBookPage] = useState(1);
-  const [currentTextPage, setCurrentTextPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
-  const [questions, setQuestions] = useState<IQuestion[]>([]);
 
+  const [pointsInputValues, setPointsInputValues] = useState<Record<string, number>>({});
+  const [initialPointsValues, setInitialPointsValues] = useState<Record<string, number>>({});
+  const [checkedStates, setCheckedStates] = useState<Record<string, boolean>>({});
 
+  //pagination
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const usersPerPage = 5;
+  const totalPages = Math.ceil(users.length / usersPerPage);
+
+  const start = (currentPage - 1) * usersPerPage;
+  const end = start + usersPerPage;
+  const displayedUsers = users.slice(start, end);
+
+  const handleAxiosError = useHandleAxiosError();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const data = await getAllUsers();
-      console.log("Users", data);
-      setUsers(data);
+      try {
+        const data = await getAllUsers();
+        setUsers(data);
+
+        const initialCheckedStates = data.reduce<Record<string, boolean>>((acc, user) => {
+          acc[user.id] = user.isBlocked === 1;
+          return acc;
+        }, {});
+        setCheckedStates(initialCheckedStates);
+
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
     };
 
     fetchUserData();
-  }, [currentUserPage]);
+  }, [useHandleAxiosError]);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const xd = await getAllQuestions();
-      console.log("klausimai", xd)
-      setQuestions(xd);
-    }
-    fetchQuestions();
-  }, []);
+    const initialPointsInputValues = users.reduce<Record<string, number>>((acc, user) => {
+      acc[user.id] = user.points;
+      return acc;
+    }, {});
+    setPointsInputValues(initialPointsInputValues);
+    setInitialPointsValues(initialPointsInputValues);
+  }, [users]);
+
+  const pointsUpdated = (userId: string) => {
+    return initialPointsValues[userId] !== pointsInputValues[userId];
+  };
 
   const handleBlockedStatus = async (userId: string, userName: string, email: string, isBlocked: number, points: number) => {
     const data: IUser = {
@@ -46,72 +70,116 @@ const AdminPage = () => {
       isBlocked: isBlocked,
       points: points
     }
-    await updateBlockedStatus(data);
+    try {
+      const response = await updateBlockedStatus(data);
+      if (response === 'success') {
+        handleConfirmed(`Klausimas sėkmingai sukurtas.`);
+        const users = await getAllUsers();
+        setUsers(users);
+      } else {
+        handleDenied(response);
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
   };
 
-  const handleUpdatePoints = async (userId: string, userName: string, email: string, isBlocked: number, points: number) => {
+  const handlePageClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePointsInputChange = (userId: string, newPoints: number) => {
+    setPointsInputValues({ ...pointsInputValues, [userId]: newPoints });
+  };
+
+  const handleUpdatePoints = async (userId: string, userName: string, email: string, isBlocked: number) => {
     const data: IUser = {
       id: userId,
       userName: userName,
       email: email,
       isBlocked: isBlocked,
-      points: points
-    }
-    await setUserPoints(data);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedUser(null);
-  };
-
-  const handleShowModal = (user: IUser) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
-
-  const handleToggleStatus = () => {
-    if (selectedUser) {
-      handleBlockedStatus(selectedUser.id, selectedUser.userName, selectedUser.email, selectedUser.isBlocked, selectedUser.points);
-      setSelectedUser({ ...selectedUser, isBlocked: 1 - selectedUser.isBlocked });
+      points: pointsInputValues[userId] || 0
+    };
+    try {
+      const response = await setUserPoints(data);
+      if (response === 'success') {
+        handleConfirmed(`Taškai sėkmingai atnaujinti.`);
+        const users = await getAllUsers();
+        setUsers(users);
+      } else {
+        handleDenied(response);
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
     }
   };
+
 
   return (
     <div className="admin-page">
+      <div className="table-header">
+        <h2>Naudotojai</h2>
+      </div>
       <Table striped bordered hover responsive className="user-table">
         <thead>
           <tr>
             <th>Naudotojo vardas</th>
-            <th>Taškai</th>
             <th>Užblokuotas</th>
+            <th>Taškai</th>
             <th>Taškų pakeitimas</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {displayedUsers.map((user) => (
             <tr key={user.id}>
               <td>{user.userName}</td>
-              <td>{user.points}</td>
               <td>
                 <input
                   type="checkbox"
-                  checked={user.isBlocked === 1}
-                  onChange={() => handleBlockedStatus(user.id, user.userName, user.email, 1 - user.isBlocked, user.points)}
+                  checked={checkedStates[user.id] || false}
+                  onChange={() => {
+                    setCheckedStates({ ...checkedStates, [user.id]: !checkedStates[user.id] });
+                    handleBlockedStatus(user.id, user.userName, user.email, 1 - user.isBlocked, user.points);
+                  }}
                 />
               </td>
               <td>
-                <button onClick={() => handleUpdatePoints(user.id, user.userName, user.email, user.isBlocked, user.points)}>Update Points</button>
+                <input
+                  type="number"
+                  value={pointsInputValues[user.id] || ''}
+                  onChange={(e) => {
+                    setPointsInputValues({ ...pointsInputValues, [user.id]: parseInt(e.target.value) });
+                  }}
+                />
               </td>
+              <td>
+                <button
+                  className="update-points-button"
+                  disabled={!pointsUpdated(user.id)}
+                  onClick={() => handleUpdatePoints(user.id, user.userName, user.email, user.isBlocked)}
+                >
+                  Atnaujinti taškus
+                </button>              </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      <div className="pagination-container">
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button
+            key={index}
+            variant={currentPage === index + 1 ? 'primary' : 'light'}
+            onClick={() => handlePageClick(index + 1)}
+          >
+            {index + 1}
+          </Button>
+        ))}
+      </div>
 
-      <DailyQuestionTable dailyQuestions={questions} />
-      {/* Add tables for books and texts here */}
-      {/* ... */}
-      {/* Pagination and Modal code */}
+      <DailyQuestionTable />
+      <BookTable />
+      <TextsTable />
+
     </div>
   );
 };

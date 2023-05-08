@@ -1,62 +1,62 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import './AddBookForm.css';
+import './AddTextForm.css';
 import { useDropzone } from 'react-dropzone';
-import { IBookAdd, IBookBought, IGenres } from '../../../Interfaces';
+import { ITextAdd, ITextsBought, IGenres } from '../../../Interfaces';
 import { toast } from 'react-toastify';
 
-interface IBookFormModalProps {
+interface ITextFormModalProps {
   show: boolean;
   genrelist: IGenres[];
   onHide: () => void;
-  onSubmit: (name: string, genre: string, description: string, chapterPrice: number, bookPrice: number, coverImage: File) => void;
-  book?: IBookBought;
+  onSubmit: (text: ITextsBought, coverImage: File, content: File) => void;
+  text: ITextsBought;
 }
 
-const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, genrelist, book }) => {
+const UpdateTextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, genrelist, text }) => {
   const [name, setName] = useState('');
   const [genres, setGenres] = useState<IGenres[]>([]);
   const [genre, setGenre] = useState<IGenres>();
   const [description, setDescription] = useState('');
-  const [chapterPrice, setChapterPrice] = useState('');
-  const [bookPrice, setBookPrice] = useState('');
+  const [price, setPrice] = useState('');
+  const [content, setContent] = useState<File>();
   const [coverImage, setCoverImage] = useState<File>();
   const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
     setGenres(genrelist);
+    setName(text.name);
+    setGenre(genrelist.find(g => g.name === text.genreName));
+    setDescription(text.description);
+    setPrice(text.price.toString());
+    setContent(undefined);
+    setCoverImage(undefined);
 
-    if (book) {
-      setName(book.name);
-      setGenre(genrelist.find(g => g.name === book.genreName));
-      setDescription(book.description);
-      setChapterPrice(book.chapterPrice.toString());
-      setBookPrice(book.price.toString());
-      setCoverImage(undefined);
-    } else {
-      setName('');
-      setGenre(undefined);
-      setDescription('');
-      setChapterPrice('');
-      setBookPrice('');
-      setCoverImage(undefined);
-    }
-  }, [book, genrelist]);
+  }, [text, genrelist]);
+
 
   const handleSubmit = () => {
-    if (!name || !description || !genre || !coverImage) {
+    if (!name || !description || !genre || !coverImage || !content) {
       setValidationError('Visi laukai yra privalomi.');
       return;
     }
 
-    onSubmit(name, genre.name, description, parseFloat(chapterPrice), parseFloat(bookPrice), coverImage);
+    const updatedtext: ITextsBought = {
+      ...text,
+      name,
+      genreName: genre.name,
+      description,
+      price: parseFloat(price)
+    };
+
+    onSubmit(updatedtext, coverImage, content);
     onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Knygos informacija</Modal.Title>
+        <Modal.Title>Teksto informacija</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {validationError && <p className="text-danger">{validationError}</p>}
@@ -101,23 +101,26 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
             />
           </Form.Group>
 
-          <Form.Group controlId="chapterPrice">
-            <Form.Label>Skyriaus kaina</Form.Label>
+          <Form.Group controlId="textPrice">
+            <Form.Label>Kaina</Form.Label>
             <Form.Control
               type="number"
               step="0.01"
-              value={chapterPrice}
-              onChange={(e) => setChapterPrice(e.target.value)}
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
             />
           </Form.Group>
 
-          <Form.Group controlId="bookPrice">
-            <Form.Label>Knygos kaina</Form.Label>
+          <Form.Group controlId="content">
+            <Form.Label>Turinys</Form.Label>
             <Form.Control
-              type="number"
-              step="0.01"
-              value={bookPrice}
-              onChange={(e) => setBookPrice(e.target.value)}
+              type="file"
+              accept=".pdf"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setContent(e.target.files[0]);
+                }
+              }}
             />
           </Form.Group>
 
@@ -133,20 +136,21 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
               }}
             />
           </Form.Group>
-
-
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
           Atšaukti
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button variant="primary" onClick={() => {
+          handleSubmit();
+        }}>
           Pateikti
         </Button>
+
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default BookFormModal;
+export default UpdateTextFormModal;

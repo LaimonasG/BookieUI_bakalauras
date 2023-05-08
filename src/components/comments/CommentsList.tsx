@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Pagination } from 'react-bootstrap';
-import { IComment, ICreateComment, handleConfirmed, handleDenied } from '../../Interfaces';
+import { IComment, ICreateComment, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import AddComment from './AddComment';
 import { addBookComment, addChapterComment, addTextComment, getBookComments, getChapterComments, getTextComments } from '../../requests/CommentsController';
 import './CommentsList.css';
+import { AxiosError } from 'axios';
 
 interface CommentListProps {
   isOpen: boolean;
@@ -25,9 +26,12 @@ const CommentList: React.FC<CommentListProps> = ({ isOpen, onClose, isProfile, e
   const pagedComments = comments.slice(startIndex, endIndex);
   const numPages = Math.ceil(comments.length / pageSize);
 
+  const handleAxiosError = useHandleAxiosError();
+
   useEffect(() => {
     if (isOpen) {
       fetchComments();
+      console.log("ar as uzblokuotas?", !isProfile);
     }
   }, [isOpen]);
 
@@ -36,36 +40,46 @@ const CommentList: React.FC<CommentListProps> = ({ isOpen, onClose, isProfile, e
       Content: content
     };
 
-    let response = "";
-    if (commentType === "Text") {
-      response = await addTextComment(genreName, entityId, comment);
-    } else if (commentType === "Book") {
-      response = await addBookComment(genreName, entityId, comment);
-    } else if (commentType === "Chapter") {
-      response = await addChapterComment(genreName, bookId, entityId, comment);
-    } else {
-      response = "fail";
+    try {
+      let response = "";
+      if (commentType === "Text") {
+        response = await addTextComment(genreName, entityId, comment);
+      } else if (commentType === "Book") {
+        response = await addBookComment(genreName, entityId, comment);
+      } else if (commentType === "Chapter") {
+        response = await addChapterComment(genreName, bookId, entityId, comment);
+      } else {
+        throw new Error("Invalid comment type");
+      }
+
+      if (response === 'success') {
+        handleConfirmed(`Jūsų komentaras sėkmingai pridėtas.`);
+        await fetchComments();
+      } else {
+        handleDenied(`Komentaro pridėti nepavyko. ${response}`)
+      };
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
     }
 
-    if (response === 'success') {
-      handleConfirmed(`Jūsų komentaras sėkmingai pridėtas.`);
-      await fetchComments();
-    } else {
-      handleDenied(`Komentaro pridėti nepavyko. ${response}`)
-    };
     setShowAddComment(false);
   };
 
   const fetchComments = async () => {
-    if (commentType === "Text") {
-      const response = await getTextComments(entityId, genreName);
-      setComments(response);
-    } else if (commentType === "Book") {
-      const response = await getBookComments(entityId, genreName);
-      setComments(response);
-    } else if (commentType === "Chapter") {
-      const response = await getChapterComments(entityId, bookId, genreName);
-      setComments(response);
+    try {
+      let response;
+
+      if (commentType === "Text") {
+        response = await getTextComments(entityId, genreName);
+      } else if (commentType === "Book") {
+        response = await getBookComments(entityId, genreName);
+      } else if (commentType === "Chapter") {
+        response = await getChapterComments(entityId, bookId, genreName);
+      }
+
+      setComments(response || []);
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
     }
   };
 

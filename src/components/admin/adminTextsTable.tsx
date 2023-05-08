@@ -1,68 +1,72 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Form } from "react-bootstrap";
-import { IBookBought, IStatus, handleConfirmed, handleDenied, useHandleAxiosError } from "../../Interfaces";
-import BookInfoModal from "./BookInfoModal";
-import { getAllBooks, setBookStatus } from "../../requests/AdminController";
+import { IStatus, ITextsBought, handleConfirmed, handleDenied, useHandleAxiosError } from "../../Interfaces";
+import { getAllTexts, setTextStatus } from "../../requests/AdminController";
 import { AxiosError } from "axios";
+import TextInfoModal from "./TextInfoModal";
 
-const BookTable: React.FC = () => {
-  const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
-  const [books, setBooks] = useState<IBookBought[]>([]);
+const TextsTable: React.FC = () => {
+  const [selectedText, setSelectedText] = useState<ITextsBought | null>(null);
+  const [texts, setTexts] = useState<ITextsBought[]>([]);
   const [statusComment, setStatusComment] = useState<string>("");
   const [selectedStatuses, setSelectedStatuses] = useState<Map<number, number>>(new Map());
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const handleUpdateModalClose = () => setShowUpdateModal(false);
+  const [readTextShow, setReadTextShow] = useState<boolean>(false);
+
 
   //pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const booksPerPage = 5;
-  const totalPages = Math.ceil(books.length / booksPerPage);
+  const textsPerPage = 5;
+  const totalPages = Math.ceil(texts.length / textsPerPage);
 
-  const start = (currentPage - 1) * booksPerPage;
-  const end = start + booksPerPage;
-  const displayedBooks = books.slice(start, end);
+  const start = (currentPage - 1) * textsPerPage;
+  const end = start + textsPerPage;
+  const displayedTexts = texts.slice(start, end);
 
   const handleAxiosError = useHandleAxiosError();
 
-  const handleUpdateModalShow = (book: IBookBought) => {
-    setSelectedBook(book);
-    setShowUpdateModal(true);
+  const handleReadModalShow = (text: ITextsBought) => {
+    setSelectedText(text);
+    setReadTextShow(true);
   };
 
-  const isUpdateDisabled = (bookId: number) => {
-    const currentStatus = selectedStatuses.get(bookId);
+  const handleReadModalHide = () => {
+    setReadTextShow(false);
+  };
+
+  const isUpdateDisabled = (textId: number) => {
+    const currentStatus = selectedStatuses.get(textId);
     return currentStatus === IStatus.Pateikta || currentStatus === undefined;
   };
 
 
   useEffect(() => {
     async function fetchData() {
-      const books = await getAllBooks();
+      const texts = await getAllTexts();
       console.log()
-      setBooks(books);
+      setTexts(texts);
     }
 
     fetchData();
   }, []);
 
-  const handleStatusChange = (bookId: number, newStatus: number) => {
+  const handleStatusChange = (textId: number, newStatus: number) => {
     setSelectedStatuses((prevState) => {
       const updatedStatuses = new Map(prevState);
-      updatedStatuses.set(bookId, newStatus);
+      updatedStatuses.set(textId, newStatus);
       return updatedStatuses;
     });
   };
 
-  const submitStatusChange = async (book: IBookBought) => {
+  const submitStatusChange = async (text: ITextsBought) => {
 
-    const currentStatus = selectedStatuses.get(book.id);
+    const currentStatus = selectedStatuses.get(text.id);
     if (currentStatus !== null) {
       try {
-        const response = await setBookStatus(currentStatus!, statusComment, book.id);
+        const response = await setTextStatus(currentStatus!, statusComment, text.id);
         if (response === 'success') {
-          handleConfirmed(`Knygos "${book.name}" statusas pakeistas į "${getStatusString(currentStatus as number)}"`);
-          const books = await getAllBooks();
-          setBooks(books);
+          handleConfirmed(`Teksto "${text.name}" statusas pakeistas į "${getStatusString(currentStatus as number)}"`);
+          const texts = await getAllTexts();
+          setTexts(texts);
         } else {
           handleDenied(response);
         }
@@ -81,12 +85,12 @@ const BookTable: React.FC = () => {
   };
 
   return (
-    <div className="book-table-container">
+    <div className="text-table-container">
       <div className="table-header">
-        <h2>Knygos</h2>
+        <h2>Tekstai</h2>
       </div>
 
-      <Table striped bordered hover responsive className="book-table">
+      <Table striped bordered hover responsive className="text-table">
         <thead>
           <tr>
             <th>Pavadinimas</th>
@@ -97,16 +101,16 @@ const BookTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {displayedBooks.map((book) => (
-            <tr key={book.id}>
-              <td>{book.name}</td>
-              <td>{book.author}</td>
+          {displayedTexts.map((text) => (
+            <tr key={text.id}>
+              <td>{text.name}</td>
+              <td>{text.author}</td>
               <td>
                 <Form.Select
                   aria-label="Pasirinkite statusą"
-                  value={selectedStatuses.get(book.id) ?? book.status}
+                  value={selectedStatuses.get(text.id) ?? text.status}
                   onChange={(event) =>
-                    handleStatusChange(book.id, parseInt(event.target.value, 10))
+                    handleStatusChange(text.id, parseInt(event.target.value, 10))
                   }
                 >
                   {Object.values(IStatus)
@@ -128,14 +132,14 @@ const BookTable: React.FC = () => {
               <td>
                 <Button
                   variant="primary"
-                  onClick={() => submitStatusChange(book)}
-                  disabled={isUpdateDisabled(book.id)}
+                  onClick={() => submitStatusChange(text)}
+                  disabled={isUpdateDisabled(text.id)}
                 >
                   Atnaujinti
                 </Button>
                 <Button
                   variant="outline-secondary"
-                  onClick={() => handleUpdateModalShow(book)}
+                  onClick={() => handleReadModalShow(text)}
                 >
                   Peržiūrėti
                 </Button>
@@ -156,15 +160,15 @@ const BookTable: React.FC = () => {
         ))}
       </div>
 
-      {selectedBook && (
-        <BookInfoModal
-          book={selectedBook}
-          isOpen={showUpdateModal}
-          onClose={handleUpdateModalClose}
+      {selectedText && readTextShow && (
+        <TextInfoModal
+          text={selectedText}
+          isOpen={readTextShow}
+          onClose={handleReadModalHide}
         />
       )}
     </div>
   );
 };
 
-export default BookTable;
+export default TextsTable;

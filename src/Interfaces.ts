@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getTokenExpirationTime, getCurrentUser, logout } from './services/auth.service';
 import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export interface IBookBought {
   id: number
@@ -8,6 +10,7 @@ export interface IBookBought {
   chapters: IChapters[] | null;
   genreName: string
   description: string
+  chapterPrice:number
   price: number
   created: Date
   userId: string
@@ -15,12 +18,11 @@ export interface IBookBought {
   isFinished:number
   coverImageUrl:string
   status:IStatus
-  statusComment:string
+  statusMessage:string
 }
 
 export enum IStatus{
   Pateikta,
-  Vertinama,
   Patvirtinta,
   Atmesta
 }
@@ -67,6 +69,8 @@ export interface ITextsBought {
   userId: string
   coverImageUrl:string
   author:string
+  status:IStatus
+  statusMessage:string
 }
 
 export interface ITextsToBuy {
@@ -138,7 +142,11 @@ export interface IAnswer {
   id: number;
   content: string;
   correct:number;
-  questionId:number
+}
+
+export interface IAnswerAdd {
+  content: string;
+  correct:number;
 }
 
 export interface IAnsweredQuestionDto {
@@ -152,6 +160,13 @@ export interface IQuestion {
   points:number;
   dateToRelease:Date;
   answers:IAnswer[];
+}
+
+export interface IQuestionAdd {
+  question: string;
+  points:number;
+  dateToRelease:Date;
+  answers:IAnswerAdd[];
 }
 
 export interface IProfile {
@@ -254,8 +269,6 @@ export function handleDenied(message: string) {
   });
 }
 
-
-
 export function handleBeingAdded(message: string) {
   let toastId: any = null;
   toastId=toast.info(message, {
@@ -268,5 +281,27 @@ export function handleBeingAdded(message: string) {
   });
   return toastId;
 }
+
+export const useHandleAxiosError = () => {
+  const navigate = useNavigate();
+
+  const handleAxiosError = (error: AxiosError) => {
+    console.log("h3i");
+
+    if (error.response && error.response.status === 401) {
+      console.log("hi");
+      logout();
+      navigate('/login');
+    } else if (error.response && error.response.status === 400) {
+      const errorDataString = JSON.stringify(error.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  };
+
+  return handleAxiosError;
+};
 
 

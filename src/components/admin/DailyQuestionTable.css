@@ -1,0 +1,19 @@
+.custom-delete-button {
+  background-color: #f44336 !important;
+  border: none;
+  color: white !important;
+  padding: 8px 16px !important;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer !important;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.custom-delete-button:hover {
+  background-color: #d32f2f;
+}
+

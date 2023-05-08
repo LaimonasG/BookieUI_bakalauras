@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { IBookAdd, IBookToBuy, IBooks, IChaptersAdd } from "../Interfaces";
+import { IBookAdd, IBookBought, IBookToBuy, IBooks, IChaptersAdd } from "../Interfaces";
 import { toast } from 'react-toastify';
 import { url } from "../App";
 
@@ -34,7 +34,42 @@ const addBook = async (genreName: string, book: IBookAdd) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    if (response.status === 200 || response.status === 201) {
+    if (response.status === 201) {
+      return 'success';
+    } else {
+      return 'Error status'+response.status.toString();
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
+};
+
+const updateBook = async (genreName: string, book: IBookBought,coverImage:File) => {
+  try {
+  const formData = new FormData();
+  formData.append("BookId", book.id.toString());
+  formData.append("GenreName", book.genreName);
+  formData.append("Name", book.name);
+  formData.append("Description", book.description);
+  formData.append("ChapterPrice", book.chapterPrice.toString());
+  formData.append("BookPrice", book.price.toString());
+  formData.append("coverImage", coverImage);
+
+
+  const response=await axios
+    .put(`${url}/genres/${genreName}/books/${book.id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200) {
       return 'success';
     } else {
       return 'Error status'+response.status.toString();
@@ -154,5 +189,5 @@ const editBook = async (genreName: string, idBook: number, book: IBooks) =>
     }
   };
 
-  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook}
+  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook,updateBook}
 

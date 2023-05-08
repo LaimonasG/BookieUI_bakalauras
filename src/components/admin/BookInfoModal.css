@@ -1,0 +1,55 @@
+.custom-modal-size .modal-dialog {
+  max-width: 900px;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  color: #000;
+  border: 2px solid #F9AA33;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.modal-header {
+  border-bottom: none;
+  padding: 1rem;
+  background-color: #F9AA33;
+  color: #ffffff;
+}
+
+.modal-title {
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+p {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.admin-book-cover {
+  width: 100%;
+  max-height: 250px;
+  max-width: 150px;
+  object-fit: contain;
+  background-color: var(--color-1);
+  border: 2px solid var(--color-1); 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.book-info {
+  display: flex;
+  align-items: center;
+}
+
+.book-details {
+  flex: 1;
+  margin-left: 20px;
+}

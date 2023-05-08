@@ -55,6 +55,14 @@ p {
   color: #ffffff;
 }
 
+.btn-custom-buy-disabled {
+  background-color: #a0a0a0 !important;
+  border-color: #a0a0a0 !important;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .btn-custom-comments {
   background-color: var(--color-3);
   border-color: var(--color-3);

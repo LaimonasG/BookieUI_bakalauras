@@ -8,9 +8,10 @@ type BookInformationModalProps = {
   book: IBookBought;
   show: boolean;
   onHide: () => void;
+  isBlocked: boolean;
 };
 
-const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide }) => {
+const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide, isBlocked }) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const [selectedChapter, setSelectedChapter] = useState<IChapters | null>(null);
 
@@ -27,18 +28,16 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
     chaptersToDisplay = [];
   }
 
-
-
   const handleHideModal = () => {
     setIsCommentsOpen(false);
   }
 
   const handleOpenComments = (chapter: IChapters) => {
     console.log("Skyrius:", chapter)
+    console.log()
     setSelectedChapter(chapter);
     setIsCommentsOpen(true);
   }
-
 
   if (book.chapters?.length == 0) {
     return (<p>Knyga dar neturi skyrių.</p>)
@@ -99,7 +98,7 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
         <CommentList
           isOpen={isCommentsOpen}
           onClose={handleHideModal}
-          isProfile={true}
+          isProfile={!isBlocked}
           entityId={selectedChapter!.id}
           commentType='Chapter'
           genreName={book.genreName}

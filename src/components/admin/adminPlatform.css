@@ -59,3 +59,13 @@ input[type="checkbox"] {
 .daily-question-table-container {
   margin-top: 2rem;
 }
+
+.update-points-button:disabled {
+  cursor: not-allowed;
+  background-color: #6c757d; 
+  opacity: 0.65; 
+}
+
+.update-points-button:disabled:hover {
+  background-color: #6c757d; 
+}

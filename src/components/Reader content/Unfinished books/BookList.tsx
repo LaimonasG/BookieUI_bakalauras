@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { getAllBooksUnfinished } from "../../../requests/BookController";
 import jwt_decode from "jwt-decode";
-import { MyToken, IBookToBuy } from "../../../Interfaces";
+import { MyToken, IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
 import '../Finished books/BookList.css';
 import BookView from './BookView';
 import { Pagination } from 'react-bootstrap';
+import { AxiosError } from 'axios';
+import { getUserBlockedStatus } from '../../../requests/AdminController';
 
 export const UnfinBookList = () => {
   const [books, setBooks] = useState<IBookToBuy[]>([]);
   const userStr = localStorage.getItem("user");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currBook, setCurrBook] = useState<IBookToBuy>();
+  const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+
 
   //pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -18,24 +22,19 @@ export const UnfinBookList = () => {
   const paginatedBooks = books.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   const totalPages = Math.ceil(books.length / itemsPerPage);
 
+  const handleAxiosError = useHandleAxiosError();
+
   const handlePageClick = (selectedPage: number) => {
     setCurrentPage(selectedPage - 1);
   };
 
-  let user = null;
-  if (userStr)
-    user = JSON.parse(userStr);
-
-  let decodedToken: MyToken | undefined;
-  try {
-    decodedToken = jwt_decode<MyToken>(user.accessToken);
-  } catch (error) {
-    console.log('User does not have a token yet');
-  }
-
   async function GetBooks() {
-    const xd = await getAllBooksUnfinished(localStorage.getItem("genreName")!);
-    setBooks(xd);
+    try {
+      const xd = await getAllBooksUnfinished(localStorage.getItem("genreName")!);
+      setBooks(xd);
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
   }
 
   const handleTileClick = (event: React.MouseEvent<HTMLDivElement>, book: IBookToBuy) => {
@@ -50,7 +49,14 @@ export const UnfinBookList = () => {
 
   useEffect(() => {
     GetBooks();
-  }, [Date.now()]);
+    SetUserBlockedStatus();
+  }, []);
+
+  async function SetUserBlockedStatus() {
+    const isBlocked = await getUserBlockedStatus();
+    setIsUserBlocked(isBlocked);
+  }
+
 
   if (books.length === 0) {
     return (
@@ -88,6 +94,7 @@ export const UnfinBookList = () => {
           book={currBook}
           isOpen={isOpen}
           onClose={toggleFormStatus}
+          isBlocked={isUserBlocked}
         />
       )}
     </div>

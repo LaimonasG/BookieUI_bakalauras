@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import './BoughtBooksPanel.css';
-import { IBookBought, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
+import { IBookBought, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import ChapterList from '../chapters/ChapterList';
 import CommentList from '../comments/CommentsList';
 import { getProfileBooks } from '../../requests/ProfileController';
 import { unsubscribeToBook } from '../../requests/BookController';
 import { Pagination } from 'react-bootstrap';
+import { AxiosError } from 'axios';
+import { getUserBlockedStatus } from '../../requests/AdminController';
+import { getCurrentUser } from '../../services/auth.service';
 
 const BoughtBooks: React.FC = () => {
   const [books, setBooks] = useState<IBookBought[]>([]);
   const [showChapterList, setShowChapterList] = useState(false);
   const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
   const [isBookCommentsOpen, setIsBookCommentsOpen] = useState<boolean>(false);
+  const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+
+
+  const handleAxiosError = useHandleAxiosError();
+
 
   //pagination
   const [pageBook, setBookPage] = useState(0);
@@ -21,9 +29,16 @@ const BoughtBooks: React.FC = () => {
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const xd = await getProfileBooks();
-      setBooks(xd);
-    }
+      const isBlocked = await getUserBlockedStatus();
+      setIsUserBlocked(isBlocked);
+      try {
+        const xd = await getProfileBooks();
+        setBooks(xd);
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
+    };
+
     fetchBooks();
   }, []);
 
@@ -88,13 +103,14 @@ const BoughtBooks: React.FC = () => {
                 book={selectedBook}
                 show={showChapterList}
                 onHide={handleHideModal}
+                isBlocked={isUserBlocked}
               />
             )}
             {isBookCommentsOpen &&
               <CommentList
                 isOpen={isBookCommentsOpen}
                 onClose={handleHideModal}
-                isProfile={true}
+                isProfile={!isUserBlocked}
                 entityId={selectedBook!.id}
                 commentType='Book'
                 genreName={selectedBook!.genreName}

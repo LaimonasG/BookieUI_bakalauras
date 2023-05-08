@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './EditPersonalInfo.css';
-import { IProfile } from '../../Interfaces';
+import { IProfile, useHandleAxiosError } from '../../Interfaces';
 
 interface IUpdatePersonalInfoModalProps {
   show: boolean;
@@ -17,7 +17,6 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
   const [username, setUsername] = useState(currentUser?.userName || '');
   const [validationError, setValidationError] = useState('');
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
 
   const handleSubmit = () => {
     if (!name || !surname) {

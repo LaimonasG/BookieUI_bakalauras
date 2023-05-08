@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './DailyQuestion.css';
-import { IAnswer, IQuestion, IAnsweredQuestionDto, handleConfirmed, handleDenied } from '../../Interfaces';
+import { IQuestion, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import { getTodaysQuestion, getLastAnswerTime, answerQuestion } from '../../requests/ProfileController'
 import { toast } from "react-toastify";
+import { AxiosError } from 'axios';
+import { getUserBlockedStatus } from '../../requests/AdminController';
 
 interface DailyQuestionProps {
   onQuestionAnswered: () => void;
@@ -14,6 +16,11 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(-1);
   const [lastAnswerTime, setLastAnswerTime] = useState<Date>();
   const [timeUntilNextQuestion, setTimeUntilNextQuestion] = useState(0);
+  const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+
+
+  const handleAxiosError = useHandleAxiosError();
+
 
   const handleSubmit = async () => {
     if (!selectedAnswer) {
@@ -21,19 +28,23 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
     }
     setQuestionAnswered(true);
     setSelectedAnswer(null);
-    const result = await answerQuestion(question!.id, selectedAnswer!);
-    if (result.correct === 1) {
-      handleConfirmed(`Puiku! Jūsų pasirinkimas "${result.content}" yra teisingas.`);
-      onQuestionAnswered();
-    } else {
-      handleDenied(`Deja, jūsų pasirinkimas buvo neteisingas. Teisingas variantas yra "${result.content}".`);
+    try {
+      const result = await answerQuestion(question!.id, selectedAnswer!);
+      if (result.correct === 1) {
+        handleConfirmed(`Puiku! Jūsų pasirinkimas "${result.content}" yra teisingas.`);
+        onQuestionAnswered();
+      } else {
+        handleDenied(`Deja, jūsų pasirinkimas buvo neteisingas. Teisingas variantas yra "${result.content}".`);
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
     }
-
   };
 
   useEffect(() => {
     GetQuestion();
     GetLastAnswerTime();
+    SetUserBlockedStatus();
   }, []);
 
   async function GetQuestion() {
@@ -41,6 +52,11 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
     const fullDate = currentDate.toISOString();
     const xd = await getTodaysQuestion(fullDate);
     setQuestion(xd);
+  }
+
+  async function SetUserBlockedStatus() {
+    const isBlocked = await getUserBlockedStatus();
+    setIsUserBlocked(isBlocked);
   }
 
   async function GetLastAnswerTime() {
@@ -95,7 +111,9 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
       );
     }
 
-    if (!question) {
+    if (isUserBlocked) {
+      return (<div><p>Naudotojui šis funkcionalumas uždraustas</p></div>)
+    } else if (!question) {
       return (<div><p>Dienos klausimas dar nebuvo sugalvotas.</p></div>)
     } else {
       return (

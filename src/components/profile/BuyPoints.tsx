@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getAvailablePayments, payForPoints } from '../../requests/ProfileController';
-import { IPayment, getAddedWord, getPointsWord, handleConfirmed, handleDenied } from '../../Interfaces';
+import { IPayment, getAddedWord, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './BuyPoints.css';
+import { AxiosError } from 'axios';
 
 interface PaymentOffersProps {
   onClose: () => void;
@@ -13,11 +14,18 @@ const PaymentOffers: React.FC<PaymentOffersProps> = ({ onClose, onPointsUpdated 
   const [paymentOffers, setPaymentOffers] = useState<IPayment[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<IPayment | null>(null);
 
+  const handleAxiosError = useHandleAxiosError();
+
   useEffect(() => {
     const fetchPaymentOffers = async () => {
-      const offers = await getAvailablePayments();
-      setPaymentOffers(offers);
+      try {
+        const offers = await getAvailablePayments();
+        setPaymentOffers(offers);
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
     };
+
     fetchPaymentOffers();
   }, []);
 
@@ -27,13 +35,18 @@ const PaymentOffers: React.FC<PaymentOffersProps> = ({ onClose, onPointsUpdated 
 
   const handlePaymentConfirm = async () => {
     if (selectedOffer) {
-      const response = await payForPoints(selectedOffer.id);
-      if (response === 'success') {
-        handleConfirmed(`Mokėjimas patvirtintas, jums ${getAddedWord(selectedOffer.points)} ${selectedOffer.points} ${getPointsWord(selectedOffer.points)}`);
-        onPointsUpdated();
-        onClose();
-      } else {
-        handleDenied(response);
+      try {
+        const response = await payForPoints(selectedOffer.id);
+        if (response === 'success') {
+          handleConfirmed(`Mokėjimas patvirtintas, jums ${getAddedWord(selectedOffer.points)} ${selectedOffer.points} ${getPointsWord(selectedOffer.points)}`);
+          onPointsUpdated();
+          onClose();
+        } else {
+          handleDenied(response);
+          onClose();
+        }
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
         onClose();
       }
     }

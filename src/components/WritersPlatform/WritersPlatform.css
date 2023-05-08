@@ -26,7 +26,6 @@
   width: 100%;
 }
 
-
 .books-and-texts,
 .statistics {
   background-color: #ffffff;
@@ -85,8 +84,9 @@
 
 .book-list,
 .text-list {
+  margin-top: 1rem;
   margin-bottom: 2rem;
-  height: 350px;
+  /* height: 500px; */
 }
 
 .book-list h3,
@@ -183,16 +183,21 @@
   margin-top: 1rem;
 }
 
+.pagination-container{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
-.pagination .page-item {
+/* .pagination .page-item {
   margin: 0 2px;
-}
+} */
 
 .pagination .page-link {
   color: var(--color-4);

@@ -9,11 +9,11 @@ interface IBookFormModalProps {
   show: boolean;
   genrelist: IGenres[];
   onHide: () => void;
-  onSubmit: (name: string, genre: string, description: string, chapterPrice: number, bookPrice: number, coverImage: File) => void;
-  book?: IBookBought;
+  onSubmit: (book: IBookBought, coverImage: File) => void;
+  book: IBookBought;
 }
 
-const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, genrelist, book }) => {
+const UpdateBookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, genrelist, book }) => {
   const [name, setName] = useState('');
   const [genres, setGenres] = useState<IGenres[]>([]);
   const [genre, setGenre] = useState<IGenres>();
@@ -25,23 +25,15 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
 
   useEffect(() => {
     setGenres(genrelist);
+    setName(book.name);
+    setGenre(genrelist.find(g => g.name === book.genreName));
+    setDescription(book.description);
+    setChapterPrice(book.chapterPrice.toString());
+    setBookPrice(book.price.toString());
+    setCoverImage(undefined);
 
-    if (book) {
-      setName(book.name);
-      setGenre(genrelist.find(g => g.name === book.genreName));
-      setDescription(book.description);
-      setChapterPrice(book.chapterPrice.toString());
-      setBookPrice(book.price.toString());
-      setCoverImage(undefined);
-    } else {
-      setName('');
-      setGenre(undefined);
-      setDescription('');
-      setChapterPrice('');
-      setBookPrice('');
-      setCoverImage(undefined);
-    }
   }, [book, genrelist]);
+
 
   const handleSubmit = () => {
     if (!name || !description || !genre || !coverImage) {
@@ -49,7 +41,16 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
       return;
     }
 
-    onSubmit(name, genre.name, description, parseFloat(chapterPrice), parseFloat(bookPrice), coverImage);
+    const updatedBook: IBookBought = {
+      ...book,
+      name,
+      genreName: genre.name,
+      description,
+      chapterPrice: parseFloat(chapterPrice),
+      price: parseFloat(bookPrice),
+    };
+
+    onSubmit(updatedBook, coverImage);
     onHide();
   };
 
@@ -141,12 +142,15 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
         <Button variant="secondary" onClick={onHide}>
           Atšaukti
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button variant="primary" onClick={() => {
+          handleSubmit();
+        }}>
           Pateikti
         </Button>
+
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default BookFormModal;
+export default UpdateBookFormModal;

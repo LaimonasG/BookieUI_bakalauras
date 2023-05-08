@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import DailyQuestion from './DailyQuestion';
 import './Profile.css';
-import useFetchCurrentUser from "../../useFetchCurrentUser";
+// import useFetchCurrentUser from "../../useFetchCurrentUser";
 import PersonalInfo from './PersonalInfo';
 import BoughtBooks from './BoughtBooksPanel';
 import BoughtTexts from './BoughtTextsPanel';
@@ -14,19 +14,11 @@ interface PersonalInfoRef {
 }
 
 const Profile: React.FC = () => {
-  const [updatePage, setUpdatePage] = useState(false);
   const personalInfoRef = useRef<PersonalInfoRef>(null);
-  const onAuthenticated = () => {
-    // GetTexts();
-    // GetGenres();
-    // GetBooks();
-  };
   const handleQuestionAnswered = () => {
     personalInfoRef.current?.fetchPoints();
   };
 
-
-  useFetchCurrentUser(onAuthenticated, updatePage);
   return (
     <div className="profile">
       <div className="personal-info-panel">

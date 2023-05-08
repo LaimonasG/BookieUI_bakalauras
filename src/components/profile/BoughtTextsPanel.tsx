@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import './BoughtTextsPanel.css';
-import { IComment, ITextsBought, ITextsToBuy, getPointsWord } from '../../Interfaces';
+import { IComment, ITextsBought, ITextsToBuy, getPointsWord, useHandleAxiosError } from '../../Interfaces';
 import ChapterList from '../chapters/ChapterList';
 import { getProfileTexts } from '../../requests/ProfileController';
 import TextReadView from '../texts/TextReadView';
 import { getTextComments } from '../../requests/CommentsController';
 import CommentList from '../comments/CommentsList';
 import { Pagination } from 'react-bootstrap';
+import { getUserBlockedStatus } from '../../requests/AdminController';
 
 
 const BoughtTexts: React.FC = () => {
@@ -15,6 +16,11 @@ const BoughtTexts: React.FC = () => {
   const [showTextRead, setShowTextRead] = useState(false);
   const [selectedText, setSelectedText] = useState<ITextsBought | null>(null);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
+  const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+
+
+  const handleAxiosError = useHandleAxiosError();
+
 
   //pagination
   const [pageBook, setBookPage] = useState(0);
@@ -24,11 +30,19 @@ const BoughtTexts: React.FC = () => {
 
   useEffect(() => {
     const fetchTexts = async () => {
-      const xd = await getProfileTexts();
-      setTexts(xd);
-    }
+      try {
+        const isBlocked = await getUserBlockedStatus();
+        setIsUserBlocked(isBlocked);
+        const xd = await getProfileTexts();
+        setTexts(xd);
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
+    };
+
     fetchTexts();
   }, []);
+
 
   const readText = (text: ITextsBought) => {
     setSelectedText(text);
@@ -74,7 +88,7 @@ const BoughtTexts: React.FC = () => {
               <CommentList
                 isOpen={isCommentsOpen}
                 onClose={handleHideModal}
-                isProfile={true}
+                isProfile={!isUserBlocked}
                 entityId={selectedText!.id}
                 commentType='Text'
                 genreName={selectedText!.genreName}

@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { IComment, ITextsToBuy, getPointsWord, handleConfirmed, handleDenied } from "../../../Interfaces";
+import { IComment, ITextsToBuy, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
 import "./TextView.css";
 import { purchaseText } from '../../../requests/TextsController';
 import CommentList from '../../comments/CommentsList';
 import { getTextComments } from '../../../requests/CommentsController';
+import { AxiosError } from 'axios';
 
 type TextInformationModalProps = {
   text: ITextsToBuy;
   isOpen: boolean;
   onClose: () => void;
+  isBlocked: boolean;
+
 };
 
 const TextView: React.FC<TextInformationModalProps> = ({
   text,
   isOpen,
   onClose,
+  isBlocked
 }) => {
   const [comments, setComments] = useState<IComment[]>([]);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
+  const handleAxiosError = useHandleAxiosError();
+
 
   const handleBuyText = async (text: ITextsToBuy) => {
-    const response = await purchaseText(text.id, text.genreName);
-    if (response === 'success') {
-      handleConfirmed(`Tekstą "${text.name}" galite rasti savo profilyje.`);
-      onClose();
-    } else {
-      handleDenied(response);
+    try {
+      const response = await purchaseText(text.id, text.genreName);
+      if (response === 'success') {
+        handleConfirmed(`Tekstą "${text.name}" galite rasti savo profilyje.`);
+        onClose();
+      } else {
+        handleDenied(response);
+        onClose();
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
       onClose();
     }
   }
@@ -38,13 +49,17 @@ const TextView: React.FC<TextInformationModalProps> = ({
   const handleOpenComments = async (text: ITextsToBuy) => {
     console.log("ID:", text.id);
     console.log("User:", localStorage.getItem("user"));
-    const response = await getTextComments(text.id, text.genreName);
-    if (response) {
-      setComments(response);
-    } else {
-      setComments([]);
+    try {
+      const response = await getTextComments(text.id, text.genreName);
+      if (response) {
+        setComments(response);
+      } else {
+        setComments([]);
+      }
+      setIsCommentsOpen(true);
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
     }
-    setIsCommentsOpen(true);
   }
 
   return (
@@ -59,7 +74,11 @@ const TextView: React.FC<TextInformationModalProps> = ({
           <p className="mb-2"><strong>Kaina:</strong> {text.price} {getPointsWord(text.price)} </p>
         </div>
         <div className="buttons-container">
-          <Button variant="custom-buy" className="btn-custom" onClick={() => handleBuyText(text)}>Pirkti</Button>
+          <Button variant="custom-buy"
+            className={`btn-custom ${isBlocked ? "btn-custom-buy-disabled" : ""}`}
+            onClick={() => handleBuyText(text)}
+            disabled={isBlocked}
+          >Pirkti</Button>
           <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(text)}>Komentarai</Button>
         </div>
         <CommentList
@@ -69,6 +88,7 @@ const TextView: React.FC<TextInformationModalProps> = ({
           entityId={text.id}
           commentType='Text'
           genreName={text.genreName}
+          bookId={0}
         />
       </Modal.Body>
     </Modal>
