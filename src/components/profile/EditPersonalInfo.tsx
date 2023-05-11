@@ -37,7 +37,7 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
   };
 
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Keisti asmeninę informaciją</Modal.Title>
       </Modal.Header>
@@ -87,9 +87,6 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Atšaukti
-        </Button>
         <Button variant="primary" onClick={handleSubmit}>
           Pateikti
         </Button>

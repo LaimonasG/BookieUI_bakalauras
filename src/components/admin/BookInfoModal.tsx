@@ -19,7 +19,7 @@ const BookInfoModal: React.FC<BookInfoModalProps> = ({ book, isOpen, onClose }) 
         <div className="book-info d-flex">
           <img src={book.coverImageUrl} alt={book.name} className="admin-book-cover" />
           <div className="book-details ml-3">
-            <p className="mb-2"><strong>Pavadinimas:</strong> {book.author}</p>
+            <p className="mb-2"><strong>Autorius:</strong> {book.author}</p>
             <p className="mb-2"><strong>Žanras:</strong> {book.genreName}</p>
             <p className="mb-2"><strong>Aprašymas:</strong> {book.description}</p>
             <p className="mb-2"><strong>Skyriaus kaina:</strong> {book.chapterPrice} {getPointsWord(book.chapterPrice)}</p>

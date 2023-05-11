@@ -19,13 +19,11 @@ const QuestionFormModal: React.FC<IQuestionFormModalProps> = ({ show, onHide, on
   const [answers, setAnswers] = useState<IAnswerAdd[]>([
     { content: '', correct: 0 },
     { content: '', correct: 0 },
-    { content: '', correct: 0 },
-    { content: '', correct: 0 },
   ]);
   const [validationError, setValidationError] = useState('');
 
   const handleSubmit = () => {
-    if (!question || !points || !dateToRelease || answers.some(a => !a.content)) {
+    if (!question || !points || !dateToRelease || answers.length < 2 || answers.some(a => !a.content)) {
       setValidationError('Visi laukai yra privalomi.');
       return;
     }
@@ -50,8 +48,19 @@ const QuestionFormModal: React.FC<IQuestionFormModalProps> = ({ show, onHide, on
     });
     setAnswers(newAnswers);
   };
+
+  const addAnswer = () => {
+    setAnswers([...answers, { content: '', correct: 0 }]);
+  };
+
+  const removeAnswer = () => {
+    if (answers.length > 2) {
+      setAnswers(answers.slice(0, -1));
+    }
+  };
+
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Suveskite klausimo informaciją</Modal.Title>
       </Modal.Header>
@@ -64,7 +73,7 @@ const QuestionFormModal: React.FC<IQuestionFormModalProps> = ({ show, onHide, on
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              maxLength={25}
+              maxLength={150}
             />
           </Form.Group>
 
@@ -105,18 +114,26 @@ const QuestionFormModal: React.FC<IQuestionFormModalProps> = ({ show, onHide, on
                   updateAnswer(index, answer.content, e.target.checked ? 1 : 0)
                 }
               />
+
             </Form.Group>
+
           ))}
+
 
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Atšaukti
-        </Button>
-        <Button variant="primary" onClick={handleSubmit}>
-          Pateikti
-        </Button>
+        <div className="d-flex align-items-center">
+          <Button onClick={addAnswer} variant="primary" className="mt-3">
+            Pridėti atsakymą
+          </Button>
+          <Button onClick={removeAnswer} variant="danger" className="ml-4 mr-4 mt-3" disabled={answers.length <= 2}>
+            Pašalinti atsakymą
+          </Button>
+          <Button variant="primary" onClick={handleSubmit} className="mt-3" style={{ backgroundColor: "var(--color-2)" }}>
+            Pateikti
+          </Button>
+        </div>
       </Modal.Footer>
     </Modal>
   );

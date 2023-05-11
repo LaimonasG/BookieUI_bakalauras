@@ -1,7 +1,7 @@
 .modal-content {
   background-color: #ffffff;
   color: #000;
-  border: 2px solid #F9AA33 ;
+  border: 2px solid #F9AA33;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -9,7 +9,7 @@
 .modal-header {
   border-bottom: none;
   padding: 1rem;
-  background-color: #F9AA33 ;
+  background-color: #F9AA33;
   color: #ffffff;
 }
 
@@ -31,7 +31,7 @@ p {
 .text-cover {
   width: 100%;
   max-height: 300px;
-  max-width:200px;
+  max-width: 200px;
   object-fit: contain;
 }
 
@@ -77,4 +77,8 @@ p {
 .btn-custom-comments:hover {
   background-color: var(--color-3-hover);
   color: #ffffff;
+}
+
+.text-info-row {
+  margin-bottom: 1rem;
 }

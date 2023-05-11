@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-
+import "./Login/Login.css"
 import { login } from "../../services/auth.service";
 
 export type LoginProps = {}
@@ -50,19 +50,19 @@ const Login: React.FC = (LoginProps) => {
   };
 
   return (
-    <div className="col-md-12">
-      <div className="card card-container">
-        <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-          alt="profile-img"
-          className="profile-img-card"
-        />
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleLogin}
-        >
-          <Form>
+    <div className="card card-container">
+      <img
+        src={`avatar.svg`}
+        alt="profile-img"
+        className="profile-img-card"
+      />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleLogin}
+      >
+        <Form>
+          <div className="form-content">
             <div className="form-group">
               <label htmlFor="username">Naudotojo vardas</label>
               <Field name="username" type="text" className="form-control" />
@@ -84,25 +84,26 @@ const Login: React.FC = (LoginProps) => {
             </div>
 
             <div className="form-group">
-              <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+              <button type="submit" className="btn btn-login btn-block" disabled={loading}>
                 {loading && (
                   <span className="spinner-border spinner-border-sm"></span>
                 )}
                 <span>Prisijungti</span>
               </button>
             </div>
+          </div>
 
-            {message && (
-              <div className="form-group">
-                <div className="alert alert-danger" role="alert">
-                  {message}
-                </div>
+          {message && (
+            <div className="form-group">
+              <div className="alert alert-danger" role="alert">
+                {message}
               </div>
-            )}
-          </Form>
-        </Formik>
-      </div>
+            </div>
+          )}
+        </Form>
+      </Formik>
     </div>
+
   );
 };
 

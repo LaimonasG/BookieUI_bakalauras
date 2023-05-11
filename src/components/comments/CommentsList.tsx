@@ -31,7 +31,6 @@ const CommentList: React.FC<CommentListProps> = ({ isOpen, onClose, isProfile, e
   useEffect(() => {
     if (isOpen) {
       fetchComments();
-      console.log("ar as uzblokuotas?", !isProfile);
     }
   }, [isOpen]);
 
@@ -91,16 +90,8 @@ const CommentList: React.FC<CommentListProps> = ({ isOpen, onClose, isProfile, e
     setShowAddComment(false);
   };
 
-  const handleNextPage = () => {
-    setPage(page + 1);
-  };
-
-  const handlePrevPage = () => {
-    setPage(page - 1);
-  };
-
   return (
-    <Modal show={isOpen} onHide={onClose} centered size="lg">
+    <Modal show={isOpen} onHide={onClose} backdrop="static" keyboard={false} centered size="lg">
       <ModalHeader closeButton>
         <Modal.Title>Komentarai</Modal.Title>
       </ModalHeader>
@@ -149,13 +140,13 @@ const CommentList: React.FC<CommentListProps> = ({ isOpen, onClose, isProfile, e
         )}
       </ModalBody>
       <ModalFooter>
-        {isProfile && (
-          <Button variant="primary" className="mr-2" onClick={handleAddComment}>
-            Pridėti komentarą
-          </Button>
-        )}
-        <Button variant="secondary" onClick={onClose}>
-          Uždaryti
+        <Button
+          variant="custom-comment"
+          className={`btn-custom ${!isProfile ? "btn-custom-comment-disabled" : ""}`}
+          onClick={() => handleAddComment()}
+          disabled={!isProfile}
+        >
+          Pridėti komentarą
         </Button>
       </ModalFooter>
     </Modal>

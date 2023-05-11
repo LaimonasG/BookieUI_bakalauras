@@ -72,13 +72,6 @@ const AdminPage = () => {
     }
     try {
       const response = await updateBlockedStatus(data);
-      if (response === 'success') {
-        handleConfirmed(`Klausimas sėkmingai sukurtas.`);
-        const users = await getAllUsers();
-        setUsers(users);
-      } else {
-        handleDenied(response);
-      }
     } catch (error) {
       handleAxiosError(error as AxiosError);
     }
@@ -86,10 +79,6 @@ const AdminPage = () => {
 
   const handlePageClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-  };
-
-  const handlePointsInputChange = (userId: string, newPoints: number) => {
-    setPointsInputValues({ ...pointsInputValues, [userId]: newPoints });
   };
 
   const handleUpdatePoints = async (userId: string, userName: string, email: string, isBlocked: number) => {

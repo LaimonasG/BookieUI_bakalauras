@@ -1,11 +1,11 @@
 import React, { Component, useState, useEffect, Dispatch } from "react";
 import { Button, Modal, Pagination } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
-import { setUserRole } from "../../requests/AdminController";
+import { getUserBlockedStatus, setBookStatus, setUserRole } from "../../requests/AdminController";
 import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord, handleBeingAdded, IStatus, useHandleAxiosError } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
 import { getAllGenres } from '../../requests/GenresController';
-import { addBook, addChapter, updateBook } from "../../requests/BookController";
+import { addBook, addChapter, removeChapter, updateBook, updateChapter } from "../../requests/BookController";
 import { addText, updateText } from "../../requests/TextsController";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ChapterList from '../chapters/ChapterList';
@@ -22,6 +22,7 @@ import BoughtBooks from "../profile/BoughtBooksPanel";
 import { AxiosError } from "axios";
 import UpdateBookFormModal from "./books/UpdateBookForm";
 import UpdateTextFormModal from "./texts/UpdateTextFormModal";
+import UpdateChaptersFormModal from "./chapters/UpdateChaptersForm";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -33,24 +34,11 @@ interface WritersPlatformProps {
   useNavigate: () => NavigateFunction;
 }
 
-interface IWritersPlatformState {
-  isConfirmationOpen: boolean;
-  isOpen: boolean;
-  books: IBookBought[];
-  texts: ITextsBought[];
-  pieChartData: any[];
-  lineChartData: any;
-}
-
-type ChaptersCount = {
-  [bookId: number]: number;
-};
-
 const ConfirmationModal: React.FC<IConfirmationModalProps> = ({ isOpen, onClose, onAgree }) => {
   return (
     <Modal show={isOpen} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Confirmation</Modal.Title>
+        <Modal.Title>Patvirtinimas</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>Ar sutinkate su puslapio privatumo politika?</p>
@@ -88,6 +76,8 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const handleAxiosError = useHandleAxiosError();
   const [showUpdateBookModal, setShowUpdateBookModal] = useState(false);
   const [showUpdateTextModal, setShowUpdateTextModal] = useState(false);
+  const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+  const [showUpdateChaptersModal, setShowUpdateChaptersModal] = useState(false);
 
 
 
@@ -124,7 +114,14 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     GetGenres();
     setIsConfirmationOpen(true);
     setUserrole(localStorage.getItem("role"));
+    SetUserBlockedStatus();
+    console.log("am i blocked?", isUserBlocked)
   }, []);
+
+  async function SetUserBlockedStatus() {
+    const isBlocked = await getUserBlockedStatus();
+    setIsUserBlocked(isBlocked);
+  }
 
   async function GetBooks() {
     try {
@@ -189,6 +186,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   };
 
   const handleAddBook = () => {
+    console.log("handleadd")
     setShowAddBookModal(true);
   };
 
@@ -196,6 +194,12 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     setSelectedBook(book);
     setShowUpdateBookModal(true);
   };
+
+  const handleUpdateChapters = (book: IBookBought) => {
+    setSelectedBook(book);
+    setShowUpdateChaptersModal(true);
+  };
+
 
   const handleUpdateText = (text: ITextsBought) => {
     setSelectedText(text);
@@ -249,6 +253,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   }
 
   async function handleReadTextClick(text: ITextsBought) {
+    console.log("text:", text)
     setSelectedText(text);
     setShowTextModal(true);
   }
@@ -268,6 +273,10 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   const handleUpdateBookModal = () => {
     setShowUpdateBookModal(false);
+  }
+
+  const handleUpdateChaptersModal = () => {
+    setShowUpdateChaptersModal(false);
   }
 
   const handleUpdateTextModal = () => {
@@ -322,6 +331,41 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
       if (response === 'success') {
         handleConfirmed(`Knyga "${book.name}" atnaujinta sėkmingai.`);
+        GetBooks();
+      } else {
+        handleDenied(response);
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
+  };
+
+  const handleRemoveChapter = async (chapter: IChapters, genreName: string) => {
+    try {
+      const response = await updateChapter(chapter, genreName);
+
+      if (response === 'success') {
+        handleConfirmed(`Skyrius "${chapter.name}" atnaujintas sėkmingai.`);
+        GetBooks();
+      } else {
+        handleDenied(response);
+      }
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
+  };
+
+  const handleChangeBookStatus = async (chapters: IChapters[], book: IBookBought) => {
+    try {
+
+      for (const element of chapters) {
+        console.log("removed chapterid", element.id);
+        await removeChapter(element.id, book.id, book.genreName);
+      }
+      console.log("knyga", book)
+      const response = await setBookStatus(0, '', book.id);
+      if (response === 'success') {
+        handleConfirmed(`Knyga "${book.name}" pateikta peržiūrai.`);
         GetBooks();
       } else {
         handleDenied(response);
@@ -413,10 +457,20 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
         <div className="textsAndBooks">
           <div className="books-and-texts">
             <div className="add-button-container">
-              <Button className="add-btn" onClick={handleAddText}>
+              <Button
+                variant="custom-add"
+                className={`btn-custom ${isUserBlocked ? "btn-custom-add-disabled" : ""}`}
+                onClick={() => handleAddText()}
+                disabled={isUserBlocked}
+              >
                 Pridėti tekstą
               </Button>
-              <Button className="add-btn" onClick={handleAddBook}>
+              <Button
+                variant="custom-add"
+                className={`btn-custom ${isUserBlocked ? "btn-custom-add-disabled" : ""}`}
+                onClick={() => handleAddBook()}
+                disabled={isUserBlocked}
+              >
                 Pridėti knygą
               </Button>
             </div>
@@ -446,13 +500,25 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                             )}
                             <button className="comments btn-color3" onClick={() => handleOpenBookComments(book)}>Komentarai</button>
                             {book.isFinished === 0 && (
-                              <button className="add-chapter btn-color2" onClick={() => handleAddChapter(book)}>Pridėti skyrių</button>
+                              <Button
+                                variant="custom-add"
+                                className={`btn-custom ${isUserBlocked ? "btn-custom-add-disabled" : ""}`}
+                                onClick={() => handleAddChapter(book)}
+                                disabled={isUserBlocked}
+                              >
+                                Pridėti skyrių
+                              </Button>
                             )}
                           </div>
                         }
                         {book.status == IStatus.Atmesta &&
                           <div>
-                            <button className="edit-book btn-color2" onClick={() => handleUpdateBook(book)}>Redaguoti</button>
+                            <div>
+                              <button className="edit-book btn-color2" onClick={() => handleUpdateBook(book)}>Redaguoti</button>
+                            </div>
+                            <div>
+                              <button className="edit-book btn-color2" onClick={() => handleUpdateChapters(book)}>Redaguoti skyrius</button>
+                            </div>
                           </div>
                         }
                       </div>
@@ -483,6 +549,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                 book={selectedBook}
                 show={showChapterList}
                 onHide={handleHideModal}
+                isBlocked={isUserBlocked}
               />
             )}
 
@@ -502,6 +569,17 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                 onHide={handleUpdateBookModal}
                 onSubmit={handleUpdateBookFormSubmit}
                 book={selectedBook!}
+              />
+            )}
+
+            {showUpdateChaptersModal && (
+              <UpdateChaptersFormModal
+                show={showUpdateChaptersModal}
+                genrelist={genres}
+                onHide={handleUpdateChaptersModal}
+                onSubmit={handleChangeBookStatus}
+                book={selectedBook!}
+                isBlocked={isUserBlocked}
               />
             )}
 

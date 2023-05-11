@@ -90,7 +90,7 @@ const Register: React.FC = () => {
     <div className="col-md-12">
       <div className="card card-container">
         <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          src={`avatar.svg`}
           alt="profile-img"
           className="profile-img-card"
         />
@@ -137,7 +137,7 @@ const Register: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                  <button type="submit" className="btn btn-primary btn-block">Registruotis</button>
+                  <button type="submit" className="btn btn-login btn-block">Registruotis</button>
                 </div>
               </div>
             )}

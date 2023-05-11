@@ -68,29 +68,48 @@ const TextView: React.FC<TextInformationModalProps> = ({
         <Modal.Title>{text.name}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="book-info">
-          <p className="mb-2"><strong>Autorius:</strong> {text.author}</p>
-          <p className="mb-2"><strong>Aprašymas:</strong> {text.description}</p>
-          <p className="mb-2"><strong>Kaina:</strong> {text.price} {getPointsWord(text.price)} </p>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Autorius:</strong> {text.author}
+          </div>
         </div>
-        <div className="buttons-container">
-          <Button variant="custom-buy"
-            className={`btn-custom ${isBlocked ? "btn-custom-buy-disabled" : ""}`}
-            onClick={() => handleBuyText(text)}
-            disabled={isBlocked}
-          >Pirkti</Button>
-          <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(text)}>Komentarai</Button>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Aprašymas:</strong> {text.description}
+          </div>
+        </div>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Kaina:</strong> {text.price} {getPointsWord(text.price)}
+          </div>
         </div>
         <CommentList
           isOpen={isCommentsOpen}
           onClose={handleOnCommentsClose}
           isProfile={false}
           entityId={text.id}
-          commentType='Text'
+          commentType="Text"
           genreName={text.genreName}
           bookId={0}
         />
       </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="custom-comments"
+          className="btn-custom"
+          onClick={() => handleOpenComments(text)}
+        >
+          Komentarai
+        </Button>
+        <Button
+          variant="custom-buy"
+          className={`btn-custom ${isBlocked ? "btn-custom-buy-disabled" : ""}`}
+          onClick={() => handleBuyText(text)}
+          disabled={isBlocked}
+        >
+          Pirkti
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };

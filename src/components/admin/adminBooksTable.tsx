@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Form } from "react-bootstrap";
-import { IBookBought, IStatus, handleConfirmed, handleDenied, useHandleAxiosError } from "../../Interfaces";
+import { IBookBought, IStatus, getStatusString, handleConfirmed, handleDenied, useHandleAxiosError } from "../../Interfaces";
 import BookInfoModal from "./BookInfoModal";
 import { getAllBooks, setBookStatus } from "../../requests/AdminController";
 import { AxiosError } from "axios";
@@ -74,10 +74,6 @@ const BookTable: React.FC = () => {
 
   const handlePageClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-  };
-
-  const getStatusString = (statusNumber: number) => {
-    return IStatus[statusNumber];
   };
 
   return (

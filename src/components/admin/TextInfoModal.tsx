@@ -30,7 +30,7 @@ const TextInfoModal: React.FC<TextInfoModalProps> = ({ text, isOpen, onClose }) 
         <div className="text-info d-flex">
           <img src={text.coverImageUrl} alt={text.name} className="admin-text-cover" />
           <div className="text-details ml-3">
-            <p className="mb-2"><strong>Pavadinimas:</strong> {text.author}</p>
+            <p className="mb-2"><strong>Autorius:</strong> {text.author}</p>
             <p className="mb-2"><strong>Žanras:</strong> {text.genreName}</p>
             <p className="mb-2"><strong>Aprašymas:</strong> {text.description}</p>
             <p className="mb-2"><strong>Teksto kaina:</strong> {text.price} {getPointsWord(text.price)}</p>

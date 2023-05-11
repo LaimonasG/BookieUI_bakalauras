@@ -3,7 +3,7 @@ import { getAllBooksFinished } from "../../../requests/BookController";
 import jwt_decode from "jwt-decode";
 import { MyToken, IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
 import './BookList.css';
-import BookView from './BookView';
+import BookView from './FinishedBooksView';
 import { AxiosError } from 'axios';
 import { getUserBlockedStatus } from '../../../requests/AdminController';
 import { Pagination } from 'react-bootstrap';
@@ -18,6 +18,8 @@ export const FinBookList = () => {
   const [showRightArrow, setShowRightArrow] = useState<boolean>(true);
   const [scrollLeftAmount, setScrollLeftAmount] = useState<number>(0);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState('');
+
   const handleAxiosError = useHandleAxiosError();
 
   //pagination
@@ -46,12 +48,15 @@ export const FinBookList = () => {
   };
 
   function toggleFormStatus() {
+    GetBooks();
     setIsOpen(!isOpen);
   };
 
   useEffect(() => {
     GetBooks();
     SetUserBlockedStatus();
+    setUserRole(localStorage.getItem('role')!);
+
   }, []);
 
   async function SetUserBlockedStatus() {
@@ -96,6 +101,7 @@ export const FinBookList = () => {
           isOpen={isOpen}
           onClose={toggleFormStatus}
           isBlocked={isUserBlocked}
+          userRole={userRole}
         />
       )}
     </div>

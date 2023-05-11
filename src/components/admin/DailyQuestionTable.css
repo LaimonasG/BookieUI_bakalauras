@@ -1,5 +1,5 @@
 .custom-delete-button {
-  background-color: #f44336 !important;
+  background-color: var(--color-6) !important;
   border: none;
   color: white !important;
   padding: 8px 16px !important;
@@ -14,6 +14,6 @@
 }
 
 .custom-delete-button:hover {
-  background-color: #d32f2f;
+  background-color: var(--color-6);
 }
 

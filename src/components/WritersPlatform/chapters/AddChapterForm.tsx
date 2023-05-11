@@ -30,7 +30,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
   };
 
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Skyriaus informacija</Modal.Title>
       </Modal.Header>
@@ -74,9 +74,6 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit }
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Atšaukti
-        </Button>
         <Button variant="primary" onClick={handleSubmit}>
           Pateikti
         </Button>

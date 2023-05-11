@@ -53,7 +53,7 @@ const PaymentOffers: React.FC<PaymentOffersProps> = ({ onClose, onPointsUpdated 
   };
 
   return (
-    <Modal show={true} onHide={onClose}>
+    <Modal show={true} onHide={onClose} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Mokėjimo pasiūlymai</Modal.Title>
       </Modal.Header>

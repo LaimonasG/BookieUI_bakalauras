@@ -83,6 +83,9 @@ const BoughtBooks: React.FC = () => {
                 {book.isFinished === 1 &&
                   <p className="book-price"> Kaina: {book.price} {getPointsWord(book.price)}</p>
                 }
+                {book.isFinished === 0 &&
+                  <p className="book-price"> Skyriaus kaina: {book.chapterPrice} {getPointsWord(book.price)}</p>
+                }
                 <p className="book-description"> Įkelta: {new Date(book.created.toString()).toISOString().split('T')[0]}</p>
                 <div>
                   {book.chapters?.length === 0 ? (
@@ -120,26 +123,28 @@ const BoughtBooks: React.FC = () => {
           </ul>
         )}
       </div>
-      {numBookPages > 1 && (
-        <Pagination
-          size="sm"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          {Array.from(Array(numBookPages), (e, i) => (
-            <Pagination.Item
-              key={i}
-              active={i === pageBook}
-              onClick={() => setBookPage(i)}
-            >
-              {i + 1}
-            </Pagination.Item>
-          ))}
-        </Pagination>
-      )}
+      <div className="pagination-wrapper">
+        {numBookPages > 1 && (
+          <Pagination
+            size="sm"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            {Array.from(Array(numBookPages), (e, i) => (
+              <Pagination.Item
+                key={i}
+                active={i === pageBook}
+                onClick={() => setBookPage(i)}
+              >
+                {i + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+        )}
+      </div>
     </div>
 
   );

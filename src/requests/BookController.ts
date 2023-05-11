@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { IBookAdd, IBookBought, IBookToBuy, IBooks, IChaptersAdd } from "../Interfaces";
+import { IBookAdd, IBookBought, IBookToBuy, IBooks, IChapters, IChaptersAdd } from "../Interfaces";
 import { toast } from 'react-toastify';
 import { url } from "../App";
 
@@ -35,6 +35,35 @@ const addBook = async (genreName: string, book: IBookAdd) => {
       },
     });
     if (response.status === 201) {
+      return 'success';
+    } else {
+      return 'Error status'+response.status.toString();
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400) {
+      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      return errorDataString;
+    } else {
+      console.error(error);
+      return 'error';
+    }
+  }
+};
+
+const updateChapter = async (chapter:IChapters,genreName:string) => {
+  try {
+  const formData = new FormData();
+  formData.append("file", chapter.content);
+  formData.append("chapterName", chapter.name);
+
+  const response=await axios
+    .put(`${url}/genres/${genreName}/books/${chapter.bookId}/chapters/${chapter.id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200) {
       return 'success';
     } else {
       return 'Error status'+response.status.toString();
@@ -189,5 +218,26 @@ const editBook = async (genreName: string, idBook: number, book: IBooks) =>
     }
   };
 
-  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook,updateBook}
+  const removeChapter = async (chapterId:number,bookId:number,genreName:string) =>{
+    try{
+      const response=await axios.delete(`${url}/genres/${genreName}/books/${bookId}/chapters/${chapterId}`, undefined);
+    
+      if (response.status === 204) {
+        return 'success';
+      } else {
+        return 'Error status'+response.status.toString();
+      }
+    } catch(error){
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+        return errorDataString;
+      } else {
+        console.error(error);
+        return 'error';
+      }
+    }};
+
+  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook,updateBook,
+    updateChapter,removeChapter}
 

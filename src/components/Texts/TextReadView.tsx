@@ -26,6 +26,8 @@ const TextReadView: React.FC<TextInformationModalProps> = ({ text, show, onHide 
       aria-labelledby="contained-modal-title-vcenter"
       centered
       className="text-read-view"
+      backdrop="static"
+      keyboard={false}
     >
       <Modal.Header closeButton onClick={handleContentClick}>
         <Modal.Title id="contained-modal-title-vcenter">{text.name}</Modal.Title>

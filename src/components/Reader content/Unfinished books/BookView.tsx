@@ -64,19 +64,25 @@ const BookView: React.FC<BookInformationModalProps> = ({
         <Modal.Title>{book.name}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="book-info">
-          <p className="mb-2"><strong>Autorius:</strong> {book.author}</p>
-          <p className="mb-2"><strong>Aprašymas:</strong> {book.description}</p>
-          <p className="mb-2"><strong>Pradinė įmoka už skyrius:</strong> {book.chapterPrice * book.chapterCount} {getPointsWord(book.chapterPrice * book.chapterCount)} </p>
-          <p className="mb-2"><strong>Skyriaus kaina:</strong> {book.chapterPrice} {getPointsWord(book.chapterPrice)} </p>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Autorius:</strong> {book.author}
+          </div>
         </div>
-        <div className="buttons-container">
-          <Button variant="custom-subscribe"
-            className={`btn-custom ${isBlocked ? "btn-custom-buy-disabled" : ""}`}
-            onClick={() => handleSubscribeToBook(book)}
-            disabled={isBlocked}
-          >Prenumeruoti</Button>
-          <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(book)}>Komentarai</Button>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Aprašymas:</strong> {book.description}
+          </div>
+        </div>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Pradinė įmoka už skyrius:</strong> {book.chapterPrice * book.chapterCount} {getPointsWord(book.chapterPrice * book.chapterCount)}
+          </div>
+        </div>
+        <div className="row text-info-row">
+          <div className="col">
+            <strong>Skyriaus kaina:</strong> {book.chapterPrice} {getPointsWord(book.chapterPrice)}
+          </div>
         </div>
         <CommentList
           isOpen={isCommentsOpen}
@@ -88,6 +94,14 @@ const BookView: React.FC<BookInformationModalProps> = ({
           bookId={0}
         />
       </Modal.Body>
+      <Modal.Footer>
+        <Button variant="custom-subscribe"
+          className={`btn-custom ${isBlocked ? "btn-custom-buy-disabled" : ""}`}
+          onClick={() => handleSubscribeToBook(book)}
+          disabled={isBlocked}
+        >Prenumeruoti</Button>
+        <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(book)}>Komentarai</Button>
+      </Modal.Footer>
     </Modal>
   );
 };

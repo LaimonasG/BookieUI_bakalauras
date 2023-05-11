@@ -304,4 +304,8 @@ export const useHandleAxiosError = () => {
   return handleAxiosError;
 };
 
+export const getStatusString = (statusNumber: number) => {
+  return IStatus[statusNumber];
+};
+
 

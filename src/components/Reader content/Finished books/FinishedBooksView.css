@@ -69,6 +69,17 @@ p {
   color: #ffffff;
 }
 
+.btn-custom-block {
+  background-color: var(--color-6);
+  border-color: var(--color-6);
+  color: #ffffff;
+}
+
+.btn-custom-block:hover {
+  background-color: var(--color-6-hover);
+  color: #ffffff;
+}
+
 .btn-custom-buy:hover {
   background-color: var(--color-2-hover);
   color: #ffffff;
@@ -77,4 +88,13 @@ p {
 .btn-custom-comments:hover {
   background-color: var(--color-3-hover);
   color: #ffffff;
+}
+
+.book-info-row {
+  margin-bottom: 1rem;
+}
+
+.block-reason-modal .modal-content {
+  width: 105%;  
+  height: 105%;  
 }
