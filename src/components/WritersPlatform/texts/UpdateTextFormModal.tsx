@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './AddTextForm.css';
-import { useDropzone } from 'react-dropzone';
-import { ITextAdd, ITextsBought, IGenres } from '../../../Interfaces';
-import { toast } from 'react-toastify';
+import { ITextsBought, IGenres } from '../../../Interfaces';
 
 interface ITextFormModalProps {
   show: boolean;

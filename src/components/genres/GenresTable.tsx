@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
 import { getAllGenres } from "../../requests/GenresController";
 import { IGenres } from '../../Interfaces';
 import './styles.css';

@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { IBookAdd, IBookBought, IBookToBuy, IBooks, IChapters, IChaptersAdd } from "../Interfaces";
-import { toast } from 'react-toastify';
+import { IBookAdd, IBookBought, IBookToBuy, IChapters, IChaptersAdd } from "../Interfaces";
 import { url } from "../App";
 
 const userStr = localStorage.getItem("user");
@@ -149,9 +148,6 @@ const addChapter = async (chapter: IChaptersAdd, genreName: string) => {
   }
 };
 
-const editBook = async (genreName: string, idBook: number, book: IBooks) =>
-  await axios.put(`${url}/genres/${genreName}/books/${idBook}`, undefined);
-
   const deleteBook = async (genreName: string, idBook: number) =>
   await axios.delete(`${url}/genres/${genreName}/books/${idBook}`, undefined);
 
@@ -238,6 +234,6 @@ const editBook = async (genreName: string, idBook: number, book: IBooks) =>
       }
     }};
 
-  export {getAllBooksFinished,getAllBooksUnfinished, addBook, editBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook,updateBook,
+  export {getAllBooksFinished,getAllBooksUnfinished, addBook,deleteBook,purchaseBook,subscribeToBook,addChapter,unsubscribeToBook,updateBook,
     updateChapter,removeChapter}
 

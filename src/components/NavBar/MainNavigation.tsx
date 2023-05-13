@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getTokenExpirationTime, getCurrentUser, logout } from '../../services/auth.service';
+import { getCurrentUser, logout } from '../../services/auth.service';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faList, faUser, faSignOutAlt, faPenNib, faUserCog } from '@fortawesome/free-solid-svg-icons';
+import { faList, faUser, faSignOutAlt, faPenNib, faUserCog } from '@fortawesome/free-solid-svg-icons';
 import { faBook } from '@fortawesome/free-solid-svg-icons/faBook';
 import { Nav, Navbar as BootstrapNavbar } from 'react-bootstrap';
 import './NavBar.css';

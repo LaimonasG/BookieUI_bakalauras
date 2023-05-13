@@ -1,3 +1,21 @@
-body {
-  background-color: #FFFFF0;
+.app {
+  text-align: center;
+  background: url('https://example.com/some-background.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.app-header {
+  padding: 50px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.container {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px;
 }

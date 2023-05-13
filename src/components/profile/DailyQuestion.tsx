@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './DailyQuestion.css';
 import { IQuestion, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import { getTodaysQuestion, getLastAnswerTime, answerQuestion } from '../../requests/ProfileController'
-import { toast } from "react-toastify";
 import { AxiosError } from 'axios';
 import { getUserBlockedStatus } from '../../requests/AdminController';
 
@@ -12,8 +11,8 @@ interface DailyQuestionProps {
 
 const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => {
   const [questionAnswered, setQuestionAnswered] = useState(false);
-  const [question, setQuestion] = useState<IQuestion | null>();
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(-1);
+  const [question, setQuestion] = useState<IQuestion>();
+  const [selectedAnswer, setSelectedAnswer] = useState<number>(-1);
   const [lastAnswerTime, setLastAnswerTime] = useState<Date>();
   const [timeUntilNextQuestion, setTimeUntilNextQuestion] = useState(0);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
@@ -27,17 +26,18 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
       return;
     }
     setQuestionAnswered(true);
-    setSelectedAnswer(null);
-    try {
-      const result = await answerQuestion(question!.id, selectedAnswer!);
-      if (result.correct === 1) {
-        handleConfirmed(`Puiku! Jūsų pasirinkimas "${result.content}" yra teisingas.`);
-        onQuestionAnswered();
-      } else {
-        handleDenied(`Deja, jūsų pasirinkimas buvo neteisingas. Teisingas variantas yra "${result.content}".`);
+    if (question) {
+      try {
+        const result = await answerQuestion(question.id, selectedAnswer);
+        if (result.correct === 1) {
+          handleConfirmed(`Puiku! Jūsų pasirinkimas "${result.content}" yra teisingas.`);
+          onQuestionAnswered();
+        } else {
+          handleDenied(`Deja, jūsų pasirinkimas buvo neteisingas. Teisingas variantas yra "${result.content}".`);
+        }
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
       }
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
     }
   };
 
@@ -60,7 +60,7 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
   }
 
   async function GetLastAnswerTime() {
-    const xd = await getLastAnswerTime();
+    await getLastAnswerTime();
     setLastAnswerTime(new Date("2023-04-25T15:00:00")); //date set just for testing purposes
   }
 

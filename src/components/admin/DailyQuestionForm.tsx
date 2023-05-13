@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './DailyQuestionForm.css';
-import { useDropzone } from 'react-dropzone';
-import { toast } from 'react-toastify';
-import { IAnswer, IAnswerAdd, IQuestion, IQuestionAdd } from '../../Interfaces';
+import { IAnswerAdd, IQuestionAdd } from '../../Interfaces';
 
 interface IQuestionFormModalProps {
   show: boolean;

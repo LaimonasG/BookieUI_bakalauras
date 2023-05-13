@@ -4,17 +4,12 @@ import { IChapters } from "../Interfaces";
 
 const userStr = localStorage.getItem("user");
 
-
 let user=null;
 if (userStr)
   user = JSON.parse(userStr);
 
 if(user)
 axios.defaults.headers.common = {'Authorization': `bearer ${user.accessToken}`}
-
-interface ISetRoleDto {
-  roleName: string
-}
 
   const getWriterTexts = async () =>
   await axios.get(`${url}/writer/texts`, undefined).then((x) => x.data);

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { getTokenExpirationTime, getCurrentUser, logout } from './services/auth.service';
+import {logout } from './services/auth.service';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';

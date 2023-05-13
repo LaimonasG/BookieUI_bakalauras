@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Pagination, Modal, Button, Form, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import './adminPlatform.css';
-import { getAllQuestions, getAllUsers, setUserPoints, updateBlockedStatus } from '../../requests/AdminController';
-import { IQuestion, IUser, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
+import { getAllUsers, setUserPoints, updateBlockedStatus } from '../../requests/AdminController';
+import { IUser, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
 import DailyQuestionTable from './DailyQuestionTable';
-import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import BookTable from './adminBooksTable';
 import TextsTable from './adminTextsTable';
 
 const AdminPage = () => {
   const [users, setUsers] = useState<IUser[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
-
   const [pointsInputValues, setPointsInputValues] = useState<Record<string, number>>({});
   const [initialPointsValues, setInitialPointsValues] = useState<Record<string, number>>({});
   const [checkedStates, setCheckedStates] = useState<Record<string, boolean>>({});
@@ -71,7 +67,7 @@ const AdminPage = () => {
       points: points
     }
     try {
-      const response = await updateBlockedStatus(data);
+      await updateBlockedStatus(data);
     } catch (error) {
       handleAxiosError(error as AxiosError);
     }

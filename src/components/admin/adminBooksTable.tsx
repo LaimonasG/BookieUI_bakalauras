@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form } from "react-bootstrap";
+import { Table, Button, Form } from "react-bootstrap";
 import { IBookBought, IStatus, getStatusString, handleConfirmed, handleDenied, useHandleAxiosError } from "../../Interfaces";
 import BookInfoModal from "./BookInfoModal";
 import { getAllBooks, setBookStatus } from "../../requests/AdminController";
@@ -56,9 +56,9 @@ const BookTable: React.FC = () => {
   const submitStatusChange = async (book: IBookBought) => {
 
     const currentStatus = selectedStatuses.get(book.id);
-    if (currentStatus !== null) {
+    if (currentStatus) {
       try {
-        const response = await setBookStatus(currentStatus!, statusComment, book.id);
+        const response = await setBookStatus(currentStatus, statusComment, book.id);
         if (response === 'success') {
           handleConfirmed(`Knygos "${book.name}" statusas pakeistas į "${getStatusString(currentStatus as number)}"`);
           const books = await getAllBooks();

@@ -1,10 +1,8 @@
 import axios, { AxiosError } from "axios"
 import { ITextAdd, ITextsBought } from "../Interfaces";
-import { toast } from 'react-toastify';
 import { url } from "../App";
 
 const userStr = localStorage.getItem("user");
-
 
 let user = null;
 if (userStr)

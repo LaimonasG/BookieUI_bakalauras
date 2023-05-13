@@ -1,13 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import DailyQuestion from './DailyQuestion';
 import './Profile.css';
-// import useFetchCurrentUser from "../../useFetchCurrentUser";
 import PersonalInfo from './PersonalInfo';
 import BoughtBooks from './BoughtBooksPanel';
 import BoughtTexts from './BoughtTextsPanel';
-import { getProfileBooks } from '../../requests/ProfileController';
-import { unsubscribeToBook } from '../../requests/BookController';
-import { IBookBought, handleConfirmed, handleDenied } from '../../Interfaces';
 
 interface PersonalInfoRef {
   fetchPoints: () => void;

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllTexts } from "../../../requests/TextsController";
-import jwt_decode from "jwt-decode";
-import { MyToken, ITextsToBuy, useHandleAxiosError } from "../../../Interfaces";
+import { ITextsToBuy, useHandleAxiosError } from "../../../Interfaces";
 import './TextList.css';
 import TextView from '../Texts/TextView';
 import { Pagination } from 'react-bootstrap';
@@ -10,13 +9,10 @@ import { getUserBlockedStatus } from '../../../requests/AdminController';
 
 export const TextList = () => {
   const [texts, setTexts] = useState<ITextsToBuy[]>([]);
-  const genreName = localStorage.getItem("genreName");
-  const userStr = localStorage.getItem("user");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currText, setCurrText] = useState<ITextsToBuy>();
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const handleAxiosError = useHandleAxiosError();
-
 
   //pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -29,12 +25,16 @@ export const TextList = () => {
   };
 
   async function GetTexts() {
-    try {
-      const xd = await getAllTexts(localStorage.getItem("genreName")!);
-      setTexts(xd);
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
+    const genreName = localStorage.getItem("genreName");
+    if (genreName) {
+      try {
+        const xd = await getAllTexts(genreName);
+        setTexts(xd);
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
     }
+
   }
 
   const handleTileClick = (event: React.MouseEvent<HTMLDivElement>, text: ITextsToBuy) => {
@@ -45,7 +45,7 @@ export const TextList = () => {
 
   function toggleFormStatus() {
     setIsOpen(!isOpen);
-  };
+  }
 
   useEffect(() => {
     GetTexts();

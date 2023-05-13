@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllBooksUnfinished } from "../../../requests/BookController";
-import jwt_decode from "jwt-decode";
-import { MyToken, IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
+import { IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
 import '../Finished books/BookList.css';
 import BookView from './BookView';
 import { Pagination } from 'react-bootstrap';
@@ -10,7 +9,6 @@ import { getUserBlockedStatus } from '../../../requests/AdminController';
 
 export const UnfinBookList = () => {
   const [books, setBooks] = useState<IBookToBuy[]>([]);
-  const userStr = localStorage.getItem("user");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currBook, setCurrBook] = useState<IBookToBuy>();
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
@@ -29,11 +27,14 @@ export const UnfinBookList = () => {
   };
 
   async function GetBooks() {
-    try {
-      const xd = await getAllBooksUnfinished(localStorage.getItem("genreName")!);
-      setBooks(xd);
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
+    const genreName = localStorage.getItem("genreName");
+    if (genreName) {
+      try {
+        const xd = await getAllBooksUnfinished(genreName);
+        setBooks(xd);
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
     }
   }
 
@@ -45,7 +46,7 @@ export const UnfinBookList = () => {
 
   function toggleFormStatus() {
     setIsOpen(!isOpen);
-  };
+  }
 
   useEffect(() => {
     GetBooks();

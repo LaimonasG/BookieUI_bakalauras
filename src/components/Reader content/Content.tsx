@@ -1,5 +1,4 @@
-import React, { Component, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import React, { Component } from "react";
 import { UnfinBookList } from "./Unfinished books/BookList";
 import { FinBookList } from "./Finished books/BookList";
 import { TextList } from "./Texts/TextList";

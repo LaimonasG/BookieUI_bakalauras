@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAvailablePayments, payForPoints } from '../../requests/ProfileController';
 import { IPayment, getAddedWord, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from '../../Interfaces';
-import { Button, Modal, Form } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import './BuyPoints.css';
 import { AxiosError } from 'axios';
 

@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Modal, Button, Popover, InputGroup, FormControl, Overlay } from "react-bootstrap";
-import { IBookToBuy, IComment, getPointsWord, getStatusString, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
+import React, { useCallback, useRef, useState } from 'react';
+import { Modal, Button, Overlay } from "react-bootstrap";
+import { IBookToBuy, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
 import "./FinishedBooksView.css";
 import { purchaseBook } from '../../../requests/BookController';
 import { AxiosError } from 'axios';
 import CommentList from '../../comments/CommentsList';
-import { getBookComments } from '../../../requests/CommentsController';
 import { setBookStatus } from '../../../requests/AdminController';
 import BlockBookPopover from '../BookBlockPopover';
 
@@ -24,7 +23,6 @@ const BookView: React.FC<BookInformationModalProps> = ({
   isBlocked,
   userRole
 }) => {
-  const [comments, setComments] = useState<IComment[]>([]);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const [blockReason, setBlockReason] = useState<string>('');
   const [showPopover, setShowPopover] = useState<boolean>(false);
@@ -51,18 +49,8 @@ const BookView: React.FC<BookInformationModalProps> = ({
     setIsCommentsOpen(false);
   }
 
-  const handleOpenComments = async (book: IBookToBuy) => {
-    try {
-      const response = await getBookComments(book.id, book.genreName);
-      if (response) {
-        setComments(response);
-      } else {
-        setComments([]);
-      }
-      setIsCommentsOpen(true);
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
-    }
+  const handleOpenComments = async () => {
+    setIsCommentsOpen(true);
   }
 
   const handleChangeBookStatus = async (book: IBookToBuy) => {
@@ -153,7 +141,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
         >
           Pirkti
         </Button>
-        <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(book)}>Komentarai</Button>
+        <Button variant="custom-comments" className="btn-custom" onClick={handleOpenComments}>Komentarai</Button>
       </Modal.Footer>
     </Modal>
   );

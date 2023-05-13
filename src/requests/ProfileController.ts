@@ -1,9 +1,6 @@
 import axios, { AxiosError } from "axios";
-import { IAnsweredQuestionDto, IQuestion, IBookAdd, IPersonalInfo, IPayment, ICreatePayment } from "../Interfaces";
-import { toast } from 'react-toastify';
-import { useParams } from "react-router-dom";
+import { IAnsweredQuestionDto, IQuestion, IPersonalInfo, IPayment } from "../Interfaces";
 import { url } from "../App";
-import { getCurrentUser } from "../services/auth.service";
 
 const userStr = localStorage.getItem("user");
 

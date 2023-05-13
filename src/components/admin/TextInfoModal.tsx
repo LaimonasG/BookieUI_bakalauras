@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { ITextsBought, getPointsWord } from '../../Interfaces';
 import TextReadView from '../texts/TextReadView';
 import "./TextInfoModal.css";

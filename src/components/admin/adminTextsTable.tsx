@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form } from "react-bootstrap";
+import { Table, Button, Form } from "react-bootstrap";
 import { IStatus, ITextsBought, handleConfirmed, handleDenied, useHandleAxiosError } from "../../Interfaces";
 import { getAllTexts, setTextStatus } from "../../requests/AdminController";
 import { AxiosError } from "axios";
@@ -60,9 +60,9 @@ const TextsTable: React.FC = () => {
   const submitStatusChange = async (text: ITextsBought) => {
 
     const currentStatus = selectedStatuses.get(text.id);
-    if (currentStatus !== null) {
+    if (currentStatus) {
       try {
-        const response = await setTextStatus(currentStatus!, statusComment, text.id);
+        const response = await setTextStatus(currentStatus, statusComment, text.id);
         if (response === 'success') {
           handleConfirmed(`Teksto "${text.name}" statusas pakeistas į "${getStatusString(currentStatus as number)}"`);
           const texts = await getAllTexts();

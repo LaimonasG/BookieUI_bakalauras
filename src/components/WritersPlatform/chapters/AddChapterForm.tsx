@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './AddChapterForm.css';
-import { useDropzone } from 'react-dropzone';
-import { IBookBought, IGenres } from '../../../Interfaces';
-import { toast } from 'react-toastify';
 
 interface IBookFormModalProps {
   show: boolean;

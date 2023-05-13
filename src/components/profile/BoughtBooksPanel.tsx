@@ -8,12 +8,11 @@ import { unsubscribeToBook } from '../../requests/BookController';
 import { Pagination } from 'react-bootstrap';
 import { AxiosError } from 'axios';
 import { getUserBlockedStatus } from '../../requests/AdminController';
-import { getCurrentUser } from '../../services/auth.service';
 
 const BoughtBooks: React.FC = () => {
   const [books, setBooks] = useState<IBookBought[]>([]);
   const [showChapterList, setShowChapterList] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<IBookBought | null>(null);
+  const [selectedBook, setSelectedBook] = useState<IBookBought>();
   const [isBookCommentsOpen, setIsBookCommentsOpen] = useState<boolean>(false);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
 
@@ -109,14 +108,14 @@ const BoughtBooks: React.FC = () => {
                 isBlocked={isUserBlocked}
               />
             )}
-            {isBookCommentsOpen &&
+            {isBookCommentsOpen && selectedBook &&
               <CommentList
                 isOpen={isBookCommentsOpen}
                 onClose={handleHideModal}
                 isProfile={!isUserBlocked}
-                entityId={selectedBook!.id}
+                entityId={selectedBook.id}
                 commentType='Book'
-                genreName={selectedBook!.genreName}
+                genreName={selectedBook.genreName}
                 bookId={0}
               />
             }

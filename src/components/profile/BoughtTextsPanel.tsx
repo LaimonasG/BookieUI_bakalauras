@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import './BoughtTextsPanel.css';
-import { IComment, ITextsBought, ITextsToBuy, getPointsWord, useHandleAxiosError } from '../../Interfaces';
-import ChapterList from '../chapters/ChapterList';
+import { ITextsBought, useHandleAxiosError } from '../../Interfaces';
 import { getProfileTexts } from '../../requests/ProfileController';
 import TextReadView from '../texts/TextReadView';
-import { getTextComments } from '../../requests/CommentsController';
 import CommentList from '../comments/CommentsList';
 import { Pagination } from 'react-bootstrap';
 import { getUserBlockedStatus } from '../../requests/AdminController';
@@ -14,7 +12,7 @@ import { getUserBlockedStatus } from '../../requests/AdminController';
 const BoughtTexts: React.FC = () => {
   const [texts, setTexts] = useState<ITextsBought[]>([]);
   const [showTextRead, setShowTextRead] = useState(false);
-  const [selectedText, setSelectedText] = useState<ITextsBought | null>(null);
+  const [selectedText, setSelectedText] = useState<ITextsBought>();
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
 
@@ -84,14 +82,14 @@ const BoughtTexts: React.FC = () => {
                 onHide={handleHideModal}
               />
             )}
-            {isCommentsOpen &&
+            {isCommentsOpen && selectedText &&
               <CommentList
                 isOpen={isCommentsOpen}
                 onClose={handleHideModal}
                 isProfile={!isUserBlocked}
-                entityId={selectedText!.id}
+                entityId={selectedText.id}
                 commentType='Text'
-                genreName={selectedText!.genreName}
+                genreName={selectedText.genreName}
                 bookId={0}
               />
             }

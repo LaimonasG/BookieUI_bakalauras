@@ -79,12 +79,12 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
           </div>
 
         </Modal.Body>
-        {isCommentsOpen &&
+        {isCommentsOpen && selectedChapter &&
           <CommentList
             isOpen={isCommentsOpen}
             onClose={handleHideModal}
             isProfile={!isBlocked}
-            entityId={selectedChapter!.id}
+            entityId={selectedChapter.id}
             commentType='Chapter'
             genreName={book.genreName}
             bookId={book.id}
@@ -144,12 +144,12 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
             </Pagination>
           )}
         </Modal.Footer>
-        {isCommentsOpen &&
+        {isCommentsOpen && selectedChapter &&
           <CommentList
             isOpen={isCommentsOpen}
             onClose={handleHideModal}
             isProfile={!isBlocked}
-            entityId={selectedChapter!.id}
+            entityId={selectedChapter.id}
             commentType='Chapter'
             genreName={book.genreName}
             bookId={book.id}

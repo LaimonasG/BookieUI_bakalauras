@@ -2,6 +2,10 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { url } from "../App";
 
+interface DecodedToken {
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': string[];
+  exp: number;
+}
 
 export const register = (username: string, email: string, password: string) => {
   return axios.post(url + "/register", {
@@ -10,14 +14,12 @@ export const register = (username: string, email: string, password: string) => {
     password,
   })
   .then((res) => {
-    
     if (res) {
       localStorage.setItem("user", JSON.stringify(res.data));
       console.log(localStorage.getItem("user"));
     }
     return res;
-  })
-  ;
+  });
 };
 
 export const login = (username: string, password: string) => {
@@ -28,7 +30,7 @@ export const login = (username: string, password: string) => {
     })
     .then((response) => {
       if (response.data.accessToken) {
-        const decodedToken: any = jwt_decode(response.data.accessToken);
+        const decodedToken: DecodedToken = jwt_decode(response.data.accessToken);
         const roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         let assignedRole = '';
 
@@ -66,10 +68,10 @@ export const getCurrentUser = () => {
 };
 
 const getTokenExpirationTime = (token: string): number => {
-  const decodedToken: any = jwt_decode(token);
+  const decodedToken: DecodedToken = jwt_decode(token);
 
   // Ensure the decoded token has the 'exp' property
-  if (!decodedToken.hasOwnProperty('exp')) {
+  if (!Object.prototype.hasOwnProperty.call(decodedToken, 'exp')) {
     throw new Error('Token does not contain expiration time');
   }
 

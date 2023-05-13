@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { IBookAdd, IBookToBuy, IChaptersAdd, IComment, ICreateComment } from "../Interfaces";
+import { IComment, ICreateComment } from "../Interfaces";
 import { url } from "../App";
 
 const userStr = localStorage.getItem("user");

@@ -56,7 +56,7 @@ const CommentList: React.FC<CommentListProps> = ({ isOpen, onClose, isProfile, e
         await fetchComments();
       } else {
         handleDenied(`Komentaro pridėti nepavyko. ${response}`)
-      };
+      }
     } catch (error) {
       handleAxiosError(error as AxiosError);
     }

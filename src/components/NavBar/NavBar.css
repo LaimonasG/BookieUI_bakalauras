@@ -2,6 +2,8 @@
   background-color: var(--color-3);
   font-family: 'Roboto', sans-serif; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  position: relative; 
+  z-index: 1000;
 }
 
 .navbar-brand-icon {

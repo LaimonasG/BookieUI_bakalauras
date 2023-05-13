@@ -1,15 +1,6 @@
 import axios from "axios"
 import { url } from "../App";
 
-interface IBooks {
-  id: number;
-  GenreId: number;
-  UserId: string;
-  Name: string;
-  Author: string;
-  Price:number;
-  Quality:string;
-}
 const userStr = localStorage.getItem("user");
 
 let user=null;

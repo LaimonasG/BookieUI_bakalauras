@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { IBookToBuy, IComment, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
+import { IBookToBuy, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
 import "./BookView.css";
 import { subscribeToBook } from '../../../requests/BookController';
 import { AxiosError } from 'axios';
-import { getBookComments } from '../../../requests/CommentsController';
 import CommentList from '../../comments/CommentsList';
 
 type BookInformationModalProps = {
@@ -20,7 +19,6 @@ const BookView: React.FC<BookInformationModalProps> = ({
   onClose,
   isBlocked
 }) => {
-  const [comments, setComments] = useState<IComment[]>([]);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const handleAxiosError = useHandleAxiosError();
 
@@ -44,18 +42,8 @@ const BookView: React.FC<BookInformationModalProps> = ({
     setIsCommentsOpen(false);
   }
 
-  const handleOpenComments = async (book: IBookToBuy) => {
-    try {
-      const response = await getBookComments(book.id, book.genreName);
-      if (response) {
-        setComments(response);
-      } else {
-        setComments([]);
-      }
-      setIsCommentsOpen(true);
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
-    }
+  const handleOpenComments = async () => {
+    setIsCommentsOpen(true);
   }
 
   return (
@@ -100,7 +88,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
           onClick={() => handleSubscribeToBook(book)}
           disabled={isBlocked}
         >Prenumeruoti</Button>
-        <Button variant="custom-comments" className="btn-custom" onClick={() => handleOpenComments(book)}>Komentarai</Button>
+        <Button variant="custom-comments" className="btn-custom" onClick={handleOpenComments}>Komentarai</Button>
       </Modal.Footer>
     </Modal>
   );

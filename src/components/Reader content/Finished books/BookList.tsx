@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllBooksFinished } from "../../../requests/BookController";
-import jwt_decode from "jwt-decode";
-import { MyToken, IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
+import { IBookToBuy, useHandleAxiosError } from "../../../Interfaces";
 import './BookList.css';
 import BookView from './FinishedBooksView';
 import { AxiosError } from 'axios';
@@ -10,13 +9,8 @@ import { Pagination } from 'react-bootstrap';
 
 export const FinBookList = () => {
   const [books, setBooks] = useState<IBookToBuy[]>([]);
-  const genreName = localStorage.getItem("genreName");
-  const userStr = localStorage.getItem("user");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currBook, setCurrBook] = useState<IBookToBuy>();
-  const [showLeftArrow, setShowLeftArrow] = useState<boolean>(false);
-  const [showRightArrow, setShowRightArrow] = useState<boolean>(true);
-  const [scrollLeftAmount, setScrollLeftAmount] = useState<number>(0);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const [userRole, setUserRole] = useState('');
 
@@ -29,11 +23,14 @@ export const FinBookList = () => {
   const totalPages = Math.ceil(books.length / itemsPerPage);
 
   async function GetBooks() {
-    try {
-      const xd = await getAllBooksFinished(localStorage.getItem("genreName")!);
-      setBooks(xd);
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
+    const genreName = localStorage.getItem("genreName");
+    if (genreName) {
+      try {
+        const xd = await getAllBooksFinished(genreName);
+        setBooks(xd);
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
+      }
     }
   }
 
@@ -50,14 +47,16 @@ export const FinBookList = () => {
   function toggleFormStatus() {
     GetBooks();
     setIsOpen(!isOpen);
-  };
+  }
 
   useEffect(() => {
     GetBooks();
     SetUserBlockedStatus();
-    setUserRole(localStorage.getItem('role')!);
-
-  }, []);
+    const role = localStorage.getItem('role');
+    if (role) {
+      setUserRole(role);
+    }
+  }, [])
 
   async function SetUserBlockedStatus() {
     const isBlocked = await getUserBlockedStatus();

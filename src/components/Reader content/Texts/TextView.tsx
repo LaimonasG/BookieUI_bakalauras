@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button } from "react-bootstrap";
-import { IComment, ITextsToBuy, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
+import { ITextsToBuy, getPointsWord, handleConfirmed, handleDenied, useHandleAxiosError } from "../../../Interfaces";
 import "./TextView.css";
 import { purchaseText } from '../../../requests/TextsController';
 import CommentList from '../../comments/CommentsList';
-import { getTextComments } from '../../../requests/CommentsController';
 import { AxiosError } from 'axios';
 
 type TextInformationModalProps = {
@@ -21,10 +20,8 @@ const TextView: React.FC<TextInformationModalProps> = ({
   onClose,
   isBlocked
 }) => {
-  const [comments, setComments] = useState<IComment[]>([]);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const handleAxiosError = useHandleAxiosError();
-
 
   const handleBuyText = async (text: ITextsToBuy) => {
     try {
@@ -46,20 +43,8 @@ const TextView: React.FC<TextInformationModalProps> = ({
     setIsCommentsOpen(false);
   }
 
-  const handleOpenComments = async (text: ITextsToBuy) => {
-    console.log("ID:", text.id);
-    console.log("User:", localStorage.getItem("user"));
-    try {
-      const response = await getTextComments(text.id, text.genreName);
-      if (response) {
-        setComments(response);
-      } else {
-        setComments([]);
-      }
-      setIsCommentsOpen(true);
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
-    }
+  const handleOpenComments = async () => {
+    setIsCommentsOpen(true);
   }
 
   return (
@@ -97,7 +82,7 @@ const TextView: React.FC<TextInformationModalProps> = ({
         <Button
           variant="custom-comments"
           className="btn-custom"
-          onClick={() => handleOpenComments(text)}
+          onClick={handleOpenComments}
         >
           Komentarai
         </Button>

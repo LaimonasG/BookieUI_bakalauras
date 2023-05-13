@@ -3,10 +3,8 @@
 import axios, { AxiosError } from "axios"
 import { url } from "../App";
 import { IBookBought, IQuestion, IQuestionAdd, ITextsBought, IUser } from "../Interfaces";
-import { getCurrentUser } from "../services/auth.service";
 
 const userStr = localStorage.getItem("user");
-
 
 let user=null;
 if (userStr)
@@ -180,8 +178,7 @@ const setUserPoints = async (dto:IUser) =>{
   }};
 
 const setUserRole = async (dto:ISetRoleDto) =>
-  await axios.post(`${url}/admin`, dto).then(function (response) {
-  })
+  await axios.post(`${url}/admin`, dto).then()
     .catch(function (error) {
       console.log(error.response.data);
     });

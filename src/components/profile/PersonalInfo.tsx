@@ -10,7 +10,7 @@ interface PersonalInfoRef {
   fetchPoints: () => void;
 }
 
-const PersonalInfo = forwardRef<PersonalInfoRef, {}>((props, ref) => {
+const PersonalInfo = forwardRef<PersonalInfoRef>((_, ref) => {
   const [currentUser, setCurrentUser] = useState<IProfile>();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showPayModal, setShowPayModal] = useState(false);

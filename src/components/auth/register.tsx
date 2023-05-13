@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { register, login } from "../../services/auth.service";
-import { NavigateFunction, json, useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 export interface IUser {
   username: string,
@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 const Register: React.FC = () => {
-  let navigate: NavigateFunction = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const [successful, setSuccessful] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
 
@@ -26,23 +26,16 @@ const Register: React.FC = () => {
       .test(
         "len",
         "Naudotojo vardo reikšmė turi būti 3-25 simbolių ilgio. ",
-        (val: any) =>
-          val &&
-          val.toString().length >= 3 &&
-          val.toString().length <= 25
+        (val: string | undefined) =>
+          Boolean(val && val.length >= 3 && val.length <= 25)
       )
       .required("Naudotojo vardo laukas būtinas."),
-    email: Yup.string()
-      .email("Tai ne validus elektroninis paštas.")
-      .required("Elektroninio pašto laukas būtinas."),
     password: Yup.string()
       .test(
         "len",
         "Slaptažodžio reikšmė turi būti 6-40 simbolių ilgio.",
-        (val: any) =>
-          val &&
-          val.toString().length >= 6 &&
-          val.toString().length <= 40
+        (val: string | undefined) =>
+          Boolean(val && val.length >= 6 && val.length <= 40)
       )
       .required("Slaptažodžio laukas būtinas."),
   });
@@ -57,7 +50,7 @@ const Register: React.FC = () => {
 
         // Perform login after successful registration
         login(username, password).then(
-          (data) => {
+          () => {
             navigate("/");
             window.location.reload();
           },
@@ -87,7 +80,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="col-md-12">
+    <div className="center-container">
       <div className="card card-container">
         <img
           src={`avatar.svg`}

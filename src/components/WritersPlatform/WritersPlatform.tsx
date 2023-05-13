@@ -1,11 +1,11 @@
-import React, { Component, useState, useEffect, Dispatch } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Pagination } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { getUserBlockedStatus, setBookStatus, setUserRole } from "../../requests/AdminController";
 import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord, handleBeingAdded, IStatus, useHandleAxiosError } from '../../Interfaces';
 import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
 import { getAllGenres } from '../../requests/GenresController';
-import { addBook, addChapter, removeChapter, updateBook, updateChapter } from "../../requests/BookController";
+import { addBook, addChapter, removeChapter, updateBook } from "../../requests/BookController";
 import { addText, updateText } from "../../requests/TextsController";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ChapterList from '../chapters/ChapterList';
@@ -15,14 +15,12 @@ import TextFormModal from './texts/AddTextForm';
 import 'chartkick/chart.js';
 import './WritersPlatform.css';
 import AddChapterForm from "./chapters/AddChapterForm";
-import { login } from "../../services/auth.service";
 import { toast } from "react-toastify";
 import CommentList from "../comments/CommentsList";
-import BoughtBooks from "../profile/BoughtBooksPanel";
-import { AxiosError } from "axios";
 import UpdateBookFormModal from "./books/UpdateBookForm";
 import UpdateTextFormModal from "./texts/UpdateTextFormModal";
 import UpdateChaptersFormModal from "./chapters/UpdateChaptersForm";
+import { AxiosError } from "axios";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -33,6 +31,10 @@ interface IConfirmationModalProps {
 interface WritersPlatformProps {
   useNavigate: () => NavigateFunction;
 }
+
+type PieChartDataType = [string, number][];
+type LineChartDataType = Record<string, number>;
+
 
 const ConfirmationModal: React.FC<IConfirmationModalProps> = ({ isOpen, onClose, onAgree }) => {
   return (
@@ -70,7 +72,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [showAddBookModal, setShowAddBookModal] = useState(false);
   const [showAddTextModal, setShowAddTextModal] = useState(false);
   const [showAddChapterModal, setShowAddChapterModal] = useState(false);
-  const [updatePage, setUpdatePage] = useState(false);
   const [isBookCommentsOpen, setIsBookCommentsOpen] = useState<boolean>(false);
   const [isTextCommentsOpen, setIsTextCommentsOpen] = useState<boolean>(false);
   const handleAxiosError = useHandleAxiosError();
@@ -93,13 +94,13 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const booksToDisplay = books.slice(pageBook * perPage, (pageBook + 1) * perPage);
 
   const [userrole, setUserrole] = useState<string | null>("");
-  const [pieChartData, setPieChartData] = useState<any[]>([
+  const [pieChartData, setPieChartData] = useState<PieChartDataType>([
     ["Fantasy", 10],
     ["Mystery", 20],
     ["Romance", 15],
     ["Horror", 5]
   ]);
-  const [lineChartData, setLineChartData] = useState<any>({
+  const [lineChartData, setLineChartData] = useState<LineChartDataType>({
     "2022-01-01": 4,
     "2022-02-01": 2,
     "2022-03-01": 6,
@@ -146,7 +147,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   async function SetUserRole(dto: ISetRoleDto) {
     try {
-      const response = await setUserRole(dto);
+      await setUserRole(dto);
       localStorage.setItem("role", "BookieWriter");
       handleConfirmed(`Vartotojo rolė sėkmingai pakeista.`);
     } catch (error) {
@@ -216,34 +217,36 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   };
 
   const handleChapterFormSubmit = async (file: File, name: string, isFinished: number) => {
-    try {
-      const toastId = handleBeingAdded("Jūsų skyrius pridedamas...");
+    if (selectedBook) {
+      try {
+        const toastId = handleBeingAdded("Jūsų skyrius pridedamas...");
 
-      const chapter: IChaptersAdd = {
-        name: name,
-        content: file,
-        isFinished: isFinished,
-        bookId: selectedBook!.id,
-      };
+        const chapter: IChaptersAdd = {
+          name: name,
+          content: file,
+          isFinished: isFinished,
+          bookId: selectedBook.id,
+        };
 
-      const response = await addChapter(chapter, selectedBook!.genreName);
+        const response = await addChapter(chapter, selectedBook.genreName);
 
-      if (toastId) {
-        toast.dismiss(toastId);
-      }
-
-      if (response.errorMessage === '') {
-        if (response.chargedUsersCount === 0) {
-          handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook!.name}".`);
-        } else {
-          handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook!.name}". Taškai gauti už ${response.chargedUsersCount} ${getSubscriberWord(response.chargedUsersCount)}`);
+        if (toastId) {
+          toast.dismiss(toastId);
         }
-        await GetBooks();
-      } else {
-        handleDenied(response.errorMessage);
+
+        if (response.errorMessage === '') {
+          if (response.chargedUsersCount === 0) {
+            handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook.name}".`);
+          } else {
+            handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook.name}". Taškai gauti už ${response.chargedUsersCount} ${getSubscriberWord(response.chargedUsersCount)}`);
+          }
+          await GetBooks();
+        } else {
+          handleDenied(response.errorMessage);
+        }
+      } catch (error) {
+        handleAxiosError(error as AxiosError);
       }
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
     }
   };
 
@@ -268,7 +271,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     setShowAddChapterModal(false);
     setIsBookCommentsOpen(false);
     setIsTextCommentsOpen(false);
-    setUpdatePage(true);
   };
 
   const handleUpdateBookModal = () => {
@@ -340,20 +342,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     }
   };
 
-  const handleRemoveChapter = async (chapter: IChapters, genreName: string) => {
-    try {
-      const response = await updateChapter(chapter, genreName);
-
-      if (response === 'success') {
-        handleConfirmed(`Skyrius "${chapter.name}" atnaujintas sėkmingai.`);
-        GetBooks();
-      } else {
-        handleDenied(response);
-      }
-    } catch (error) {
-      handleAxiosError(error as AxiosError);
-    }
-  };
 
   const handleChangeBookStatus = async (chapters: IChapters[], book: IBookBought) => {
     try {
@@ -562,36 +550,35 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
               />
             )}
 
-            {showUpdateBookModal && (
+            {showUpdateBookModal && selectedBook && (
               <UpdateBookFormModal
                 show={showUpdateBookModal}
                 genrelist={genres}
                 onHide={handleUpdateBookModal}
                 onSubmit={handleUpdateBookFormSubmit}
-                book={selectedBook!}
+                book={selectedBook}
               />
             )}
 
-            {showUpdateChaptersModal && (
+            {showUpdateChaptersModal && selectedBook && (
               <UpdateChaptersFormModal
                 show={showUpdateChaptersModal}
-                genrelist={genres}
                 onHide={handleUpdateChaptersModal}
                 onSubmit={handleChangeBookStatus}
-                book={selectedBook!}
+                book={selectedBook}
                 isBlocked={isUserBlocked}
               />
             )}
 
-            {showUpdateTextModal && (
+            {showUpdateTextModal && selectedtext &&
               <UpdateTextFormModal
                 show={showUpdateTextModal}
                 genrelist={genres}
                 onHide={handleUpdateTextModal}
                 onSubmit={handleUpdateTextFormSubmit}
-                text={selectedtext!}
+                text={selectedtext}
               />
-            )}
+            }
 
             {showAddTextModal && (
               <TextFormModal
@@ -610,26 +597,26 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
               />
             )}
 
-            {isBookCommentsOpen &&
+            {isBookCommentsOpen && selectedBook &&
               <CommentList
                 isOpen={isBookCommentsOpen}
                 onClose={handleHideModal}
                 isProfile={true}
-                entityId={selectedBook!.id}
+                entityId={selectedBook.id}
                 commentType='Book'
-                genreName={selectedBook!.genreName}
+                genreName={selectedBook.genreName}
                 bookId={0} //zero because its not for chapters
               />
             }
 
-            {isTextCommentsOpen &&
-              <CommentList
+            {isTextCommentsOpen && selectedtext &&
+              < CommentList
                 isOpen={isTextCommentsOpen}
                 onClose={handleHideModal}
                 isProfile={true}
-                entityId={selectedtext!.id}
+                entityId={selectedtext.id}
                 commentType='Text'
-                genreName={selectedtext!.genreName}
+                genreName={selectedtext.genreName}
                 bookId={0} //zero because its not for chapters
               />
             }

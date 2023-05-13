@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './EditPersonalInfo.css';
-import { IProfile, useHandleAxiosError } from '../../Interfaces';
+import { IProfile } from '../../Interfaces';
 
 interface IUpdatePersonalInfoModalProps {
   show: boolean;
@@ -42,6 +42,7 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
         <Modal.Title>Keisti asmeninę informaciją</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {validationError && <p className="text-danger">{validationError}</p>}
         <Form>
           <Form.Group controlId="username">
             <Form.Label>Naudotojo vardas</Form.Label>
