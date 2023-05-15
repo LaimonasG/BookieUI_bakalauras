@@ -21,6 +21,7 @@ import UpdateBookFormModal from "./books/UpdateBookForm";
 import UpdateTextFormModal from "./texts/UpdateTextFormModal";
 import UpdateChaptersFormModal from "./chapters/UpdateChaptersForm";
 import { AxiosError } from "axios";
+import RedeemPoints from "./RedeemPoints";
 
 interface IConfirmationModalProps {
   isOpen: boolean;
@@ -79,7 +80,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [showUpdateTextModal, setShowUpdateTextModal] = useState(false);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const [showUpdateChaptersModal, setShowUpdateChaptersModal] = useState(false);
-
+  const [showRedeemPointsModal, setShowRedeemPointsModal] = useState(false);
 
 
   //pagination
@@ -95,18 +96,40 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   const [userrole, setUserrole] = useState<string | null>("");
   const [pieChartData, setPieChartData] = useState<PieChartDataType>([
-    ["Fantasy", 10],
-    ["Mystery", 20],
-    ["Romance", 15],
-    ["Horror", 5]
+    ["Nuotykiai", 10],
+    ["Romantika", 20],
+    ["Paauglių romanai", 15]
   ]);
-  const [lineChartData, setLineChartData] = useState<LineChartDataType>({
+  const [bookSalesData, setBookSalesData] = useState<LineChartDataType>({
     "2022-01-01": 4,
     "2022-02-01": 2,
     "2022-03-01": 6,
     "2022-04-01": 8,
-    "2022-05-01": 5
+    "2022-05-01": 6,
+    "2022-06-01": 3,
+    "2022-07-01": 1,
+    "2022-08-01": 5,
+    "2022-09-01": 2,
+    "2022-10-01": 12,
+    "2022-11-01": 11,
+    "2022-12-01": 7
   });
+
+  const [textSalesData, setTextSalesData] = useState<LineChartDataType>({
+    "2022-01-01": 6,
+    "2022-02-01": 3,
+    "2022-03-01": 7,
+    "2022-04-01": 10,
+    "2022-05-01": 7,
+    "2022-06-01": 5,
+    "2022-07-01": 2,
+    "2022-08-01": 4,
+    "2022-09-01": 4,
+    "2022-10-01": 8,
+    "2022-11-01": 8,
+    "2022-12-01": 9
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -177,6 +200,10 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     navigate("/");
   };
 
+  const handleOpenRedeemPointsModal = () => {
+    setShowRedeemPointsModal(true);
+  };
+
   const handleAgree = () => {
     const setRole: ISetRoleDto = {
       roleName: "BookieWriter"
@@ -233,7 +260,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
         if (toastId) {
           toast.dismiss(toastId);
         }
-
+        console.log("atsakymas", response)
         if (response.errorMessage === '') {
           if (response.chargedUsersCount === 0) {
             handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook.name}".`);
@@ -680,10 +707,22 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
             <div className="chart">
               <PieChart data={pieChartData} />
             </div>
+            <div className="divider"></div>
             <div className="chart">
-              <LineChart data={lineChartData} />
+              <LineChart
+                data={[
+                  { name: "Knygų pardavimai", data: bookSalesData, color: "blue" },
+                  { name: "Teksto pardavimai", data: textSalesData, color: "red" },
+                ]}
+              />
             </div>
+            <button className="redeem-btn" onClick={handleOpenRedeemPointsModal}>Iškeisti taškus</button>
           </div>
+          {showRedeemPointsModal && (
+            <RedeemPoints
+              onClose={() => setShowRedeemPointsModal(false)}
+            />
+          )}
 
         </div>
       </div>

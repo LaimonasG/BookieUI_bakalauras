@@ -67,7 +67,6 @@ const PersonalInfo = forwardRef<PersonalInfoRef>((_, ref) => {
       surname,
       email,
     };
-    console.log("updated info", personalInfo);
 
     setShowUpdateModal(false);
     try {

@@ -111,12 +111,13 @@ const BookView: React.FC<BookInformationModalProps> = ({
             ref={target}
             variant="custom-block"
             className="btn-custom"
-            onClick={showPopover ? () => handleChangeBookStatus(book) : () => setShowPopover(true)}
+            // onClick={showPopover ? () => handleChangeBookStatus(book) : () => setShowPopover(true)}
+            onClick={() => handleChangeBookStatus(book)}
           >
-            {showPopover ? 'Submit' : 'Block Book'}
+            {showPopover ? 'Pateikti' : 'blokuoti knygą'}
           </Button>
         }
-        <Overlay
+        {/* <Overlay
           show={showPopover}
           target={target.current}
           placement="bottom"
@@ -131,7 +132,7 @@ const BookView: React.FC<BookInformationModalProps> = ({
               <BlockBookPopover blockReason={blockReason} onChange={handleBlockReasonChange} />
             </div>
           )}
-        </Overlay>
+        </Overlay> */}
 
         <Button
           variant="custom-buy"

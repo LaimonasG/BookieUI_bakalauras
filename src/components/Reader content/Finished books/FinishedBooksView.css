@@ -70,18 +70,19 @@ p {
 }
 
 .btn-custom-block {
-  background-color: var(--color-6);
+  background-color: var(--color-6) !important;
   border-color: var(--color-6);
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .btn-custom-block:hover {
-  background-color: var(--color-6-hover);
-  color: #ffffff;
+  background-color: var(--color-6-hover) !important;
+  border-color: var(--color-6-hover);
+  color: #ffffff !important;
 }
 
 .btn-custom-buy:hover {
-  background-color: var(--color-2-hover);
+  background-color: var(--color-2-hover)!;
   color: #ffffff;
 }
 

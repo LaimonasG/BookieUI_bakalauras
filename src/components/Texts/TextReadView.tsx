@@ -45,9 +45,6 @@ const TextReadView: React.FC<TextInformationModalProps> = ({ text, show, onHide 
         <p dangerouslySetInnerHTML={{ __html: text.content }} />
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide} className="text-read-view-close-btn">
-          Close
-        </Button>
       </Modal.Footer>
     </Modal>
   );

@@ -65,7 +65,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              maxLength={25}
+              maxLength={35}
             />
           </Form.Group>
 
@@ -123,7 +123,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
             <Form.Label>Viršelio nuotrauka</Form.Label>
             <Form.Control
               type="file"
-              accept="image/*"
+              accept=".png, .jpg"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.target.files && e.target.files.length > 0) {
                   setCoverImage(e.target.files[0]);
@@ -136,9 +136,6 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Atšaukti
-        </Button>
         <Button variant="primary" onClick={handleSubmit}>
           Pateikti
         </Button>

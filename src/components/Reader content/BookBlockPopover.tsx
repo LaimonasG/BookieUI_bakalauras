@@ -8,11 +8,11 @@ type BlockBookPopoverProps = {
 const BlockBookPopover: React.FC<BlockBookPopoverProps> = ({ blockReason, onChange }) => {
   return (
     <Popover id="popover-basic">
-      <Popover.Header as="h3">Enter block reason</Popover.Header>
+      <Popover.Header as="h3">Pateikite blokavimo priežastį</Popover.Header>
       <Popover.Body>
         <InputGroup>
           <FormControl
-            placeholder="Block reason"
+            placeholder="Priežastis"
             value={blockReason}
             onChange={onChange}
             onClick={(e) => e.stopPropagation()}

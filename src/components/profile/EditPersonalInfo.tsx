@@ -19,8 +19,8 @@ const UpdatePersonalInfoModal: React.FC<IUpdatePersonalInfoModalProps> = ({ show
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
   const handleSubmit = () => {
-    if (!name || !surname) {
-      setValidationError('Vardo ir pavardės laukai privalomi.');
+    if (!username || !email) {
+      setValidationError('Naudotojo vardo ir elektroninio pašto laukai privalomi.');
       return;
     }
     if (!username) {

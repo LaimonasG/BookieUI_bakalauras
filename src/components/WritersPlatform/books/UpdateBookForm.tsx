@@ -124,7 +124,7 @@ const UpdateBookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSu
             <Form.Label>Viršelio nuotrauka</Form.Label>
             <Form.Control
               type="file"
-              accept="image/*"
+              accept=".png, .jpg"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.target.files && e.target.files.length > 0) {
                   setCoverImage(e.target.files[0]);

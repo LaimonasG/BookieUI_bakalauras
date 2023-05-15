@@ -37,7 +37,15 @@ const Register: React.FC = () => {
         (val: string | undefined) =>
           Boolean(val && val.length >= 6 && val.length <= 40)
       )
-      .required("Slaptažodžio laukas būtinas."),
+      .matches(
+        /[0-9]/,
+        "Slaptažodyje turi būti bent vienas skaičius."
+      )
+      .matches(
+        /[@$!%*#?&]/,
+        "Slaptažodyje turi būti bent vienas specialus simbolis."
+      )
+      .required("Slaptažodžio laukas būtinas.")
   });
 
   const handleRegister = (formValue: IUser) => {
