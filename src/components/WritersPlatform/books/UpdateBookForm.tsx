@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import './AddBookForm.css';
+import './UpdateBookForm.css';
 import { IBookBought, IGenres } from '../../../Interfaces';
 
 interface IBookFormModalProps {
@@ -34,7 +34,7 @@ const UpdateBookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSu
 
 
   const handleSubmit = () => {
-    if (!name || !description || !genre || !coverImage) {
+    if (!name || !description || !genre || !coverImage || !bookPrice || !chapterPrice) {
       setValidationError('Visi laukai yra privalomi.');
       return;
     }
@@ -52,13 +52,20 @@ const UpdateBookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSu
     onHide();
   };
 
+  useEffect(() => {
+    if (validationError) {
+      const errorElement = document.getElementById('validation-error');
+      errorElement?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [validationError]);
+
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Knygos informacija</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {validationError && <p className="text-danger">{validationError}</p>}
+        {validationError && <p id="validation-error" className="text-danger">{validationError}</p>}
         <Form>
           <Form.Group controlId="name">
             <Form.Label>Pavadinimas</Form.Label>

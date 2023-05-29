@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './AddBookForm.css';
 import { IBookBought, IGenres } from '../../../Interfaces';
@@ -20,6 +20,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
   const [bookPrice, setBookPrice] = useState('');
   const [coverImage, setCoverImage] = useState<File>();
   const [validationError, setValidationError] = useState('');
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setGenres(genrelist);
@@ -42,7 +43,7 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
   }, [book, genrelist]);
 
   const handleSubmit = () => {
-    if (!name || !description || !genre || !coverImage) {
+    if (!name || !description || !genre || !coverImage || !bookPrice || !chapterPrice) {
       setValidationError('Visi laukai yra privalomi.');
       return;
     }
@@ -50,14 +51,20 @@ const BookFormModal: React.FC<IBookFormModalProps> = ({ show, onHide, onSubmit, 
     onSubmit(name, genre.name, description, parseFloat(chapterPrice), parseFloat(bookPrice), coverImage);
     onHide();
   };
+  useEffect(() => {
+    if (validationError) {
+      const errorElement = document.getElementById('validation-error');
+      errorElement?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [validationError]);
 
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} ref={modalRef}>
       <Modal.Header closeButton>
         <Modal.Title>Knygos informacija</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {validationError && <p className="text-danger">{validationError}</p>}
+        {validationError && <p id="validation-error" className="text-danger">{validationError}</p>}
         <Form>
           <Form.Group controlId="name">
             <Form.Label>Pavadinimas</Form.Label>

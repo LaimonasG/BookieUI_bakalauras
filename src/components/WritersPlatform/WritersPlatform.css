@@ -99,7 +99,6 @@
 .edit-book:hover {
   background-color: var(--color-2-hover);
   border-color: var(--color-2-hover);
-  margin-left: 1rem;
   color: #ffffff;
 }
 
@@ -254,11 +253,6 @@
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
-
-/* .pagination .page-item {
-  margin: 0 2px;
-} */
-
 .pagination .page-link {
   color: var(--color-4);
   background-color: var(--color-5);

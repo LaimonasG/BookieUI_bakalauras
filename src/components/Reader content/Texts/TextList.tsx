@@ -13,6 +13,7 @@ export const TextList = () => {
   const [currText, setCurrText] = useState<ITextsToBuy>();
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const handleAxiosError = useHandleAxiosError();
+  const userIsLogged = localStorage.getItem("user") !== null;
 
   //pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -49,7 +50,10 @@ export const TextList = () => {
 
   useEffect(() => {
     GetTexts();
-    SetUserBlockedStatus();
+
+    if (userIsLogged) {
+      SetUserBlockedStatus();
+    }
   }, []);
 
   async function SetUserBlockedStatus() {

@@ -16,31 +16,12 @@
   max-height: 200px;
 }
 
-.text-tile:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
 .text-tile-details {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   padding: 20px;
   text-align: center;
-}
-
-.text-tile-details h2 {
-  margin-top: 0;
-  margin-bottom: 5px;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.text-tile-details p {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  line-height: 1.2;
 }
 
 .text-tile-footer {
@@ -50,30 +31,9 @@
 }
 
 .text-tiles-grid {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin: 0 -10px;
-  padding: 10px 0;
-  align-items: flex-start;
-  scrollbar-width: thin;
-  scrollbar-color: #606060 #f1f1f1;
-}
-
-.text-tiles-grid > .text-tile {
-  flex-shrink: 0;
-}
-
-.text-tiles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 1rem;
-}
-
-.text-tile-price {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #007bff;
 }
 
 .text-tiles-section-title {
@@ -84,73 +44,4 @@
   text-align: center;
   margin: 40px 0;
   position: relative;
-}
-
-.text-tiles-section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 4px;
-  background-color: #606060;
-}
-
-.text-tiles-grid,
-.text-tiles-grid {
-  scrollbar-width: thin;
-  scrollbar-color: #606060 #f1f1f1;
-}
-
-.text-tiles-grid::-webkit-scrollbar,
-.text-tiles-grid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.text-tiles-grid::-webkit-scrollbar-track,
-.text-tiles-grid::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-  border-radius: 10px;
-}
-
-.text-tiles-grid::-webkit-scrollbar-thumb,
-.text-tiles-grid::-webkit-scrollbar-thumb {
-  background-color: #606060;
-  border-radius: 10px;
-}
-
-.text-tiles-grid::-webkit-scrollbar-thumb:hover,
-.text-tiles-grid::-webkit-scrollbar-thumb:hover {
-  background: #303030;
-}
-.text-tiles-scroll-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.text-tiles-scroll-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.5rem;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.text-tiles-scroll-arrow-left {
-  left: -30px;
-}
-
-.text-tiles-scroll-arrow-right {
-  right: -30px;
-}
-.text-tiles-scroll-container {
-  overflow-x: auto;
-  position: relative;
-  overflow-x: hidden;
 }

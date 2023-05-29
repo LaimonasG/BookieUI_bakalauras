@@ -2,8 +2,11 @@
   background-color: var(--color-3);
   font-family: 'Roboto', sans-serif; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  position: relative; 
-  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
 }
 
 .navbar-brand-icon {
@@ -31,6 +34,9 @@ nav {
   align-items: center;
   width: 100%;
 }
+.navbar-custom-admin {
+  background-color: #D32F2F;
+}
 
 .nav-item-icon {
   font-size: 1.2rem;
@@ -52,6 +58,4 @@ nav {
   color: #F8F8FF !important;
 }
 
-.navbar-custom-admin {
-  background-color: #D32F2F;
-}
+

@@ -31,7 +31,7 @@ export const Navbar = () => {
           setCurrentRole(role);
         }
       } catch (error) {
-        //console.error(error);
+        console.error(error);
       }
     };
 

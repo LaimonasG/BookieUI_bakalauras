@@ -165,10 +165,13 @@ const addChapter = async (chapter: IChaptersAdd, genreName: string) => {
       if (axiosError.response && axiosError.response.status === 400) {
         const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
         return errorDataString;
-      } else {
+      } 
+      if (axiosError.response && axiosError.response.status === 401) {
+        return "Norėdami pirkti knygą turite prisijungti.";
+      }
         console.error(error);
         return 'error';
-      }
+      
     }
   };
 
@@ -186,10 +189,14 @@ const addChapter = async (chapter: IChaptersAdd, genreName: string) => {
       if (axiosError.response && axiosError.response.status === 400) {
         const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
         return errorDataString;
-      } else {
+      }
+        if (axiosError.response && axiosError.response.status === 401) {
+          return "Norėdami prenumeruoti knygą turite prisijungti.";
+        }
+
         console.error(error);
         return 'error';
-      }
+      
     }
   };
 

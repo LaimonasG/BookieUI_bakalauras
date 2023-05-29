@@ -77,7 +77,6 @@ const updateText = async (genreName: string, text: ITextsBought, coverImage: Fil
     }
   }
 };
-
 const purchaseText = async (textId: number, genreName: string): Promise<string> => {
   try {
     const response = await axios.put(`${url}/genres/${genreName}/texts/${textId}/buy`, undefined);
@@ -89,13 +88,16 @@ const purchaseText = async (textId: number, genreName: string): Promise<string> 
     }
   } catch (error) {
     const axiosError = error as AxiosError;
+    let errorDataString;
     if (axiosError.response && axiosError.response.status === 400) {
-      const errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
+      errorDataString = JSON.stringify(axiosError.response.data).replace(/^"|"$/g, '');
       return errorDataString;
-    } else {
-      console.error(error);
-      return 'error';
     }
+    if (axiosError.response && axiosError.response.status === 401) {
+      return "Norėdami pirkti tekstą turite prisijungti.";
+    }
+    console.error(error);
+    return 'error';
   }
 };
 

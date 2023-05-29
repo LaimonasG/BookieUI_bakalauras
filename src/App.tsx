@@ -16,10 +16,9 @@ export const url = "https://localhost:5001/api";
 
 function App() {
   return (
-    <div >
-
+    <div className="app">
       <Navbar />
-      <div>
+      <div className="app-container">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -31,6 +30,12 @@ function App() {
           <Route path='/writer' element={<WritersPlatform useNavigate={useNavigate} />} />
         </Routes>
       </div>
+      <footer className="footer">
+        <div className="footer-content">
+          <span>&copy; {new Date().getFullYear()} Bookie</span>
+          <a className="footer-link">Kontaktai</a>
+        </div>
+      </footer>
       <ToastContainer />
     </div>
   );

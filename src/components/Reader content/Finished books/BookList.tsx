@@ -51,7 +51,10 @@ export const FinBookList = () => {
 
   useEffect(() => {
     GetBooks();
-    SetUserBlockedStatus();
+    if (localStorage.getItem("user") !== null) {
+      SetUserBlockedStatus();
+    }
+
     const role = localStorage.getItem('role');
     if (role) {
       setUserRole(role);

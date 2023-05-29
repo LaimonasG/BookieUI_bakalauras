@@ -50,7 +50,11 @@ export const UnfinBookList = () => {
 
   useEffect(() => {
     GetBooks();
-    SetUserBlockedStatus();
+    if (localStorage.getItem("user") !== null) {
+      console.log("pakliuvo", localStorage.getItem("user"))
+      SetUserBlockedStatus();
+    }
+
   }, []);
 
   async function SetUserBlockedStatus() {

@@ -51,13 +51,20 @@ const UpdateTextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSu
     onHide();
   };
 
+  useEffect(() => {
+    if (validationError) {
+      const errorElement = document.getElementById('validation-error');
+      errorElement?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [validationError]);
+
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Teksto informacija</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {validationError && <p className="text-danger">{validationError}</p>}
+        {validationError && <p id="validation-error" className="text-danger">{validationError}</p>}
         <Form>
           <Form.Group controlId="name">
             <Form.Label>Pavadinimas</Form.Label>

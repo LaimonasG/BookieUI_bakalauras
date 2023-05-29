@@ -531,9 +531,12 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
                             <div>
                               <button className="edit-book btn-color2" onClick={() => handleUpdateBook(book)}>Redaguoti</button>
                             </div>
-                            <div>
-                              <button className="edit-book btn-color2" onClick={() => handleUpdateChapters(book)}>Redaguoti skyrius</button>
-                            </div>
+
+                            {book.chapters && book.chapters.length > 0 &&
+                              <div>
+                                <button className="edit-book btn-color2" onClick={() => handleUpdateChapters(book)}>Redaguoti skyrius</button>
+                              </div>
+                            }
                           </div>
                         }
                       </div>

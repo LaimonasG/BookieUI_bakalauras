@@ -62,46 +62,66 @@ const Login: React.FC = () => {
           validationSchema={validationSchema}
           onSubmit={handleLogin}
         >
-          <Form>
-            <div className="form-content">
-              <div className="form-group">
-                <label htmlFor="username">Naudotojo vardas</label>
-                <Field name="username" type="text" className="form-control" />
-                <ErrorMessage
-                  name="username"
-                  component="div"
-                  className="alert alert-danger"
-                />
-              </div>
+          {({ handleChange, handleBlur }) => (
+            <Form>
+              <div className="form-content">
+                <div className="form-group">
+                  <label htmlFor="username">Naudotojo vardas</label>
+                  <Field
+                    name="username"
+                    type="text"
+                    className="form-control"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      handleChange(e); // call Formik's handleChange
+                      setMessage("");
+                    }}
+                    onBlur={handleBlur}
+                  />
+                  <ErrorMessage
+                    name="username"
+                    component="div"
+                    className="alert alert-danger"
+                  />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="password">Slaptažodis</label>
-                <Field name="password" type="password" className="form-control" />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="alert alert-danger"
-                />
-              </div>
+                <div className="form-group">
+                  <label htmlFor="password">Slaptažodis</label>
+                  <Field
+                    name="password"
+                    type="password"
+                    className="form-control"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      handleChange(e); // call Formik's handleChange
+                      setMessage("");
+                    }}
+                    onBlur={handleBlur}
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="alert alert-danger"
+                  />
+                </div>
 
-              <div className="form-group">
-                <button type="submit" className="btn btn-login btn-block" disabled={loading}>
-                  {loading && (
-                    <span className="spinner-border spinner-border-sm"></span>
-                  )}
-                  <span>Prisijungti</span>
-                </button>
-              </div>
-            </div>
-
-            {message && (
-              <div className="form-group">
-                <div className="alert alert-danger" role="alert">
-                  {message}
+                <div className="form-group">
+                  <button type="submit" className="btn btn-login btn-block" disabled={loading}>
+                    {loading && (
+                      <span className="spinner-border spinner-border-sm"></span>
+                    )}
+                    <span>Prisijungti</span>
+                  </button>
                 </div>
               </div>
-            )}
-          </Form>
+
+              {message && (
+                <div className="form-group">
+                  <div className="alert alert-danger" role="alert">
+                    {message}
+                  </div>
+                </div>
+              )}
+            </Form>
+          )}
         </Formik>
       </div>
     </div>
