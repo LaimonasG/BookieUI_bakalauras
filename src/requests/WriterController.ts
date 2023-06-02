@@ -1,6 +1,6 @@
 import axios from "axios"
 import { url } from "../App";
-import { IChapters } from "../Interfaces";
+import { IChapters, RedeemPaymentResponse } from "../Interfaces";
 
 const userStr = localStorage.getItem("user");
 
@@ -25,6 +25,14 @@ axios.defaults.headers.common = {'Authorization': `bearer ${user.accessToken}`}
 
   const getBookChapters = async (bookId:number,genreName:string) : Promise<IChapters> =>
   await axios.get(`${url}/genres/${genreName}/books/${bookId}/chapters`, undefined).then((x) => x.data);
+
+  const getSalesData= async () =>
+  await axios.get(`${url}/writer/sales`, undefined).then((x) => x.data);
+
+  const redeemPay = async (percent:number):Promise<RedeemPaymentResponse>=>
+await axios.put(`${url}/writer/getPayment`, {
+    "cashOutPercent": percent,
+}).then((x) => x.data); 
   
 const chargeUsers = async (bookId: number, chapterId: number): Promise<number> =>
 await axios.put(`${url}/profiles/pay`, {
@@ -32,4 +40,4 @@ await axios.put(`${url}/profiles/pay`, {
     "chapterId": chapterId  
 }).then((x) => x.data); 
 
-  export {getWriterTexts,getWriterBooks,getWriterText,getWriterBook,getBookChapters,chargeUsers}
+  export {getWriterTexts,getWriterBooks,getWriterText,getWriterBook,getBookChapters,chargeUsers,getSalesData,redeemPay}

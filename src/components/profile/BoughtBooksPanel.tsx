@@ -122,14 +122,14 @@ const BoughtBooks: React.FC = () => {
           </ul>
         )}
       </div>
-      <div className="pagination-wrapper">
+      <div >
         {numBookPages > 1 && (
           <Pagination
             size="sm"
             style={{
               display: "flex",
               justifyContent: "center",
-              marginBottom: "1rem",
+              margin: "0px"
             }}
           >
             {Array.from(Array(numBookPages), (e, i) => (

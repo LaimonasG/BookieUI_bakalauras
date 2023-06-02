@@ -55,7 +55,7 @@ const TextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, 
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              maxLength={25}
+              maxLength={50}
             />
           </Form.Group>
 
@@ -85,7 +85,7 @@ const TextFormModal: React.FC<ITextFormModalProps> = ({ show, onHide, onSubmit, 
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              maxLength={150}
+              maxLength={200}
             />
           </Form.Group>
 

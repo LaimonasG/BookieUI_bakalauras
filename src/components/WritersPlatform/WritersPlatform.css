@@ -145,12 +145,6 @@
 .book-list,
 .text-list {
   margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-.book-list h3,
-.text-list h3 {
-  margin-bottom: 1rem;
 }
 
 .book-list ul, .text-list ul {
@@ -292,4 +286,19 @@
 
 .status-Atmesta {
   color: #cc0000;
+}
+
+.chart-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem; /* Adjust the value to control the gap size */
+}
+
+.chart {
+  width: 100%;
+}
+
+.line-chart {
+  margin-top: 1rem;
+  width: 100%;
 }

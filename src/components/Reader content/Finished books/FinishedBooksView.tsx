@@ -6,7 +6,7 @@ import { purchaseBook } from '../../../requests/BookController';
 import { AxiosError } from 'axios';
 import CommentList from '../../comments/CommentsList';
 import { setBookStatus } from '../../../requests/AdminController';
-import BlockBookPopover from '../BookBlockPopover';
+import BlockBookDropdown from '../BookBlockDropDown';
 
 type BookInformationModalProps = {
   book: IBookToBuy;
@@ -25,8 +25,6 @@ const BookView: React.FC<BookInformationModalProps> = ({
 }) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const [blockReason, setBlockReason] = useState<string>('');
-  const [showPopover, setShowPopover] = useState<boolean>(false);
-  const target = useRef<HTMLButtonElement | null>(null);
 
   const handleAxiosError = useHandleAxiosError();
 
@@ -58,7 +56,6 @@ const BookView: React.FC<BookInformationModalProps> = ({
       const response = await setBookStatus(2, blockReason, book.id);
       if (response === 'success') {
         handleConfirmed(`Knygos "${book.name}" statusas pakeistas į "Atmesta"`);
-        setShowPopover(false);
         onClose();
       } else {
         handleDenied(response);
@@ -69,9 +66,9 @@ const BookView: React.FC<BookInformationModalProps> = ({
     }
   }
 
-  const handleBlockReasonChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBlockReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBlockReason(event.target.value);
-  }, []);
+  };
 
 
   return (
@@ -106,33 +103,13 @@ const BookView: React.FC<BookInformationModalProps> = ({
         />
       </Modal.Body>
       <Modal.Footer>
-        {userRole === 'Admin' &&
-          <Button
-            ref={target}
-            variant="custom-block"
-            className="btn-custom"
-            // onClick={showPopover ? () => handleChangeBookStatus(book) : () => setShowPopover(true)}
-            onClick={() => handleChangeBookStatus(book)}
-          >
-            {showPopover ? 'Pateikti' : 'blokuoti knygą'}
-          </Button>
-        }
-        {/* <Overlay
-          show={showPopover}
-          target={target.current}
-          placement="bottom"
-          container={null}
-          containerPadding={20}
-          rootClose
-          onHide={() => setShowPopover(false)}
-          rootCloseEvent='mousedown'
-        >
-          {(props) => (
-            <div {...props} style={{ ...props.style, zIndex: 9999 }}>
-              <BlockBookPopover blockReason={blockReason} onChange={handleBlockReasonChange} />
-            </div>
-          )}
-        </Overlay> */}
+        {userRole === 'Admin' && (
+          <BlockBookDropdown
+            blockReason={blockReason}
+            onChange={handleBlockReasonChange}
+            onSubmit={() => handleChangeBookStatus(book)}
+          />
+        )}
 
         <Button
           variant="custom-buy"

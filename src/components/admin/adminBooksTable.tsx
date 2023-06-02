@@ -38,7 +38,6 @@ const BookTable: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       const books = await getAllBooks();
-      console.log()
       setBooks(books);
     }
 

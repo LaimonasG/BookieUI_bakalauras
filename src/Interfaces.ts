@@ -217,6 +217,35 @@ export interface IUser{
   points:number;
   }
 
+  export interface BookSalesData {
+    bookName: string;
+    genre:string,
+    bookPrice: number;
+    salesAmount: number;
+    boughtDates: Array<Date | null>;
+    currSubscribedAmount: number;
+  }
+  
+ export  interface TextSalesData {
+    textName: string;
+    genre:string,
+    textPrice: number;
+    salesAmount: number;
+    boughtDates: Array<Date | null>;
+  }
+
+  export interface WriterSalesData {
+    bookData: Array<BookSalesData>;
+    textData: Array<TextSalesData>;
+  }
+
+  export interface RedeemPaymentResponse {
+   confirmed:boolean,
+   withrawalTooSmall:boolean,
+   pointAmount:number,
+   eurAmount:number;
+  }
+
 export function getPointsWord(points: number) {
   if (points % 10 === 1 && points % 100 !== 11) {
     return "taškas";
@@ -225,6 +254,13 @@ export function getPointsWord(points: number) {
   } else {
     return "taškų";
   }
+}
+
+export function getPointsWordForRedeem(points: number) {
+  if (points % 10 === 1 && points % 100 !== 11) {
+    return "tašką";
+  }
+    return "taškų";
 }
 
 export function getAddedWord(points: number) {
@@ -285,10 +321,8 @@ export const useHandleAxiosError = () => {
   const navigate = useNavigate();
 
   const handleAxiosError = (error: AxiosError) => {
-    console.log("h3i");
 
     if (error.response && error.response.status === 401) {
-      console.log("hi");
       logout();
       navigate('/login');
     } else if (error.response && error.response.status === 400) {
@@ -306,5 +340,4 @@ export const useHandleAxiosError = () => {
 export const getStatusString = (statusNumber: number) => {
   return IStatus[statusNumber];
 };
-
 

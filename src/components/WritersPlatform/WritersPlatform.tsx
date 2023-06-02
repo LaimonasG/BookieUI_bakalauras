@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Pagination } from "react-bootstrap";
 import { LineChart, PieChart } from 'react-chartkick';
 import { getUserBlockedStatus, setBookStatus, setUserRole } from "../../requests/AdminController";
-import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord, handleBeingAdded, IStatus, useHandleAxiosError } from '../../Interfaces';
-import { getWriterBooks, getWriterTexts, getBookChapters } from "../../requests/WriterController";
+import { IBookBought, ITextsBought, ISetRoleDto, IChapters, IGenres, getPointsWord, IBookAdd, ITextAdd, handleConfirmed, handleDenied, IChaptersAdd, getSubscriberWord, handleBeingAdded, IStatus, useHandleAxiosError, WriterSalesData, IProfile } from '../../Interfaces';
+import { getWriterBooks, getWriterTexts, getBookChapters, getSalesData } from "../../requests/WriterController";
 import { getAllGenres } from '../../requests/GenresController';
 import { addBook, addChapter, removeChapter, updateBook } from "../../requests/BookController";
 import { addText, updateText } from "../../requests/TextsController";
@@ -32,10 +32,6 @@ interface IConfirmationModalProps {
 interface WritersPlatformProps {
   useNavigate: () => NavigateFunction;
 }
-
-type PieChartDataType = [string, number][];
-type LineChartDataType = Record<string, number>;
-
 
 const ConfirmationModal: React.FC<IConfirmationModalProps> = ({ isOpen, onClose, onAgree }) => {
   return (
@@ -81,7 +77,9 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const [showUpdateChaptersModal, setShowUpdateChaptersModal] = useState(false);
   const [showRedeemPointsModal, setShowRedeemPointsModal] = useState(false);
-
+  const [salesData, setSalesData] = useState<WriterSalesData | undefined>();
+  const [bookPieChartData, setBookPieChartData] = useState<{ [key: string]: number }>();
+  const [textPieChartData, setTextPieChartData] = useState<{ [key: string]: number }>();
 
   //pagination
   const [pageText, setTextPage] = useState(0);
@@ -95,51 +93,64 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const booksToDisplay = books.slice(pageBook * perPage, (pageBook + 1) * perPage);
 
   const [userrole, setUserrole] = useState<string | null>("");
-  const [pieChartData, setPieChartData] = useState<PieChartDataType>([
-    ["Nuotykiai", 10],
-    ["Romantika", 20],
-    ["Paauglių romanai", 15]
-  ]);
-  const [bookSalesData, setBookSalesData] = useState<LineChartDataType>({
-    "2022-01-01": 4,
-    "2022-02-01": 2,
-    "2022-03-01": 6,
-    "2022-04-01": 8,
-    "2022-05-01": 6,
-    "2022-06-01": 3,
-    "2022-07-01": 1,
-    "2022-08-01": 5,
-    "2022-09-01": 2,
-    "2022-10-01": 12,
-    "2022-11-01": 11,
-    "2022-12-01": 7
-  });
 
-  const [textSalesData, setTextSalesData] = useState<LineChartDataType>({
-    "2022-01-01": 6,
-    "2022-02-01": 3,
-    "2022-03-01": 7,
-    "2022-04-01": 10,
-    "2022-05-01": 7,
-    "2022-06-01": 5,
-    "2022-07-01": 2,
-    "2022-08-01": 4,
-    "2022-09-01": 4,
-    "2022-10-01": 8,
-    "2022-11-01": 8,
-    "2022-12-01": 9
-  });
+  const getCurrentYearSales = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const bookSalesData = salesData?.bookData.reduce((acc: { [key: string]: number }, book) => {
+      book.boughtDates?.forEach((date) => {
+        if (date && date.getFullYear() === currentYear) {
+          const month = date.getMonth() + 1;
+          const key = `${currentYear}-${month.toString().padStart(2, '0')}-01`;
+          acc[key] = (acc[key] ?? 0) + book.salesAmount; // Add book sales amount, not just 1
+        }
+      });
+      return acc;
+    }, {}) ?? {};
+
+    const textSalesData = salesData?.textData.reduce((acc: { [key: string]: number }, text) => {
+      text.boughtDates?.forEach((date) => {
+        if (date && date.getFullYear() === currentYear) {
+          const month = date.getMonth() + 1;
+          const key = `${currentYear}-${month.toString().padStart(2, '0')}-01`;
+          acc[key] = (acc[key] ?? 0) + text.salesAmount; // Add text sales amount, not just 1
+        }
+      });
+      return acc;
+    }, {}) ?? {};
+
+    const lineChartData = Object.keys(bookSalesData).sort().map((date) => {
+      return {
+        x: date,
+        y: bookSalesData[date],
+      };
+    });
+
+    const lineChartData2 = Object.keys(textSalesData).sort().map((date) => {
+      return {
+        x: date,
+        y: textSalesData[date],
+      };
+    });
+
+    return {
+      lineChartData,
+      lineChartData2,
+    };
+  };
+
+  const { lineChartData, lineChartData2 } = getCurrentYearSales();
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    GetSalesData();
     GetBooks();
     GetTexts();
     GetGenres();
     setIsConfirmationOpen(true);
     setUserrole(localStorage.getItem("role"));
     SetUserBlockedStatus();
-    console.log("am i blocked?", isUserBlocked)
   }, []);
 
   async function SetUserBlockedStatus() {
@@ -163,6 +174,17 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       );
 
       setBooks(booksWithChapters);
+    } catch (error) {
+      handleAxiosError(error as AxiosError);
+    }
+  }
+
+  async function GetSalesData() {
+    try {
+      const xd = await getSalesData();
+      setSalesData(xd);
+      SetPieChartData(xd);
+      console.log("duomenys", xd)
     } catch (error) {
       handleAxiosError(error as AxiosError);
     }
@@ -196,6 +218,24 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     }
   };
 
+
+  const SetPieChartData = (data: WriterSalesData) => {
+    const pieChartDataBooks = data?.bookData.reduce((acc: { [key: string]: number }, book) => {
+      const genre = book.genre;
+      acc[genre] = (acc[genre] ?? 0) + 1;
+      return acc;
+    }, {}) ?? {};
+
+    const pieChartDataTexts = data?.textData.reduce((acc: { [key: string]: number }, text) => {
+      const genre = text.genre;
+      acc[genre] = (acc[genre] ?? 0) + 1;
+      return acc;
+    }, {}) ?? {};
+
+    setBookPieChartData(pieChartDataBooks);
+    setTextPieChartData(pieChartDataTexts);
+  };
+
   const handleConfirmationClose = () => {
     navigate("/");
   };
@@ -214,7 +254,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   };
 
   const handleAddBook = () => {
-    console.log("handleadd")
     setShowAddBookModal(true);
   };
 
@@ -260,7 +299,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
         if (toastId) {
           toast.dismiss(toastId);
         }
-        console.log("atsakymas", response)
         if (response.errorMessage === '') {
           if (response.chargedUsersCount === 0) {
             handleConfirmed(`Skyrius "${chapter.name}" pridėtas prie knygos "${selectedBook.name}".`);
@@ -283,7 +321,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   }
 
   async function handleReadTextClick(text: ITextsBought) {
-    console.log("text:", text)
     setSelectedText(text);
     setShowTextModal(true);
   }
@@ -291,13 +328,15 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
   const handleHideModal = () => {
     setShowChapterList(false);
     setShowTextModal(false);
-    setShowAddBookModal(false);
-
-    setShowAddChapterModal(false);
-    setShowAddTextModal(false);
     setShowAddChapterModal(false);
     setIsBookCommentsOpen(false);
     setIsTextCommentsOpen(false);
+  };
+
+  const handleHideAddmodal = () => {
+    setShowAddBookModal(false);
+    setShowAddChapterModal(false);
+    setShowAddTextModal(false);
   };
 
   const handleUpdateBookModal = () => {
@@ -340,6 +379,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       if (response === 'success') {
         handleConfirmed(`Knyga "${book.name}" pridėta sėkmingai.`);
         GetBooks();
+        GetSalesData();
       } else {
         handleDenied(response);
       }
@@ -374,10 +414,8 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
     try {
 
       for (const element of chapters) {
-        console.log("removed chapterid", element.id);
         await removeChapter(element.id, book.id, book.genreName);
       }
-      console.log("knyga", book)
       const response = await setBookStatus(0, '', book.id);
       if (response === 'success') {
         handleConfirmed(`Knyga "${book.name}" pateikta peržiūrai.`);
@@ -392,7 +430,6 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
   const handleUpdateTextFormSubmit = async (text: ITextsBought, coverImage: File, content: File) => {
     try {
-      console.log("jusu tekstas:", text)
       const toastId = handleBeingAdded("Jūsų tekstas atnaujinamas...");
 
       const response = await updateText(text.genreName, text, coverImage, content);
@@ -440,6 +477,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
       if (response === 'success') {
         handleConfirmed(`Tekstas "${text.name}" pridėtas sėkmingai.`);
         GetTexts();
+        GetSalesData();
       } else {
         handleDenied(response);
       }
@@ -575,7 +613,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
               <BookFormModal
                 show={showAddBookModal}
                 genrelist={genres}
-                onHide={handleHideModal}
+                onHide={handleHideAddmodal}
                 onSubmit={handleAddBookFormSubmit}
               />
             )}
@@ -614,7 +652,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
               <TextFormModal
                 show={showAddTextModal}
                 genrelist={genres}
-                onHide={handleHideModal}
+                onHide={handleHideAddmodal}
                 onSubmit={handleTextFormSubmit}
               />
             )}
@@ -622,7 +660,7 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
             {showAddChapterModal && (
               <AddChapterForm
                 show={showAddChapterModal}
-                onHide={handleHideModal}
+                onHide={handleHideAddmodal}
                 onSubmit={handleChapterFormSubmit}
               />
             )}
@@ -706,20 +744,30 @@ const WritersPlatform: React.FC<WritersPlatformProps> = () => {
 
           </div>
           <div className="statistics">
-            <h2>Pardavimų statistika</h2>
-            <div className="chart">
-              <PieChart data={pieChartData} />
+            <h2>Kūrinių pasiskirstymas</h2>
+            <div className="chart-container">
+              <div className="chart">
+                <h3>Knygos</h3>
+                <PieChart data={bookPieChartData} />
+              </div>
+              <div className="chart">
+                <h3>Tekstai</h3>
+                <PieChart data={textPieChartData} />
+              </div>
             </div>
             <div className="divider"></div>
-            <div className="chart">
+            <h2>Pardavimų statistika</h2>
+            <div className="line-chart">
               <LineChart
                 data={[
-                  { name: "Knygų pardavimai", data: bookSalesData, color: "blue" },
-                  { name: "Teksto pardavimai", data: textSalesData, color: "red" },
+                  { name: 'Book Sales', data: lineChartData, color: 'red' },
+                  { name: 'Text Sales', data: lineChartData2, color: 'blue' },
                 ]}
               />
             </div>
-            <button className="redeem-btn" onClick={handleOpenRedeemPointsModal}>Iškeisti taškus</button>
+            <button className="redeem-btn" onClick={handleOpenRedeemPointsModal}>
+              Iškeisti taškus
+            </button>
           </div>
           {showRedeemPointsModal && (
             <RedeemPoints

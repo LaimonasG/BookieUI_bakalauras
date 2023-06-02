@@ -3,7 +3,7 @@ import './Home.css';
 
 function Home() {
   return (
-    <Container className="mt-5">
+    <Container className="mt-5" >
       <header className="app-header text-center">
         <h1>Bookie</h1>
         <h3>Kurk ir būk pastebėtas</h3>

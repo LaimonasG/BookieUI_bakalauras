@@ -16,9 +16,14 @@ export const url = "https://localhost:5001/api";
 
 function App() {
   return (
-    <div className="app">
+    <div className="app" style={{
+      overflow: "hidden"
+    }}>
       <Navbar />
-      <div className="app-container">
+      <div className="app-container" style={{
+        height: "80vh",
+        overflow: "auto",
+      }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
