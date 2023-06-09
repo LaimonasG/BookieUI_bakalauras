@@ -86,14 +86,20 @@ const AdminPage = () => {
       points: pointsInputValues[userId] || 0
     };
     try {
-      const response = await setUserPoints(data);
-      if (response === 'success') {
-        handleConfirmed(`Taškai sėkmingai atnaujinti.`);
-        const users = await getAllUsers();
-        setUsers(users);
+
+      if (data.points < 0) {
+        handleDenied("Taškų reikšmė negali būti neigiama.")
       } else {
-        handleDenied(response);
+        const response = await setUserPoints(data);
+        if (response === 'success') {
+          handleConfirmed(`Taškai sėkmingai atnaujinti.`);
+          const users = await getAllUsers();
+          setUsers(users);
+        } else {
+          handleDenied(response);
+        }
       }
+
     } catch (error) {
       handleAxiosError(error as AxiosError);
     }

@@ -231,7 +231,7 @@ export interface IUser{
     genre:string,
     textPrice: number;
     salesAmount: number;
-    boughtDates: Array<Date | null>;
+    boughtDate: Array<Date | null>;
   }
 
   export interface WriterSalesData {
@@ -246,27 +246,40 @@ export interface IUser{
    eurAmount:number;
   }
 
-export function getPointsWord(points: number) {
-  if (points % 10 === 1 && points % 100 !== 11) {
-    return "taškas";
-  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
-    return "taškai";
-  } else {
-    return "taškų";
+  export function getPointsWord(points: number) {
+    const rounded=Math.round(points);
+    if (rounded == 9) {
+      return "taškai";
+    } else if (
+      (rounded % 10 === 1 && rounded % 100 !== 11) ||
+      (rounded % 10 === 9 && rounded % 100 !== 19)
+    ) {
+      return "taškas";
+    } else if (
+      (rounded % 10 >= 2 && rounded % 10 <= 9 && (rounded % 100 < 10 || rounded % 100 >= 20)) ||
+      (rounded % 100 >= 22 && rounded % 100 <= 29)
+    ) {
+      return "taškai";
+    } else {
+      return "taškų";
+    }
   }
-}
 
-export function getPointsWordForRedeem(points: number) {
-  if (points % 10 === 1 && points % 100 !== 11) {
+  export function getPointsWordForRedeem(points: number) {
+    if (Math.round(points) % 10 === 1) {
     return "tašką";
-  }
+    } else if (Math.round(points) % 10 >= 2 && Math.round(points) % 10 <= 9 && (Math.round(points) % 100 < 10 || Math.round(points) % 100 >= 20)) {
+    return "taškus";
+    } else {
     return "taškų";
-}
+    }
+    }
 
 export function getAddedWord(points: number) {
-  if (points===1) {
+  const rounded=Math.round(points);
+  if (rounded===1) {
     return "pridėtas";
-  } else if (points % 10 >= 2 && points % 10 <= 9 && (points % 100 < 10 || points % 100 >= 20)) {
+  } else if (rounded % 10 >= 2 && rounded % 10 <= 9 && (rounded % 100 < 10 || rounded % 100 >= 20)) {
     return "pridėti";
   } else {
     return "pridėta";
@@ -274,7 +287,7 @@ export function getAddedWord(points: number) {
 }
 
 export function getSubscriberWord(points: number) {
-  if (points===1) {
+  if (Math.round(points)===1) {
     return "prenumeratorių";
   } else  {
     return "prenumeratorius";

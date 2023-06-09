@@ -291,7 +291,8 @@
 .chart-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem; /* Adjust the value to control the gap size */
+  gap: 1rem; 
+  text-align: center;
 }
 
 .chart {
@@ -301,4 +302,11 @@
 .line-chart {
   margin-top: 1rem;
   width: 100%;
+}
+
+.centered-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }

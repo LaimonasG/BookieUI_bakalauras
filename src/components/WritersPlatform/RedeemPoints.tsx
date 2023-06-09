@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IProfile, getPointsWord, getPointsWordForRedeem, handleConfirmed, useHandleAxiosError } from '../../Interfaces';
+import { getPointsWord, getPointsWordForRedeem, handleConfirmed, useHandleAxiosError } from '../../Interfaces';
 import { Button, Modal } from 'react-bootstrap';
 import './RedeemPoints.css';
 import { redeemPay } from '../../requests/WriterController';

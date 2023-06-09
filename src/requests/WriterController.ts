@@ -1,6 +1,6 @@
 import axios from "axios"
 import { url } from "../App";
-import { IChapters, RedeemPaymentResponse } from "../Interfaces";
+import { IChapters, RedeemPaymentResponse, WriterSalesData } from "../Interfaces";
 
 const userStr = localStorage.getItem("user");
 
@@ -26,7 +26,7 @@ axios.defaults.headers.common = {'Authorization': `bearer ${user.accessToken}`}
   const getBookChapters = async (bookId:number,genreName:string) : Promise<IChapters> =>
   await axios.get(`${url}/genres/${genreName}/books/${bookId}/chapters`, undefined).then((x) => x.data);
 
-  const getSalesData= async () =>
+  const getSalesData= async () :Promise<WriterSalesData> =>
   await axios.get(`${url}/writer/sales`, undefined).then((x) => x.data);
 
   const redeemPay = async (percent:number):Promise<RedeemPaymentResponse>=>

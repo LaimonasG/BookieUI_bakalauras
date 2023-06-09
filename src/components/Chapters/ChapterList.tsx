@@ -38,8 +38,6 @@ const ChaptersModal: React.FC<BookInformationModalProps> = ({ book, show, onHide
   }
 
   const handleOpenComments = (chapter: IChapters) => {
-    console.log("Skyrius:", chapter)
-    console.log()
     setSelectedChapter(chapter);
     setIsCommentsOpen(true);
   }

@@ -29,6 +29,7 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
     if (question) {
       try {
         const result = await answerQuestion(question.id, selectedAnswer);
+        GetLastAnswerTime();
         if (result.correct === 1) {
           handleConfirmed(`Puiku! Jūsų pasirinkimas "${result.content}" yra teisingas.`);
           onQuestionAnswered();
@@ -60,8 +61,8 @@ const DailyQuestion: React.FC<DailyQuestionProps> = ({ onQuestionAnswered }) => 
   }
 
   async function GetLastAnswerTime() {
-    await getLastAnswerTime();
-    setLastAnswerTime(new Date("2023-04-25T15:00:00")); //date set just for testing purposes
+    const xd = await getLastAnswerTime();
+    setLastAnswerTime(new Date(xd));
   }
 
   useEffect(() => {

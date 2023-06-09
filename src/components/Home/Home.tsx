@@ -23,7 +23,7 @@ function Home() {
             <Card.Body>
               <Card.Title>Apie mus</Card.Title>
               <Card.Text>
-                Bookie tai sistema, leidžianti rašytojams publikuoti ir monetizuoti savo kūrybą, o skaitytojams remti rašytojus ir pirkti parašytas knygas ir tekstus, bei prenumeruoti dar rašomas knygas.
+                Bookie - tai sistema, leidžianti rašytojams publikuoti ir monetizuoti savo kūrybą, o skaitytojams remti rašytojus ir pirkti parašytas knygas ir tekstus bei prenumeruoti dar rašomas knygas.
               </Card.Text>
             </Card.Body>
           </Card>

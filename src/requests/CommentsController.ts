@@ -52,7 +52,6 @@ const addBookComment= async (genreName: string, bookId: number,dto:ICreateCommen
       "Content":dto.Content   
     });
 
-    console.log("atsakas",response)
     if (response.status === 201) {
       return 'success';
     } else {

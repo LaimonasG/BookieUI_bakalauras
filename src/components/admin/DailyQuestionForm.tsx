@@ -26,6 +26,11 @@ const QuestionFormModal: React.FC<IQuestionFormModalProps> = ({ show, onHide, on
       return;
     }
 
+    if (!answers.some(a => a.correct === 1)) {
+      setValidationError('Bent vienas atsakymas turi būti pažymėtas kaip teisingas.');
+      return;
+    }
+
     const rez: IQuestionAdd = {
       "question": question,
       "points": parseFloat(points),

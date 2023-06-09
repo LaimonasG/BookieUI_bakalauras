@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllGenres } from "../../requests/GenresController";
 import { IGenres } from '../../Interfaces';
 import './styles.css';
+import { width } from "@fortawesome/free-solid-svg-icons/faBook";
 
 
 export const GenresTable = () => {
@@ -38,7 +39,7 @@ export const GenresTable = () => {
           }}
           className="genre-tile d-flex flex-column align-items-center justify-content-center"
         >
-          <img src={`/GenreImages/${genre.name}.png`} alt={genre.name} />
+          <img src={`/GenreImages/${genre.name}.png`} alt={genre.name} style={{ width: '75px' }} />
           <span className="genre-name">{genre.name}</span>
         </a>
       );
